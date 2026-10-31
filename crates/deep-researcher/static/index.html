@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deep Researcher Agent — Autonomous Intelligence Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+    .dark .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); }
+  </style>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
+            slate: { 850: '#111827', 950: '#030712' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Navigation Bar -->
+  <header class="sticky top-0 z-50 glass border-b border-slate-200 dark:border-slate-800 px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+        <i class="fa-solid fa-atom text-lg"></i>
+      </div>
+      <div>
+        <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-slate-900 via-indigo-950 to-brand-600 dark:from-white dark:via-indigo-200 dark:to-indigo-400 bg-clip-text text-transparent">Deep Researcher Agent</span>
+        <span class="text-xs font-semibold px-2 py-0.5 ml-1.5 rounded-full bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">Rust Core</span>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <nav class="flex items-center space-x-1 bg-slate-200/60 dark:bg-slate-800/60 p-1 rounded-xl text-sm font-medium">
+      <button onclick="switchTab('research')" id="tab-research" class="px-3.5 py-1.5 rounded-lg transition-all flex items-center space-x-2 bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm">
+        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+        <span>Research</span>
+      </button>
+      <button onclick="switchTab('playground')" id="tab-playground" class="px-3.5 py-1.5 rounded-lg transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+        <i class="fa-solid fa-terminal text-xs"></i>
+        <span>Playground</span>
+      </button>
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-3.5 py-1.5 rounded-lg transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+        <i class="fa-solid fa-chart-line text-xs"></i>
+        <span>Dashboard</span>
+      </button>
+      <button onclick="switchTab('keys')" id="tab-keys" class="px-3.5 py-1.5 rounded-lg transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+        <i class="fa-solid fa-key text-xs"></i>
+        <span>API Keys</span>
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="flex items-center space-x-3">
+      <div id="ram-indicator" class="hidden sm:flex items-center space-x-2 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-slate-500 dark:text-slate-400">RAM:</span>
+        <span id="header-ram-val" class="font-semibold text-slate-700 dark:text-slate-200">--%</span>
+      </div>
+      <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+        <i id="theme-icon" class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Areas -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6">
+
+    <!-- 1. RESEARCH TAB -->
+    <section id="view-research" class="space-y-6">
+      <div class="text-center py-6">
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Autonomous Deep Research</h1>
+        <p class="text-slate-500 dark:text-slate-400 mt-2 max-w-xl mx-auto text-sm">
+          Multi-angle investigation across web, Reddit, community discussions, and zero-auth skills with verified citations.
+        </p>
+      </div>
+
+      <!-- Search Input Box -->
+      <div class="glass border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-4 transition focus-within:ring-2 focus-within:ring-brand-500/50">
+        <div class="flex flex-col space-y-3">
+          <textarea id="research-query" rows="3" placeholder="What would you like to investigate? (e.g. 'Find a room or flatmate in Kochi, Kerala with prices and reviews' or 'Comprehensive market valuation of Nvidia with 10-K analysis')" class="w-full bg-transparent resize-none focus:outline-none text-base placeholder-slate-400"></textarea>
+          
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <div class="flex items-center space-x-2 text-xs">
+              <span class="text-slate-400">Sources:</span>
+              <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Web</span>
+              <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Reddit</span>
+              <span class="px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-brand-600 dark:text-brand-300 font-medium">Adaptive Skills</span>
+            </div>
+            
+            <button onclick="startResearch()" id="btn-submit" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm flex items-center space-x-2 shadow-md shadow-brand-600/30 transition">
+              <span>Start Research</span>
+              <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress / Queue Banner -->
+      <div id="queue-banner" class="hidden p-4 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800/50 text-amber-800 dark:text-amber-200 flex items-center space-x-3 text-sm">
+        <i class="fa-solid fa-clock-rotate-left animate-spin text-amber-500"></i>
+        <span id="queue-msg">Job Queued: Waiting for memory headroom...</span>
+      </div>
+
+      <!-- Active Execution Steps Timeline -->
+      <div id="steps-card" class="hidden glass border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Live Investigation Trajectory</h3>
+        <div id="steps-timeline" class="space-y-2 text-sm"></div>
+      </div>
+
+      <!-- Final Report View -->
+      <div id="report-card" class="hidden glass border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span class="font-semibold text-sm">Synthesis Complete</span>
+          </div>
+          <button onclick="copyReport()" class="text-xs text-brand-600 hover:underline flex items-center space-x-1">
+            <i class="fa-regular fa-copy"></i>
+            <span>Copy Markdown</span>
+          </button>
+        </div>
+        <div id="report-content" class="prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 leading-relaxed"></div>
+      </div>
+    </section>
+
+    <!-- 2. PLAYGROUND TAB -->
+    <section id="view-playground" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold">Research Playground</h2>
+          <p class="text-sm text-slate-500">Test prompts, switch LLM models, and observe real-time agent reasoning steps.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <label class="text-xs text-slate-400">Model:</label>
+          <select id="playground-model" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-1.5 text-xs font-medium">
+            <option value="meta/llama-3.1-70b-instruct">NVIDIA Llama 3.1 70B (Default)</option>
+            <option value="deepseek-chat">DeepSeek Chat</option>
+            <option value="gpt-4o">OpenAI GPT-4o</option>
+            <option value="llama-3.3-70b-versatile">Groq Llama 3.3 70B</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Prompt Input</label>
+            <textarea id="playground-input" rows="6" class="w-full bg-transparent resize-none focus:outline-none text-sm placeholder-slate-400" placeholder="Enter research prompt..."></textarea>
+            <button onclick="runPlayground()" class="mt-3 w-full py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium transition">Execute Run</button>
+          </div>
+        </div>
+
+        <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-500 uppercase">Agent Reasoning Log</label>
+            <span id="playground-tokens" class="text-xs text-brand-600 font-mono">0 tokens</span>
+          </div>
+          <pre id="playground-output" class="bg-slate-100 dark:bg-slate-900/80 p-3 rounded-lg text-xs overflow-auto max-h-96 text-slate-700 dark:text-slate-300 font-mono whitespace-pre-wrap">Waiting for execution...</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. DASHBOARD TAB -->
+    <section id="view-dashboard" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold">Observability & System Dashboard</h2>
+          <p class="text-sm text-slate-500">Live memory, process RSS, queue backpressure, and tokenomics metrics.</p>
+        </div>
+        <button onclick="refreshDashboard()" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs hover:bg-slate-100 dark:hover:bg-slate-900 transition">
+          <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh
+        </button>
+      </div>
+
+      <!-- Resource Gauges (Render 512MB Monitor) -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+          <div class="text-xs text-slate-400">System RAM Usage</div>
+          <div id="stat-system-ram" class="text-2xl font-bold mt-1 text-slate-800 dark:text-slate-100">--%</div>
+          <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+            <div id="stat-ram-bar" class="bg-emerald-500 h-full rounded-full transition-all" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+          <div class="text-xs text-slate-400">Process RSS (Agent)</div>
+          <div id="stat-process-rss" class="text-2xl font-bold mt-1 text-brand-600">-- MB</div>
+          <div class="text-xs text-slate-400 mt-1">Render Free Limit: 512 MB</div>
+        </div>
+
+        <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+          <div class="text-xs text-slate-400">Active / Queued Jobs</div>
+          <div id="stat-jobs-count" class="text-2xl font-bold mt-1 text-slate-800 dark:text-slate-100">0 / 0</div>
+          <div class="text-xs text-emerald-500 mt-1">OOM Guard Active</div>
+        </div>
+
+        <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+          <div class="text-xs text-slate-400">Total Tokens Consumed</div>
+          <div id="stat-tokens" class="text-2xl font-bold mt-1 text-indigo-500">0</div>
+          <div id="stat-cost" class="text-xs text-slate-400 mt-1">Est. Cost: $0.00</div>
+        </div>
+      </div>
+
+      <!-- Job History Table -->
+      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <h3 class="font-semibold text-sm">Recent Research Jobs</h3>
+          <span class="text-xs text-slate-400">Failure inspection & traces</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100/60 dark:bg-slate-900/60 text-slate-500 border-b border-slate-200 dark:border-slate-800">
+              <tr>
+                <th class="p-3">Job ID</th>
+                <th class="p-3">Query</th>
+                <th class="p-3">Status</th>
+                <th class="p-3">Tokens</th>
+                <th class="p-3">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-jobs-body" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
+              <tr><td colspan="5" class="p-4 text-center text-slate-400">No jobs recorded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. API KEYS TAB -->
+    <section id="view-keys" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold">API Key Manager</h2>
+          <p class="text-sm text-slate-500">Generate and manage bearer keys for your Telegram bot and external clients.</p>
+        </div>
+        <button onclick="createApiKey()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+          <i class="fa-solid fa-plus mr-1"></i> Generate New Key
+        </button>
+      </div>
+
+      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-100/60 dark:bg-slate-900/60 text-slate-500 border-b border-slate-200 dark:border-slate-800">
+            <tr>
+              <th class="p-3">Name</th>
+              <th class="p-3">Key Prefix</th>
+              <th class="p-3">Status</th>
+              <th class="p-3">Created</th>
+              <th class="p-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="keys-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
+            <tr><td colspan="5" class="p-4 text-center text-slate-400">Loading API keys...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Tab switching
+    function switchTab(tab) {
+      ['research', 'playground', 'dashboard', 'keys'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`tab-${t}`);
+        btn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-sm');
+        btn.classList.add('text-slate-600', 'dark:text-slate-400');
+      });
+
+      document.getElementById(`view-${tab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tab}`);
+      activeBtn.classList.add('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-sm');
+      activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+
+      if (tab === 'dashboard') refreshDashboard();
+      if (tab === 'keys') refreshApiKeys();
+    }
+
+    // Dark Mode Toggle
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+      document.getElementById('theme-icon').className = 'fa-solid fa-sun';
+    }
+
+    // Research Flow
+    async function startResearch() {
+      const query = document.getElementById('research-query').value.trim();
+      if (!query) return;
+
+      const btn = document.getElementById('btn-submit');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i><span>Investigating...</span>`;
+
+      const stepsCard = document.getElementById('steps-card');
+      const timeline = document.getElementById('steps-timeline');
+      const reportCard = document.getElementById('report-card');
+      const queueBanner = document.getElementById('queue-banner');
+
+      stepsCard.classList.remove('hidden');
+      reportCard.classList.add('hidden');
+      queueBanner.classList.add('hidden');
+      timeline.innerHTML = '';
+
+      try {
+        const res = await fetch('/v1/jobs/async', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        });
+
+        const data = await res.json();
+        const jobId = data.job_id;
+
+        if (data.status === 'QUEUED_ON_HOLD') {
+          queueBanner.classList.remove('hidden');
+          document.getElementById('queue-msg').innerText = data.message;
+        }
+
+        // Subscribe to SSE events
+        const eventSource = new EventSource(`/v1/jobs/async/${jobId}/events`);
+
+        eventSource.onmessage = (event) => {
+          const ev = JSON.parse(event.data);
+          const stepDiv = document.createElement('div');
+          stepDiv.className = 'flex items-start space-x-2.5 text-xs text-slate-600 dark:text-slate-300';
+          stepDiv.innerHTML = `<i class="fa-solid fa-chevron-right text-brand-500 mt-0.5"></i><span>${ev.content}</span>`;
+          timeline.appendChild(stepDiv);
+        };
+
+        eventSource.addEventListener('end', async () => {
+          eventSource.close();
+          queueBanner.classList.add('hidden');
+
+          // Fetch final report
+          const jobRes = await fetch(`/v1/jobs/async/${jobId}`);
+          const jobData = await jobRes.json();
+
+          if (jobData.report) {
+            reportCard.classList.remove('hidden');
+            document.getElementById('report-content').innerHTML = marked.parse(jobData.report);
+          }
+
+          btn.disabled = false;
+          btn.innerHTML = `<span>Start Research</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
+        });
+
+      } catch (err) {
+        alert('Failed to submit research job: ' + err);
+        btn.disabled = false;
+        btn.innerHTML = `<span>Start Research</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
+      }
+    }
+
+    function copyReport() {
+      const content = document.getElementById('report-content').innerText;
+      navigator.clipboard.writeText(content);
+      alert('Report Markdown copied to clipboard!');
+    }
+
+    // Dashboard refresh
+    async function refreshDashboard() {
+      try {
+        const res = await fetch('/api/dashboard/stats');
+        const data = await res.json();
+
+        const ramPct = data.metrics.ram_usage_percent.toFixed(1);
+        document.getElementById('header-ram-val').innerText = `${ramPct}%`;
+        document.getElementById('stat-system-ram').innerText = `${ramPct}%`;
+        document.getElementById('stat-ram-bar').style.width = `${Math.min(ramPct, 100)}%`;
+
+        if (ramPct >= 85) {
+          document.getElementById('stat-ram-bar').className = 'bg-rose-500 h-full rounded-full transition-all';
+        }
+
+        document.getElementById('stat-process-rss').innerText = `${data.metrics.process_rss_mb} MB`;
+        document.getElementById('stat-jobs-count').innerText = `${data.metrics.active_jobs} / ${data.metrics.queue_length}`;
+        document.getElementById('stat-tokens').innerText = Number(data.tokenomics.total_tokens_consumed).toLocaleString();
+        document.getElementById('stat-cost').innerText = `Est. Cost: $${data.tokenomics.estimated_cost_usd.toFixed(4)}`;
+
+        // Load jobs
+        const jobsRes = await fetch('/api/dashboard/jobs');
+        const jobs = await jobsRes.json();
+        const tbody = document.getElementById('dashboard-jobs-body');
+
+        if (jobs.length > 0) {
+          tbody.innerHTML = jobs.map(j => `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/50">
+              <td class="p-3 text-brand-600">${j.id.slice(0, 8)}...</td>
+              <td class="p-3 text-slate-700 dark:text-slate-300 max-w-xs truncate">${j.query}</td>
+              <td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold ${
+                j.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' :
+                j.status === 'FAILED' ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300' :
+                'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300'
+              }">${j.status}</span></td>
+              <td class="p-3">${j.total_tokens || 0}</td>
+              <td class="p-3 text-slate-400">${new Date(j.created_at).toLocaleTimeString()}</td>
+            </tr>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Dashboard refresh failed:', e);
+      }
+    }
+
+    // Periodic RAM check
+    setInterval(async () => {
+      try {
+        const res = await fetch('/health');
+        const d = await res.json();
+        document.getElementById('header-ram-val').innerText = `${d.system_ram_pct.toFixed(1)}%`;
+      } catch (e) {}
+    }, 8000);
+
+    // API Keys
+    async function refreshApiKeys() {
+      try {
+        const res = await fetch('/api/keys');
+        const keys = await res.json();
+        const tbody = document.getElementById('keys-table-body');
+
+        if (keys.length > 0) {
+          tbody.innerHTML = keys.map(k => `
+            <tr>
+              <td class="p-3 font-semibold">${k.name}</td>
+              <td class="p-3 text-brand-600">${k.key_prefix}••••••••</td>
+              <td class="p-3">${k.is_revoked ? '<span class="text-rose-500">Revoked</span>' : '<span class="text-emerald-500">Active</span>'}</td>
+              <td class="p-3 text-slate-400">${new Date(k.created_at).toLocaleDateString()}</td>
+              <td class="p-3 text-right">
+                ${k.is_revoked ? '' : `<button onclick="revokeKey('${k.id}')" class="text-xs text-rose-500 hover:underline">Revoke</button>`}
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No API keys generated.</td></tr>`;
+        }
+      } catch (e) {}
+    }
+
+    async function createApiKey() {
+      const name = prompt('Enter a name for this API key (e.g. "Telegram Bot"):');
+      if (!name) return;
+
+      const res = await fetch('/api/keys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+
+      const d = await res.json();
+      prompt('API Key generated! Copy it now (it will not be shown again):', d.api_key);
+      refreshApiKeys();
+    }
+
+    async function revokeKey(id) {
+      if (!confirm('Are you sure you want to revoke this API key?')) return;
+      await fetch(`/api/keys/${id}`, { method: 'DELETE' });
+      refreshApiKeys();
+    }
+  </script>
+</body>
+</html>

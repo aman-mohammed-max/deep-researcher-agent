@@ -1,0 +1,49 @@
+# Multi-stage ultra-lightweight Dockerfile for Render 512MB RAM deployment
+# Target footprint: ~35MB idle RSS RAM, zero Python/Node dependencies
+FROM rust:1.85-slim-bookworm AS builder
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config \
+    libssl-dev \
+    sqlite3 \
+    libsqlite3-dev \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy workspace and crate source
+COPY Cargo.toml Cargo.lock ./
+COPY crates/deep-researcher ./crates/deep-researcher
+
+# Build optimized release binary
+RUN cargo build --release --manifest-path crates/deep-researcher/Cargo.toml
+
+# Stage 2: Runtime Minimal Distro
+FROM debian:bookworm-slim AS runner
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libssl3 \
+    sqlite3 \
+    libsqlite3-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy single binary from builder
+COPY --from=builder /app/target/release/deep-researcher-agent /app/deep-researcher-agent
+
+# Default environment variables optimized for Render free tier (512MB RAM)
+ENV HOST=0.0.0.0
+ENV PORT=8000
+ENV DATABASE_URL=sqlite:///app/deep_researcher.db?mode=rwc
+ENV MAX_RAM_PERCENT=85.0
+ENV MAX_CONCURRENT_JOBS=5
+ENV MAX_RESEARCH_CONCURRENCY=3
+ENV RUST_LOG=deep_researcher_agent=info,tower_http=info
+
+EXPOSE 8000
+
+CMD ["/app/deep-researcher-agent"]
