@@ -170,6 +170,59 @@ $$\text{Weight Bytes per Token (Dense Forward Pass)} = \text{Parameters} \times 
 
 ---
 
+### 3. Empirical Research Benchmark: Post-Quantum Cryptography Migration for Global Financial Systems
+
+A rigorous, end-to-end comparative benchmark on a mission-critical financial cryptography assignment:
+> *"Analyze the technical, algorithmic, and infrastructure challenges of migrating global financial institutions to Post-Quantum Cryptography (PQC). Specifically investigate: (1) The deployment of NIST standardized post-quantum algorithms (FIPS 203 ML-KEM, FIPS 204 ML-DSA, and FIPS 205 SLH-DSA), focusing on key and ciphertext size expansions compared to classical RSA-2048 and ECDSA P-256; (2) The latency and packet fragmentation impact on High-Frequency Trading (HFT) and TLS 1.3 handshake times; (3) Hardware Security Module (HSM) and smartcard storage and cryptographic acceleration bottlenecks; (4) Hybrid key exchange schemes and protocol backward-compatibility across payment clearing networks like SWIFT and Fedwire; and (5) The quantitative risk window of 'Harvest Now, Decrypt Later' (HNDL) attacks against financial data with multi-decade retention requirements."*
+
+Immutable benchmark prompt SHA256: `0033ec060d7869973b365286852da1c13e0d98d5c449ed5fe5cadd479d634874` (`benchmarks/final/prompts/benchmark_a_pqc_finance.txt`).
+
+#### Head-to-Head Benchmark Results
+
+| Metric | Python Engine (`nat` + LangChain) | Rust Engine Trial 1 (`axum` + `tokio`) | Rust Engine Trial 2 (`axum` + `tokio`) | Rust Advantage |
+| :--- | :--- | :--- | :--- | :--- |
+| **Wall Clock Execution Time** | `1,937.41 s` (32.3 min) | **`188.31 s`** (3.1 min) | **`180.17 s`** (3.0 min) | **10.3× – 10.8× Faster** |
+| **Peak Memory Footprint (RSS)**| `401.2 MB` | **`38.0 MB`** | **`26.0 MB`** | **10.6× – 15.4× Lower RAM** |
+| **Render 512 MB Budget Used**  | `78.4%` (Near OOM) | **`7.4%`** | **`5.1%`** | **Safe ~486 MB Headroom** |
+| **Synthesized Report Length**   | 4,909 words (38,496 chars) | 3,481 words (28,902 chars) | 2,996 words (24,621 chars) | Comprehensive, publication-ready |
+| **Total Tokens Processed**     | N/A (untracked) | **`89,161 tokens`** | **`82,030 tokens`** | 100% accounted in SQLite |
+| **Verified Inline Citations**  | 121 citations (53 sources) | 107 citations (36 sources) | 74 citations (36 sources) | Rigorous source whitelisting |
+| **Multi-Agent Architecture**   | Sequential node graph | Concurrent Tokio workers + ReAct | Concurrent Tokio workers + ReAct | Native async ReAct loops |
+| **Tool Execution Stability**   | Warnings & 550b fallback retry | 100% structured JSON schemas | 100% structured JSON schemas | Zero runtime exceptions |
+
+#### Key Technical & Algorithmic Findings (Output Comparison)
+
+Both engines successfully addressed all five core investigative dimensions with identical mathematical precision:
+
+1. **Algorithm Key & Ciphertext Size Expansions:**
+   - **FIPS 203 (ML-KEM-768):** Public key expanded to **1,184 bytes**, ciphertext to **1,088 bytes** (compared to classical X25519 at **32 bytes** / RSA-2048 at **256 bytes**).
+   - **FIPS 204 (ML-DSA-65):** Public key expanded to **1,952 bytes**, signature expanded to **3,309 bytes** (compared to ECDSA P-256 at **64 bytes** / RSA-2048 at **256 bytes**).
+   - **FIPS 205 (SLH-DSA-SHA2-128s):** Stateless hash-based fallback with signature size of **17,088 bytes**.
+2. **TLS 1.3 Handshake & HFT Latency Impact:**
+   - Standard Ethernet MTU is **1,500 bytes**. An ML-DSA signature (3,309 bytes) exceeds the MTU, causing compulsory IP packet fragmentation into **3–4 TCP segments**.
+   - In High-Frequency Trading (HFT) co-located environments where trade execution occurs in the **sub-microsecond regime (500 ns – 2 µs)**, the additional TCP round-trips from fragmented TLS handshakes introduce **15–50 µs of tail latency jitter**, breaking latency-arbitrage guarantees unless pre-shared session resumption (TLS PSK) or pre-established encrypted tunnels are employed.
+3. **Hardware Security Module (HSM) & Smartcard Bottlenecks:**
+   - Kilobyte-scale post-quantum keys cause severe storage exhaustion in legacy HSM NVRAM partitions designed for 32-byte ECC keys (e.g., Thales Luna, Utimaco CryptoServer, and Entrust nShield).
+   - Smartcards (EMV chips) suffer from limited EEPROM space and compute bottlenecks, requiring dedicated lattice-math coprocessors to complete signature verification within standard **<300 ms POS terminal tap timeouts**.
+4. **Hybrid Protocol Backward-Compatibility & Payment Clearing:**
+   - Analysis of **BIS Project Leap Phase 2** demonstrates that global financial networks (SWIFT, Fedwire, CHIPS) require dual-path hybrid certificate wrapping (e.g., `X25519 + ML-KEM-768` for key encapsulation and `ECDSA + ML-DSA` for composite digital signatures) to prevent middlebox breakage across legacy financial gateways.
+5. **"Harvest Now, Decrypt Later" (HNDL) Quantitative Risk Window:**
+   - Evaluated using **Mosca's Theorem** ($X + Y > Z$):
+     - Shelf-life / retention mandate ($X$): **30 years** for mortgages, sovereign debt, and trust records.
+     - Migration timeline ($Y$): **7–10 years** for enterprise-wide financial infrastructure.
+     - Cryptanalytically Relevant Quantum Computer arrival ($Z$): **8–12 years** (estimated 2033–2036).
+     - Because $30 + 10 = 40 \gg 12$, **the quantitative risk window is already active**, requiring immediate transition to hybrid post-quantum key encapsulation for all data in transit.
+
+#### Reproducibility & Benchmark Artifacts
+
+The complete execution logs, prompt hashes, and generated JSON reports are preserved in the repository:
+- Prompt: [`benchmarks/final/prompts/benchmark_a_pqc_finance.txt`](benchmarks/final/prompts/benchmark_a_pqc_finance.txt) (SHA256: `0033ec060d7869973b365286852da1c13e0d98d5c449ed5fe5cadd479d634874`)
+- Python Run Artifact: [`benchmarks/final/runs/python_topic_a_trial_1.json`](benchmarks/final/runs/python_topic_a_trial_1.json)
+- Rust Trial 1 Run Artifact: [`benchmarks/final/runs/rust_topic_a_trial_1.json`](benchmarks/final/runs/rust_topic_a_trial_1.json)
+- Rust Trial 2 Run Artifact: [`benchmarks/final/runs/rust_topic_a_trial_2.json`](benchmarks/final/runs/rust_topic_a_trial_2.json)
+
+---
+
 ## Quickstart
 
 ### Prerequisites

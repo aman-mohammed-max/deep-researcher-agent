@@ -1,532 +1,725 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deep Researcher Agent — Autonomous Intelligence Engine</title>
+  
+  <!-- Tailwind CSS with Typography Plugin -->
   <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Marked.js Markdown Parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- Highlight.js Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  
+  <!-- html2pdf.js for PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    code, pre { font-family: 'JetBrains Mono', monospace; }
-    .glass { background: rgba(255, 255, 255, 0.90); backdrop-filter: blur(12px); }
-    .dark .glass { background: rgba(15, 23, 42, 0.90); backdrop-filter: blur(12px); }
-    
-    /* Scrollbars */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
-    .dark ::-webkit-scrollbar-thumb { background: rgba(75, 85, 99, 0.4); }
 
-    /* Custom Animations */
-    @keyframes pulse-slow {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    .animate-pulse-slow { animation: pulse-slow 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+  <!-- Google Fonts: Plus Jakarta Sans, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    /* Rich Markdown Body Styles */
-    .markdown-body {
-      color: inherit;
-      font-size: 0.925rem;
-      line-height: 1.65;
-      word-break: break-word;
-    }
-    .markdown-body h1 {
-      font-size: 1.45rem;
-      font-weight: 700;
-      margin-top: 1.25rem;
-      margin-bottom: 0.75rem;
-      padding-bottom: 0.35rem;
-      border-bottom: 1px solid rgba(156, 163, 175, 0.25);
-    }
-    .markdown-body h2 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-top: 1.15rem;
-      margin-bottom: 0.5rem;
-      color: #4f46e5;
-    }
-    .dark .markdown-body h2 {
-      color: #818cf8;
-    }
-    .markdown-body h3 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-top: 0.9rem;
-      margin-bottom: 0.4rem;
-    }
-    .markdown-body h4, .markdown-body h5, .markdown-body h6 {
-      font-weight: 600;
-      margin-top: 0.75rem;
-      margin-bottom: 0.35rem;
-    }
-    .markdown-body p {
-      margin-top: 0.5rem;
-      margin-bottom: 0.65rem;
-    }
-    .markdown-body ul {
-      list-style-type: disc;
-      padding-left: 1.5rem;
-      margin-top: 0.4rem;
-      margin-bottom: 0.6rem;
-    }
-    .markdown-body ol {
-      list-style-type: decimal;
-      padding-left: 1.5rem;
-      margin-top: 0.4rem;
-      margin-bottom: 0.6rem;
-    }
-    .markdown-body li {
-      margin-top: 0.2rem;
-      margin-bottom: 0.2rem;
-    }
-    .markdown-body blockquote {
-      border-left: 3px solid #6366f1;
-      padding-left: 1rem;
-      margin: 0.75rem 0;
-      color: #6b7280;
-      font-style: italic;
-    }
-    .dark .markdown-body blockquote {
-      color: #9ca3af;
-    }
-    .markdown-body pre {
-      background-color: rgba(15, 23, 42, 0.06);
-      border-radius: 0.5rem;
-      padding: 0.75rem 1rem;
-      overflow-x: auto;
-      margin: 0.75rem 0;
-      font-size: 0.825rem;
-    }
-    .dark .markdown-body pre {
-      background-color: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .markdown-body code {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85em;
-      padding: 0.15rem 0.35rem;
-      border-radius: 0.3rem;
-      background-color: rgba(99, 102, 241, 0.1);
-      color: #4f46e5;
-    }
-    .dark .markdown-body code {
-      background-color: rgba(99, 102, 241, 0.2);
-      color: #a5b4fc;
-    }
-    .markdown-body pre code {
-      background-color: transparent;
-      color: inherit;
-      padding: 0;
-    }
-    .markdown-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-      font-size: 0.85rem;
-    }
-    .markdown-body th, .markdown-body td {
-      border: 1px solid rgba(156, 163, 175, 0.3);
-      padding: 0.5rem 0.75rem;
-      text-align: left;
-    }
-    .markdown-body th {
-      background-color: rgba(156, 163, 175, 0.1);
-      font-weight: 600;
-    }
-    .markdown-body a {
-      color: #6366f1;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .markdown-body a:hover {
-      color: #4f46e5;
-    }
-    .dark .markdown-body a {
-      color: #818cf8;
-    }
-    .markdown-body hr {
-      border: 0;
-      border-top: 1px solid rgba(156, 163, 175, 0.25);
-      margin: 1.5rem 0;
-    }
-  </style>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['Inter', 'Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          },
           colors: {
             brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981', // Emerald/NVIDIA green accent
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+              950: '#022c22'
+            },
+            accent: {
               50: '#eef2ff',
               100: '#e0e7ff',
               200: '#c7d2fe',
-              500: '#6366f1',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1', // Indigo Cyber
               600: '#4f46e5',
               700: '#4338ca',
-              800: '#3730a3'
+              800: '#3730a3',
+              900: '#312e81'
             },
-            slate: { 850: '#111827', 950: '#030712' }
+            surface: {
+              dark: '#080C14',
+              darker: '#05070B',
+              card: '#0D131F',
+              border: 'rgba(255, 255, 255, 0.08)',
+              glass: 'rgba(13, 19, 31, 0.75)',
+              hover: 'rgba(255, 255, 255, 0.04)'
+            }
+          },
+          boxShadow: {
+            'glow-emerald': '0 0 20px -5px rgba(16, 185, 129, 0.35)',
+            'glow-indigo': '0 0 20px -5px rgba(99, 102, 241, 0.35)',
+            'canvas': '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
           }
         }
       }
     }
   </script>
+
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.45); }
+    .dark ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.45); }
+    .dark ::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.75); }
+
+    /* Frosted Glass Utilities */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .dark .glass-panel {
+      background: rgba(13, 19, 31, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .glass-input {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(203, 213, 225, 0.8);
+    }
+    .dark .glass-input {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    /* Claude Canvas Shadow & Elevation */
+    .artifact-canvas {
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Animations */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 0.4; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .pulse-ring-slow { animation: pulse-ring 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .animate-gradient {
+      background-size: 200% 200%;
+      animation: gradient-shift 8s ease infinite;
+    }
+
+    /* Markdown Typography & Artifact Document Styling */
+    .artifact-body {
+      color: inherit;
+      font-size: 0.95rem;
+      line-height: 1.75;
+      word-break: break-word;
+    }
+    .artifact-body h1 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-top: 1.75rem;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      color: #0f172a;
+    }
+    .dark .artifact-body h1 {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+    }
+    .artifact-body h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin-top: 1.5rem;
+      margin-bottom: 0.65rem;
+      color: #059669;
+    }
+    .dark .artifact-body h2 {
+      color: #34d399;
+    }
+    .artifact-body h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #1e293b;
+    }
+    .dark .artifact-body h3 {
+      color: #e2e8f0;
+    }
+    .artifact-body p {
+      margin-top: 0.65rem;
+      margin-bottom: 0.85rem;
+      color: #334155;
+    }
+    .dark .artifact-body p {
+      color: #cbd5e1;
+    }
+    .artifact-body ul, .artifact-body ol {
+      padding-left: 1.6rem;
+      margin: 0.65rem 0;
+    }
+    .artifact-body ul { list-style-type: disc; }
+    .artifact-body ol { list-style-type: decimal; }
+    .artifact-body li {
+      margin: 0.35rem 0;
+      color: #334155;
+    }
+    .dark .artifact-body li {
+      color: #cbd5e1;
+    }
+    .artifact-body blockquote {
+      border-left: 3px solid #10b981;
+      background: rgba(16, 185, 129, 0.05);
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      font-style: normal;
+      color: #475569;
+    }
+    .dark .artifact-body blockquote {
+      background: rgba(16, 185, 129, 0.08);
+      color: #94a3b8;
+    }
+    .artifact-body table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 1.25rem 0;
+      font-size: 0.875rem;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .dark .artifact-body table {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .artifact-body th {
+      background-color: rgba(241, 245, 249, 0.8);
+      padding: 0.65rem 0.85rem;
+      font-weight: 600;
+      text-align: left;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .dark .artifact-body th {
+      background-color: rgba(30, 41, 59, 0.6);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .artifact-body td {
+      padding: 0.6rem 0.85rem;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+    }
+    .dark .artifact-body td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .artifact-body tr:last-child td {
+      border-bottom: none;
+    }
+    .artifact-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84em;
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.35rem;
+      background-color: rgba(16, 185, 129, 0.1);
+      color: #047857;
+    }
+    .dark .artifact-body code {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+    }
+    .artifact-body pre {
+      background-color: #0f172a !important;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      font-size: 0.85rem;
+    }
+    .artifact-body pre code {
+      background-color: transparent !important;
+      color: #e2e8f0 !important;
+      padding: 0;
+      font-size: inherit;
+    }
+    .artifact-body hr {
+      border: none;
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+      margin: 2rem 0;
+    }
+    .dark .artifact-body hr {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .artifact-body a {
+      color: #059669;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .dark .artifact-body a {
+      color: #34d399;
+    }
+    .artifact-body a:hover {
+      color: #10b981;
+    }
+  </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 h-screen flex flex-col overflow-hidden transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-surface-dark text-slate-800 dark:text-slate-100 h-screen flex flex-col overflow-hidden font-sans antialiased transition-colors duration-200">
 
   <!-- ========================================================================= -->
-  <!-- 1. TOP APP BAR (AppBar)                                                   -->
+  <!-- 1. TOP APP BAR                                                            -->
   <!-- ========================================================================= -->
-  <header class="h-14 shrink-0 glass border-b border-slate-200 dark:border-slate-800 px-4 flex items-center justify-between z-40">
+  <header class="h-14 shrink-0 glass-panel px-4 flex items-center justify-between z-40 border-b border-slate-200 dark:border-white/5 select-none">
+    
+    <!-- Left Area: Rail Toggle + Brand Logo + Mode Selector -->
     <div class="flex items-center space-x-3">
       <!-- Toggle Sessions Rail Button -->
-      <button onclick="toggleSessionsRail()" class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Sessions Rail">
-        <i class="fa-solid fa-bars text-sm"></i>
+      <button onclick="toggleSessionsRail()" class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Toggle Sessions Drawer">
+        <i class="fa-solid fa-bars-staggered text-sm"></i>
       </button>
 
-      <!-- Brand Logo -->
-      <div class="flex items-center space-x-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-sm shadow-brand-500/20">
+      <!-- Brand Identity with NVIDIA Green + Rust Parity Glow -->
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 via-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-glow-emerald">
           <i class="fa-solid fa-atom text-sm"></i>
         </div>
-        <span class="font-bold text-base tracking-tight bg-gradient-to-r from-slate-900 via-indigo-950 to-brand-600 dark:from-white dark:via-indigo-200 dark:to-indigo-400 bg-clip-text text-transparent hidden sm:inline">
-          Deep Researcher Agent
-        </span>
+        <div class="flex flex-col">
+          <div class="flex items-center space-x-2">
+            <span class="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white">
+              Deep Researcher
+            </span>
+            <span class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
+              RUST 1:1
+            </span>
+          </div>
+          <span class="text-[10px] text-slate-400 font-mono tracking-wider hidden sm:inline">
+            Render 512MB RAM Guard • 10× Fast Engine
+          </span>
+        </div>
       </div>
 
-      <!-- Navigation Tabs (Playground, Dashboard, Keys) -->
-      <div class="hidden md:flex items-center space-x-1 ml-4 bg-slate-200/60 dark:bg-slate-800/60 p-0.5 rounded-lg text-xs font-medium">
-        <button onclick="switchView('playground')" id="nav-playground" class="px-3 py-1 rounded-md transition-all flex items-center space-x-1.5 bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-xs font-semibold">
-          <i class="fa-solid fa-flask-vial"></i>
-          <span>Playground</span>
+      <!-- Navigation Tabs (Studio, Observability, API Keys) -->
+      <nav class="hidden md:flex items-center space-x-1 ml-5 p-1 rounded-xl bg-slate-200/60 dark:bg-white/5 text-xs font-semibold">
+        <button onclick="switchView('playground')" id="nav-playground" class="px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold">
+          <i class="fa-solid fa-compass"></i>
+          <span>Studio</span>
         </button>
-        <button onclick="switchView('dashboard')" id="nav-dashboard" class="px-3 py-1 rounded-md transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-          <i class="fa-solid fa-chart-line"></i>
+        <button onclick="switchView('dashboard')" id="nav-dashboard" class="px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-gauge-high"></i>
           <span>Observability</span>
         </button>
-        <button onclick="switchView('keys')" id="nav-keys" class="px-3 py-1 rounded-md transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+        <button onclick="switchView('keys')" id="nav-keys" class="px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
           <i class="fa-solid fa-key"></i>
           <span>API Keys</span>
         </button>
-      </div>
+      </nav>
     </div>
 
-    <!-- Right Controls in AppBar -->
-    <div class="flex items-center space-x-2">
-      <!-- LLM Model Selector -->
-      <div class="hidden lg:flex items-center space-x-1.5 px-2 py-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg text-xs border border-slate-200/80 dark:border-slate-700/80">
-        <i class="fa-solid fa-microchip text-brand-500"></i>
-        <select id="select-model" onchange="handleModelChange(this.value)" class="bg-transparent focus:outline-none font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
+    <!-- Right Controls -->
+    <div class="flex items-center space-x-2.5">
+      
+      <!-- LLM Model Selector Pill -->
+      <div class="hidden lg:flex items-center space-x-2 px-2.5 py-1 glass-input rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200">
+        <i class="fa-solid fa-microchip text-brand-500 text-[11px]"></i>
+        <select id="select-model" onchange="handleModelChange(this.value)" class="bg-transparent focus:outline-none cursor-pointer font-medium text-xs pr-1">
           <option value="nvidia/nemotron-3.5-lightning-30b-a3b">NVIDIA Nemotron 3.5 Lightning (Fast)</option>
           <option value="nvidia/nemotron-3-ultra-550b-a55b">NVIDIA Nemotron Ultra 550B (Deep)</option>
-          <option value="deepseek-chat">DeepSeek Chat</option>
+          <option value="deepseek-chat">DeepSeek Chat (V3/R1)</option>
           <option value="gpt-4o">OpenAI GPT-4o</option>
           <option value="llama-3.3-70b-versatile">Groq Llama 3.3 70B</option>
         </select>
       </div>
 
-      <!-- Data Sources Button -->
-      <button onclick="openDataSourcesModal()" class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1.5 transition">
-        <i class="fa-solid fa-globe text-brand-500"></i>
+      <!-- Data Sources Drawer Button -->
+      <button onclick="openDataSourcesModal()" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 flex items-center space-x-2 transition">
+        <i class="fa-solid fa-network-wired text-brand-500"></i>
         <span class="hidden sm:inline">Data Sources</span>
-        <span id="sources-count-badge" class="w-4 h-4 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300 text-[10px] flex items-center justify-center font-bold">3</span>
+        <span id="sources-count-badge" class="px-1.5 py-0.2 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 font-mono text-[10px] font-bold">3</span>
       </button>
 
-      <!-- Show Research Toggle Button (Right Panel) -->
-      <button id="btn-toggle-research" onclick="toggleResearchPanel()" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-medium hover:border-brand-500 flex items-center space-x-1.5 transition relative">
+      <!-- Artifact Canvas Split View Toggle (Right Inspector) -->
+      <button id="btn-toggle-research" onclick="toggleResearchPanel()" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:border-brand-500 flex items-center space-x-2 transition relative" title="Toggle Artifact Canvas (Claude Style)">
         <span id="research-spinner" class="hidden">
           <i class="fa-solid fa-circle-notch animate-spin text-brand-500"></i>
         </span>
         <span id="research-static-icon">
-          <i class="fa-solid fa-network-wired text-brand-500"></i>
+          <i class="fa-solid fa-layer-group text-accent-400"></i>
         </span>
-        <span class="font-semibold">Research Panel</span>
+        <span class="hidden md:inline font-bold">Artifact Canvas</span>
       </button>
 
       <!-- New Session Button -->
-      <button onclick="createNewSession()" class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Start New Session">
-        <i class="fa-solid fa-pen-to-square text-sm"></i>
+      <button onclick="createNewSession()" class="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Start New Session (Ctrl+K)">
+        <i class="fa-solid fa-plus text-sm"></i>
       </button>
 
-      <!-- Dark Mode Toggle -->
-      <button onclick="toggleDarkMode()" class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Theme">
-        <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+      <!-- Theme Toggle (Dark / Light) -->
+      <button onclick="toggleDarkMode()" class="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Toggle Light/Dark Theme">
+        <i id="theme-icon" class="fa-solid fa-sun text-sm"></i>
       </button>
     </div>
   </header>
 
   <!-- ========================================================================= -->
-  <!-- 2. MAIN WORKSPACE VIEW (PLAYGROUND 1:1 UX)                                -->
+  <!-- 2. STUDIO VIEW (PLAYGROUND + ARTIFACT SPLIT CANVAS)                        -->
   <!-- ========================================================================= -->
   <div id="view-playground" class="flex-1 flex overflow-hidden relative">
 
     <!-- --------------------------------------------------------------------- -->
-    <!-- A. SESSIONS PANEL (LEFT COLLAPSIBLE RAIL)                              -->
+    <!-- A. SESSIONS RAIL (LEFT COLLAPSIBLE DRAWER)                             -->
     <!-- --------------------------------------------------------------------- -->
-    <aside id="sessions-rail" class="w-72 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 flex flex-col transition-all duration-300 z-30">
+    <aside id="sessions-rail" class="w-72 shrink-0 border-r border-slate-200 dark:border-white/5 bg-white/80 dark:bg-surface-card/60 flex flex-col transition-all duration-300 z-30 select-none">
+      
       <!-- Rail Header -->
-      <div class="p-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Research Sessions</span>
-        <button onclick="createNewSession()" class="px-2 py-1 rounded bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-300 text-xs font-semibold hover:bg-brand-100 transition flex items-center space-x-1">
+      <div class="p-3.5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-folder-tree text-xs text-brand-500"></i>
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Sessions</span>
+        </div>
+        <button onclick="createNewSession()" class="px-2 py-1 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 text-xs font-bold hover:bg-brand-500/20 transition flex items-center space-x-1">
           <i class="fa-solid fa-plus text-[10px]"></i>
           <span>New</span>
         </button>
       </div>
 
-      <!-- Search Sessions -->
-      <div class="p-2.5">
+      <!-- Search Filter -->
+      <div class="p-3">
         <div class="relative">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
-          <input type="text" id="sessions-search" placeholder="Filter sessions..." oninput="filterSessions(this.value)" class="w-full bg-slate-100 dark:bg-slate-800 pl-8 pr-3 py-1.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 text-slate-700 dark:text-slate-200">
+          <input 
+            type="text" 
+            id="sessions-search" 
+            placeholder="Search research history..." 
+            oninput="filterSessions(this.value)" 
+            class="w-full glass-input pl-8 pr-3 py-1.5 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100 placeholder-slate-400"
+          >
         </div>
       </div>
 
       <!-- Sessions List -->
-      <div id="sessions-list" class="flex-1 overflow-y-auto px-2 space-y-1 py-1">
+      <div id="sessions-list" class="flex-1 overflow-y-auto px-2 space-y-1.5 py-1">
         <!-- Rendered dynamically -->
       </div>
 
-      <!-- Rail Footer (Clear All) -->
-      <div class="p-2 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-[11px] text-slate-400">
-        <span id="session-count-text">0 sessions</span>
-        <button onclick="clearAllSessions()" class="hover:text-rose-500 transition">Clear all</button>
+      <!-- Rail Footer -->
+      <div class="p-3 border-t border-slate-200 dark:border-white/5 flex justify-between items-center text-[11px] text-slate-400">
+        <span id="session-count-text" class="font-mono">0 sessions</span>
+        <button onclick="clearAllSessions()" class="hover:text-rose-400 transition font-medium">Clear History</button>
       </div>
     </aside>
 
     <!-- --------------------------------------------------------------------- -->
-    <!-- B. CHAT AREA & INPUT (CENTER)                                         -->
+    <!-- B. CENTER STREAM: RESEARCH STREAM & PROMPT COMPOSER                   -->
     <!-- --------------------------------------------------------------------- -->
-    <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50 dark:bg-slate-950/50 relative overflow-hidden">
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-surface-dark relative overflow-hidden">
       
-      <!-- Queue Backpressure Notice Banner -->
-      <div id="queue-banner" class="hidden shrink-0 bg-amber-50 dark:bg-amber-950/50 border-b border-amber-200 dark:border-amber-900/60 px-4 py-2 text-xs flex items-center space-x-2.5 text-amber-800 dark:text-amber-300">
-        <i class="fa-solid fa-clock text-amber-500 animate-spin"></i>
+      <!-- Backpressure & Concurrency Safety Alert Banner -->
+      <div id="queue-banner" class="hidden shrink-0 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 text-xs flex items-center space-x-3 text-amber-700 dark:text-amber-300">
+        <i class="fa-solid fa-shield-halved text-amber-500 text-sm animate-pulse"></i>
         <div class="flex-1 font-medium">
-          <span class="font-bold">Server Under Concurrency / RAM Guard:</span>
-          <span id="queue-banner-msg">Your query is safely queued and will begin the moment active jobs complete.</span>
+          <span class="font-bold">Render 512MB RAM Guard Active:</span>
+          <span id="queue-banner-msg">Inquiry is queued to guarantee 0% OOM crashes under high concurrency.</span>
         </div>
       </div>
 
-      <!-- Scrollable Messages Container -->
-      <div id="chat-messages-container" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+      <!-- Scrollable Message Canvas -->
+      <div id="chat-messages-container" class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6">
         
-        <!-- Welcome / Hero State (Shown when session is empty) -->
-        <div id="hero-welcome" class="max-w-2xl mx-auto py-12 text-center space-y-6">
-          <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-indigo-300 flex items-center justify-center text-white text-2xl shadow-xl shadow-brand-500/20">
-            <i class="fa-solid fa-atom"></i>
+        <!-- Welcome Hero State (Empty Session) -->
+        <div id="hero-welcome" class="max-w-3xl mx-auto py-10 text-center space-y-6">
+          
+          <!-- Hero Icon with Glowing Halo -->
+          <div class="relative w-20 h-20 mx-auto">
+            <div class="absolute inset-0 rounded-3xl bg-brand-500/20 blur-xl"></div>
+            <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-tr from-brand-600 via-emerald-500 to-teal-400 flex items-center justify-center text-white text-3xl shadow-glow-emerald">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
           </div>
 
           <div class="space-y-2">
-            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">What would you like to research today?</h1>
-            <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
-              Autonomous multi-agent research across live web, Reddit community sentiment, local discussions, and zero-auth skills with strict source verification.
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display">
+              Autonomous Deep Research
+            </h1>
+            <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
+              Explore multi-turn agentic decomposition, parallel search retrieval, cross-source fact validation, and publication-ready synthesis.
             </p>
           </div>
 
-          <!-- Suggested Query Cards -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left pt-4">
-            <button onclick="fillAndSubmitPrompt('Find affordable rental rooms or flats in Kakkanad, Kochi with monthly rates and deposit feedback')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-brand-500/60 dark:hover:border-brand-500/60 shadow-xs hover:shadow-md transition group">
-              <div class="flex items-center space-x-2 text-brand-600 dark:text-brand-400 text-xs font-semibold mb-1">
-                <i class="fa-solid fa-house"></i>
-                <span>Local Housing & Room Finder</span>
+          <!-- Suggested Research Prompts (Including Verified Benchmark Inquiries) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-left pt-3">
+            
+            <!-- Benchmark 1: PQC Migration -->
+            <button onclick="fillAndSubmitPrompt('Post-Quantum Cryptography Migration Challenges for Global Financial Systems: algorithmic size expansion FIPS 203/204, TLS 1.3 MTU packet fragmentation, HFT latency jitter, HSM NVRAM bottlenecks, and Mosca theorem risk window.')" class="p-4 rounded-2xl glass-panel hover:border-brand-500/50 hover:shadow-glow-emerald transition duration-200 group text-left">
+              <div class="flex items-center space-x-2 text-brand-600 dark:text-brand-400 text-xs font-bold mb-1.5">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Post-Quantum Cryptography</span>
+                <span class="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-500">Benchmark #1</span>
               </div>
-              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
-                "Find rental rooms or flats in Kakkanad, Kochi with monthly rates and community feedback"
-              </div>
-            </button>
-
-            <button onclick="fillAndSubmitPrompt('Comprehensive financial valuation of Nvidia (NVDA) including 10-K datacenter revenue and competitive risks')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-brand-500/60 dark:hover:border-brand-500/60 shadow-xs hover:shadow-md transition group">
-              <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 text-xs font-semibold mb-1">
-                <i class="fa-solid fa-chart-pie"></i>
-                <span>Financial Analysis & 10-K</span>
-              </div>
-              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
-                "Comprehensive valuation of Nvidia (NVDA) with datacenter growth and competitive risks"
+              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                "PQC Migration in Global Financial Systems: FIPS 203/204 MTU fragmentation and HSM bottlenecks"
               </div>
             </button>
 
-            <button onclick="fillAndSubmitPrompt('Compare Rust Axum vs Node.js for high-concurrency microservices with memory benchmarks')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-brand-500/60 dark:hover:border-brand-500/60 shadow-xs hover:shadow-md transition group">
-              <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 text-xs font-semibold mb-1">
-                <i class="fa-solid fa-code-compare"></i>
-                <span>System Architecture</span>
+            <!-- Benchmark 2: High-Temperature Fusion -->
+            <button onclick="fillAndSubmitPrompt('High-Temperature Superconductors & Commercial Magnetically Confined Fusion: REBCO tape critical current limits, quench detection in high-field tokamaks, stellarator non-planar coils, and engineering economics vs fission.')" class="p-4 rounded-2xl glass-panel hover:border-accent-400/50 hover:shadow-glow-indigo transition duration-200 group text-left">
+              <div class="flex items-center space-x-2 text-accent-500 dark:text-accent-400 text-xs font-bold mb-1.5">
+                <i class="fa-solid fa-atom"></i>
+                <span>Superconductors & Fusion</span>
+                <span class="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-accent-500/10 text-accent-400">Benchmark #2</span>
               </div>
-              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
-                "Compare Rust Axum vs Node.js for high-concurrency microservices with memory benchmarks"
+              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                "High-Temperature Superconductors & Commercial Fusion: REBCO tapes, quench protection & tokamaks"
               </div>
             </button>
 
-            <button onclick="fillAndSubmitPrompt('Commercial nuclear fusion timeline, stellarator vs tokamak milestones, and grid roadmap')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-brand-500/60 dark:hover:border-brand-500/60 shadow-xs hover:shadow-md transition group">
-              <div class="flex items-center space-x-2 text-violet-600 dark:text-violet-400 text-xs font-semibold mb-1">
-                <i class="fa-solid fa-bolt"></i>
-                <span>Deep Tech Roadmap</span>
+            <!-- Benchmark 3: Distributed MoE vs UMA -->
+            <button onclick="fillAndSubmitPrompt('Distributed Mixture-of-Experts Inference vs. Unified Memory Architectures: Expert parallelism communication overhead, all-to-all NVLink saturation, Grace Blackwell GB200 UMA, and latency-throughput Pareto frontiers.')" class="p-4 rounded-2xl glass-panel hover:border-teal-400/50 transition duration-200 group text-left">
+              <div class="flex items-center space-x-2 text-teal-600 dark:text-teal-400 text-xs font-bold mb-1.5">
+                <i class="fa-solid fa-server"></i>
+                <span>Distributed MoE vs. UMA</span>
+                <span class="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-400">Benchmark #3</span>
               </div>
-              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
-                "Commercial nuclear fusion timeline, stellarator vs tokamak milestones, and grid roadmap"
+              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                "Distributed MoE vs Unified Memory: All-to-all NVLink saturation & GB200 Pareto frontiers"
               </div>
             </button>
+
+            <!-- Practical Query: Financial 10-K & Valuation -->
+            <button onclick="fillAndSubmitPrompt('Comprehensive financial valuation of Nvidia (NVDA) analyzing 10-K datacenter revenue growth, Blackwell ramp, hyperscaler capex trends, and competitive risks.')" class="p-4 rounded-2xl glass-panel hover:border-violet-400/50 transition duration-200 group text-left">
+              <div class="flex items-center space-x-2 text-violet-600 dark:text-violet-400 text-xs font-bold mb-1.5">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Enterprise 10-K & Valuation</span>
+                <span class="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-400">Finance</span>
+              </div>
+              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                "Comprehensive financial valuation of Nvidia (NVDA): 10-K capex trends & Blackwell ramp"
+              </div>
+            </button>
+
           </div>
         </div>
 
-        <!-- Dynamic Chat Turns (Rendered via JS) -->
+        <!-- Rendered Chat Turns -->
         <div id="chat-turns" class="space-y-6 max-w-4xl mx-auto w-full"></div>
 
       </div>
 
       <!-- ------------------------------------------------------------------- -->
-      <!-- C. INPUT AREA (BOTTOM CONTAINER)                                    -->
+      <!-- C. PROMPT COMPOSER BAR (PERPLEXITY / CLAUDE STYLE DOCKED BAR)        -->
       <!-- ------------------------------------------------------------------- -->
-      <div class="p-4 border-t border-slate-200/80 dark:border-slate-800/80 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md">
+      <div class="p-4 border-t border-slate-200 dark:border-white/5 bg-white/70 dark:bg-surface-darker/80 backdrop-blur-md">
         <div class="max-w-4xl mx-auto">
-          <div class="glass border border-slate-300 dark:border-slate-700/80 rounded-2xl shadow-lg p-3 transition focus-within:ring-2 focus-within:ring-brand-500/50">
-            <!-- Textarea -->
+          <div class="glass-input rounded-2xl shadow-xl p-3 focus-within:ring-2 focus-within:ring-brand-500/40 transition duration-200">
+            
+            <!-- Expanding Textarea -->
             <textarea 
               id="prompt-input" 
               rows="2" 
-              placeholder="Check data sources and ask a research question... (Press Enter to submit)" 
+              placeholder="Ask a deep research question or paste complex inquiry... (Enter to submit, Shift+Enter for newline)" 
               onkeydown="handleInputKeydown(event)"
-              class="w-full bg-transparent resize-none focus:outline-none text-sm placeholder-slate-400 text-slate-800 dark:text-slate-100"
+              class="w-full bg-transparent resize-none focus:outline-none text-sm placeholder-slate-400 text-slate-800 dark:text-slate-100 font-sans leading-relaxed"
             ></textarea>
 
-            <!-- Bottom Action Row -->
-            <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+            <!-- Bottom Control Strip -->
+            <div class="flex items-center justify-between pt-2.5 mt-1 border-t border-slate-100 dark:border-white/5">
+              
+              <!-- Left Pills: Depth Mode & Data Sources -->
               <div class="flex items-center space-x-2 text-xs">
-                <!-- Deep Research Mode Badge -->
-                <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 font-semibold border border-brand-200 dark:border-brand-900/60">
-                  <i class="fa-solid fa-diagram-project text-[10px]"></i>
-                  <span>Deep Research</span>
+                
+                <!-- Research Mode Indicator -->
+                <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold border border-brand-500/20">
+                  <i class="fa-solid fa-brain text-[10px]"></i>
+                  <span>Deep Research Mode</span>
                 </div>
 
-                <!-- Enabled Sources Indicator -->
-                <div class="hidden sm:flex items-center space-x-1 text-slate-500 dark:text-slate-400 text-[11px]">
-                  <span>Sources:</span>
-                  <span class="font-medium text-slate-700 dark:text-slate-300">Web, Reddit, Zero-Auth Skills</span>
-                </div>
+                <!-- Sources Pill -->
+                <button onclick="openDataSourcesModal()" class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-white/10 transition">
+                  <i class="fa-solid fa-globe text-[10px] text-brand-500"></i>
+                  <span>Web + Reddit + Skills</span>
+                </button>
               </div>
 
-              <!-- Submit / Stop Action Button -->
+              <!-- Right Actions: Send / Stop Button -->
               <div class="flex items-center space-x-2">
-                <span class="text-[11px] text-slate-400 hidden md:inline">Shift+Enter for newline</span>
+                <span class="text-[11px] text-slate-400 font-mono hidden md:inline">Ctrl+Enter to run</span>
                 <button 
                   id="btn-send" 
                   onclick="handleSendOrStop()" 
-                  class="w-8 h-8 rounded-xl bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center transition shadow-sm cursor-pointer"
-                  title="Send Research Inquiry"
+                  class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white flex items-center justify-center transition shadow-glow-emerald cursor-pointer"
+                  title="Run Research Inquiry"
                 >
                   <i id="btn-send-icon" class="fa-solid fa-arrow-up text-xs"></i>
                 </button>
               </div>
+
             </div>
+
           </div>
         </div>
       </div>
+
     </main>
 
     <!-- --------------------------------------------------------------------- -->
-    <!-- D. RESEARCH PANEL (RIGHT COLLAPSIBLE INSPECTOR - 1:1 UX)               -->
+    <!-- D. ARTIFACT CANVAS STUDIO (RIGHT PANEL - CLAUDE ARTIFACT PARITY)      -->
     <!-- --------------------------------------------------------------------- -->
-    <aside id="research-panel" class="w-0 overflow-hidden border-l border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 flex flex-col transition-all duration-300 z-30">
+    <aside id="research-panel" class="w-0 overflow-hidden border-l border-slate-200 dark:border-white/5 bg-white/95 dark:bg-surface-card/95 flex flex-col transition-all duration-300 z-30 select-text">
       
-      <!-- Panel Header & Segmented Tabs -->
-      <div class="h-14 shrink-0 px-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-        <!-- Segmented Tab Controls (Tasks, Thinking, Report, Sources) -->
-        <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-xs font-medium">
-          <button onclick="switchResearchTab('tasks')" id="rtab-tasks" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-xs font-semibold">
-            Tasks
+      <!-- Artifact Header Toolbar -->
+      <div class="h-14 shrink-0 px-4 border-b border-slate-200 dark:border-white/5 flex items-center justify-between select-none">
+        
+        <!-- Segmented Tab Controls (Artifact Document, Plan Graph, Thoughts, Sources) -->
+        <div class="flex items-center space-x-1 p-1 rounded-xl bg-slate-100 dark:bg-white/5 text-xs font-semibold">
+          <button onclick="switchResearchTab('report')" id="rtab-report" class="px-3 py-1 rounded-lg bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold transition">
+            <i class="fa-solid fa-file-contract mr-1 text-[11px]"></i>
+            <span>Artifact</span>
           </button>
-          <button onclick="switchResearchTab('thinking')" id="rtab-thinking" class="px-2.5 py-1 rounded-md text-slate-500 hover:text-slate-900 dark:hover:text-white">
-            Thinking
+          <button onclick="switchResearchTab('tasks')" id="rtab-tasks" class="px-3 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+            <i class="fa-solid fa-diagram-project mr-1 text-[11px]"></i>
+            <span>Plan</span>
           </button>
-          <button onclick="switchResearchTab('report')" id="rtab-report" class="px-2.5 py-1 rounded-md text-slate-500 hover:text-slate-900 dark:hover:text-white">
-            Report
+          <button onclick="switchResearchTab('thinking')" id="rtab-thinking" class="px-3 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+            <i class="fa-solid fa-terminal mr-1 text-[11px]"></i>
+            <span>Traces</span>
           </button>
-          <button onclick="switchResearchTab('sources')" id="rtab-sources" class="px-2.5 py-1 rounded-md text-slate-500 hover:text-slate-900 dark:hover:text-white">
-            Sources
+          <button onclick="switchResearchTab('sources')" id="rtab-sources" class="px-3 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+            <i class="fa-solid fa-quote-right mr-1 text-[11px]"></i>
+            <span>Sources</span>
           </button>
         </div>
 
-        <!-- Header Actions (Stop & Close) -->
-        <div class="flex items-center space-x-2">
-          <button id="btn-panel-stop" onclick="stopActiveResearch()" class="hidden px-2 py-1 rounded bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-xs font-semibold transition flex items-center space-x-1">
-            <i class="fa-solid fa-stop text-[10px]"></i>
-            <span>Stop</span>
+        <!-- Canvas Actions (Download .md, Export PDF, Copy, Fullscreen, Close) -->
+        <div class="flex items-center space-x-1.5">
+          <button onclick="downloadCurrentReportMd()" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Download Markdown (.md)">
+            <i class="fa-regular fa-file-lines text-xs"></i>
           </button>
-          <button onclick="toggleResearchPanel()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+          <button onclick="downloadCurrentReportPdf()" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Export Formatted PDF">
+            <i class="fa-regular fa-file-pdf text-xs"></i>
+          </button>
+          <button onclick="copyCurrentReport()" class="p-1.5 rounded-lg text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Copy Document Markdown">
+            <i class="fa-regular fa-copy text-xs"></i>
+          </button>
+          <div class="w-px h-4 bg-slate-200 dark:bg-white/10 mx-1"></div>
+          <button onclick="toggleResearchPanelExpand()" id="btn-canvas-expand" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Toggle Fullscreen Width">
+            <i class="fa-solid fa-up-right-and-down-left-from-center text-xs"></i>
+          </button>
+          <button onclick="toggleResearchPanel()" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Close Artifact Canvas">
             <i class="fa-solid fa-xmark text-sm"></i>
           </button>
         </div>
+
       </div>
 
-      <!-- Tab 1: Tasks / Plan Tab -->
-      <div id="rview-tasks" class="flex-1 overflow-y-auto p-4 space-y-4">
+      <!-- TAB 1: ARTIFACT DOCUMENT CANVAS (DEFAULT TAB) -->
+      <div id="rview-report" class="flex-1 overflow-y-auto p-6 md:p-8 space-y-5">
+        
+        <!-- Artifact Meta Header -->
+        <div class="pb-4 border-b border-slate-200 dark:border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs select-none">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-mono text-slate-400 uppercase tracking-wider text-[11px]">Autonomous Artifact</span>
+          </div>
+          <div class="flex items-center space-x-3 text-slate-400 font-mono text-[11px]">
+            <span id="artifact-word-count">0 words</span>
+            <span>•</span>
+            <span id="artifact-reading-time">1 min read</span>
+            <span>•</span>
+            <span id="artifact-status-pill" class="text-emerald-500 font-bold">READY</span>
+          </div>
+        </div>
+
+        <!-- Synthesized Document Body (Clean Typography) -->
+        <div id="panel-report-content" class="artifact-body max-w-none leading-relaxed">
+          <div class="text-slate-400 italic py-10 text-center">
+            <i class="fa-solid fa-file-circle-question text-3xl mb-3 text-slate-300 dark:text-slate-600 block"></i>
+            No synthesis generated yet in this session. Run an inquiry to inspect the document canvas.
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: TASKS & DECOMPOSITION PLAN -->
+      <div id="rview-tasks" class="hidden flex-1 overflow-y-auto p-6 space-y-5">
         <div>
-          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Research Plan</div>
-          <h3 id="plan-title-display" class="font-bold text-sm text-slate-800 dark:text-slate-100 mt-1">No active plan generated yet.</h3>
+          <div class="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider">Automated Query Decomposition</div>
+          <h3 id="plan-title-display" class="font-extrabold text-base text-slate-900 dark:text-white mt-1">
+            No active plan formulated.
+          </h3>
         </div>
 
-        <!-- Progress Bar -->
-        <div class="space-y-1">
-          <div class="flex justify-between text-xs text-slate-500">
-            <span>Overall Progress</span>
-            <span id="plan-progress-pct" class="font-bold text-brand-600">0%</span>
+        <!-- Progress Gauge -->
+        <div class="p-4 rounded-2xl glass-panel space-y-2">
+          <div class="flex justify-between text-xs font-semibold">
+            <span class="text-slate-500">Batch Concurrency & Execution</span>
+            <span id="plan-progress-pct" class="font-mono font-bold text-brand-500">0%</span>
           </div>
-          <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-            <div id="plan-progress-bar" class="bg-brand-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+          <div class="w-full bg-slate-200 dark:bg-white/5 h-2 rounded-full overflow-hidden">
+            <div id="plan-progress-bar" class="bg-gradient-to-r from-brand-500 to-teal-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
           </div>
         </div>
 
-        <!-- Sub-queries list -->
-        <div class="space-y-2 pt-2">
-          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Sub-Query Tasks</div>
+        <!-- Decomposed Sub-Query Tasks -->
+        <div class="space-y-2.5 pt-1">
+          <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sub-Query Tasks</div>
           <div id="tasks-list" class="space-y-2">
             <div class="text-xs text-slate-400 italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>
           </div>
         </div>
       </div>
 
-      <!-- Tab 2: Thinking Tab -->
-      <div id="rview-thinking" class="hidden flex-1 overflow-y-auto p-4 space-y-3 font-mono text-xs">
-        <div class="text-[11px] font-sans font-bold text-slate-400 uppercase tracking-wider">Agent Monologue & Monitored Traces</div>
+      <!-- TAB 3: AGENT MONOLOGUE & TRACES -->
+      <div id="rview-thinking" class="hidden flex-1 overflow-y-auto p-6 space-y-4 font-mono text-xs">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-white/5">
+          <span class="font-bold text-slate-400 uppercase tracking-wider text-[11px]">Worker Execution Traces</span>
+          <span id="thinking-step-count" class="text-slate-500 text-[11px]">0 steps logged</span>
+        </div>
         <div id="thinking-stream-list" class="space-y-2 text-slate-700 dark:text-slate-300">
           <div class="text-xs text-slate-400 italic font-sans">No research thinking active.</div>
         </div>
       </div>
 
-      <!-- Tab 3: Dedicated Report View -->
-      <div id="rview-report" class="hidden flex-1 overflow-y-auto p-6 space-y-4">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Document Synthesis</span>
-          <div class="flex items-center space-x-1.5">
-            <button onclick="downloadCurrentReportMd()" class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium transition flex items-center space-x-1" title="Download Markdown (.md)">
-              <i class="fa-regular fa-file-lines text-brand-500"></i>
-              <span>.md</span>
-            </button>
-            <button onclick="downloadCurrentReportPdf()" class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium transition flex items-center space-x-1" title="Export PDF">
-              <i class="fa-regular fa-file-pdf text-rose-500"></i>
-              <span>PDF</span>
-            </button>
-            <button onclick="copyCurrentReport()" class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center space-x-1" title="Copy Markdown">
-              <i class="fa-regular fa-copy"></i>
-              <span>Copy</span>
-            </button>
-          </div>
+      <!-- TAB 4: VERIFIED SOURCES & CITATIONS -->
+      <div id="rview-sources" class="hidden flex-1 overflow-y-auto p-6 space-y-4">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-white/5">
+          <span class="font-bold text-slate-400 uppercase tracking-wider text-[11px]">Primary Citations</span>
+          <span id="sources-badge-total" class="font-mono text-xs text-brand-500 font-bold">0 captured</span>
         </div>
-        <div id="panel-report-content" class="markdown-body prose dark:prose-invert max-w-none text-xs md:text-sm leading-relaxed">
-          <div class="text-slate-400 italic">No report completed in this session yet.</div>
-        </div>
-      </div>
-
-      <!-- Tab 4: Sources Tab -->
-      <div id="rview-sources" class="hidden flex-1 overflow-y-auto p-4 space-y-3">
-        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Verified Sources Captured</div>
-        <div id="panel-sources-list" class="space-y-2">
+        <div id="panel-sources-list" class="space-y-2.5">
           <div class="text-xs text-slate-400 italic">Sources collected by concurrent workers will be listed here.</div>
         </div>
       </div>
+
     </aside>
 
   </div>
@@ -534,331 +727,410 @@
   <!-- ========================================================================= -->
   <!-- 3. OBSERVABILITY DASHBOARD VIEW                                           -->
   <!-- ========================================================================= -->
-  <div id="view-dashboard" class="hidden flex-1 overflow-y-auto p-6 max-w-6xl w-full mx-auto space-y-6">
-    <div class="flex items-center justify-between">
+  <div id="view-dashboard" class="hidden flex-1 overflow-y-auto p-6 md:p-8 max-w-6xl w-full mx-auto space-y-6">
+    
+    <!-- Dashboard Header -->
+    <div class="flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-bold">Observability & System Dashboard</h2>
-        <p class="text-sm text-slate-500">Render 512MB RAM monitor, Process RSS Blame, and Dynamic Backpressure Queue.</p>
+        <h2 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display">
+          System Observability & Blame
+        </h2>
+        <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+          Real-time metrics: Process RSS, Render 512MB RAM Guard, token consumption, and concurrency backpressure.
+        </p>
       </div>
-      <button onclick="refreshDashboard()" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs hover:bg-slate-100 dark:hover:bg-slate-900 transition">
-        <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh
+      <button onclick="refreshDashboard()" class="px-3.5 py-2 rounded-xl glass-panel text-xs font-semibold hover:border-brand-500 flex items-center space-x-2 transition">
+        <i class="fa-solid fa-arrows-rotate text-brand-500"></i>
+        <span>Refresh Metrics</span>
       </button>
     </div>
 
-    <!-- Resource Gauges (Render 512MB Monitor) -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-        <div class="text-xs text-slate-400">System RAM Usage</div>
-        <div id="stat-system-ram" class="text-2xl font-bold mt-1 text-slate-800 dark:text-slate-100">--%</div>
-        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-          <div id="stat-ram-bar" class="bg-emerald-500 h-full rounded-full transition-all" style="width: 0%"></div>
+    <!-- Metric Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Card 1: System RAM Usage -->
+      <div class="glass-panel rounded-2xl p-4 md:p-5 space-y-3">
+        <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+          <span>HOST SYSTEM RAM</span>
+          <i class="fa-solid fa-memory text-emerald-500"></i>
         </div>
+        <div id="stat-system-ram" class="text-3xl font-extrabold font-mono text-slate-900 dark:text-white">--%</div>
+        <div class="w-full bg-slate-200 dark:bg-white/5 h-2 rounded-full overflow-hidden">
+          <div id="stat-ram-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="text-[11px] text-slate-400">Total host machine memory load</div>
       </div>
 
-      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-        <div class="text-xs text-slate-400">Process RSS (Agent)</div>
-        <div id="stat-process-rss" class="text-2xl font-bold mt-1 text-brand-600">-- MB</div>
-        <div class="text-xs text-slate-400 mt-1">Render Free Limit: 512 MB</div>
+      <!-- Card 2: Process RSS (Agent Footprint) -->
+      <div class="glass-panel rounded-2xl p-4 md:p-5 space-y-3">
+        <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+          <span>PROCESS RSS FOOTPRINT</span>
+          <i class="fa-solid fa-bolt text-brand-500"></i>
+        </div>
+        <div id="stat-process-rss" class="text-3xl font-extrabold font-mono text-brand-500">-- MB</div>
+        <div class="w-full bg-slate-200 dark:bg-white/5 h-2 rounded-full overflow-hidden">
+          <div id="stat-rss-bar" class="bg-brand-500 h-full rounded-full transition-all duration-300" style="width: 6%"></div>
+        </div>
+        <div class="text-[11px] text-slate-400">Render Free Limit: 512 MB (Immune)</div>
       </div>
 
-      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-        <div class="text-xs text-slate-400">Active / Queued Jobs</div>
-        <div id="stat-jobs-count" class="text-2xl font-bold mt-1 text-slate-800 dark:text-slate-100">0 / 0</div>
-        <div class="text-xs text-emerald-500 mt-1">OOM Guard Active</div>
+      <!-- Card 3: Active & Queued Jobs -->
+      <div class="glass-panel rounded-2xl p-4 md:p-5 space-y-3">
+        <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+          <span>CONCURRENCY JOBS</span>
+          <i class="fa-solid fa-list-check text-accent-400"></i>
+        </div>
+        <div id="stat-jobs-count" class="text-3xl font-extrabold font-mono text-slate-900 dark:text-white">0 / 0</div>
+        <div class="flex items-center space-x-1.5 text-xs text-emerald-500 font-semibold">
+          <i class="fa-solid fa-circle-check text-[10px]"></i>
+          <span>OOM Guard Active</span>
+        </div>
+        <div class="text-[11px] text-slate-400">Active vs. Queued Backpressure</div>
       </div>
 
-      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-        <div class="text-xs text-slate-400">Total Tokens Consumed</div>
-        <div id="stat-tokens" class="text-2xl font-bold mt-1 text-indigo-500">0</div>
-        <div id="stat-cost" class="text-xs text-slate-400 mt-1">Est. Cost: $0.00</div>
+      <!-- Card 4: Token Consumption & Cost -->
+      <div class="glass-panel rounded-2xl p-4 md:p-5 space-y-3">
+        <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+          <span>TOKENOMICS</span>
+          <i class="fa-solid fa-coins text-amber-500"></i>
+        </div>
+        <div id="stat-tokens" class="text-3xl font-extrabold font-mono text-indigo-400">0</div>
+        <div id="stat-cost" class="text-xs font-mono text-slate-400">Est. Cost: $0.00</div>
+        <div class="text-[11px] text-slate-400">NVIDIA NIM / LLM API Tokens</div>
       </div>
+
     </div>
 
-    <!-- Job History Table -->
-    <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-      <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-        <h3 class="font-semibold text-sm">Recent Research Jobs</h3>
-        <span class="text-xs text-slate-400">Failure inspection & traces</span>
+    <!-- Recent Jobs Ledger Table -->
+    <div class="glass-panel rounded-2xl overflow-hidden">
+      <div class="p-4 md:p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white">Execution Ledger & Job History</h3>
+          <p class="text-xs text-slate-400">Audit trail of completed research tasks, latency, and tokens.</p>
+        </div>
+        <span class="text-xs font-mono text-slate-400">SQLite Logged</span>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs">
-          <thead class="bg-slate-100/60 dark:bg-slate-900/60 text-slate-500 border-b border-slate-200 dark:border-slate-800">
+          <thead class="bg-slate-100 dark:bg-white/5 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-white/5">
             <tr>
-              <th class="p-3">Job ID</th>
-              <th class="p-3">Query</th>
-              <th class="p-3">Status</th>
-              <th class="p-3">Tokens</th>
-              <th class="p-3">Timestamp</th>
+              <th class="p-3.5 pl-5">Job ID</th>
+              <th class="p-3.5">Research Inquiry</th>
+              <th class="p-3.5">Status</th>
+              <th class="p-3.5">Tokens</th>
+              <th class="p-3.5 pr-5">Timestamp</th>
             </tr>
           </thead>
-          <tbody id="dashboard-jobs-body" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
-            <tr><td colspan="5" class="p-4 text-center text-slate-400">No jobs recorded yet.</td></tr>
+          <tbody id="dashboard-jobs-body" class="divide-y divide-slate-100 dark:divide-white/5 font-mono">
+            <tr><td colspan="5" class="p-5 text-center text-slate-400 font-sans">No research jobs executed yet.</td></tr>
           </tbody>
         </table>
       </div>
     </div>
+
   </div>
 
   <!-- ========================================================================= -->
   <!-- 4. API KEYS VIEW                                                          -->
   <!-- ========================================================================= -->
-  <div id="view-keys" class="hidden flex-1 overflow-y-auto p-6 max-w-6xl w-full mx-auto space-y-6">
-    <div class="flex items-center justify-between">
+  <div id="view-keys" class="hidden flex-1 overflow-y-auto p-6 md:p-8 max-w-6xl w-full mx-auto space-y-6">
+    <div class="flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-bold">API Key Manager</h2>
-        <p class="text-sm text-slate-500">Generate and manage bearer keys for your Telegram bot and external clients.</p>
+        <h2 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display">
+          API Key Authentication Manager
+        </h2>
+        <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+          Generate bearer tokens for external microservices, Telegram bots, or downstream enterprise workflows.
+        </p>
       </div>
-      <button onclick="createApiKey()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
-        <i class="fa-solid fa-plus mr-1"></i> Generate New Key
+      <button onclick="createApiKey()" class="px-4 py-2 bg-gradient-to-r from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white rounded-xl text-xs font-bold shadow-glow-emerald transition flex items-center space-x-2">
+        <i class="fa-solid fa-plus text-[10px]"></i>
+        <span>Generate New Key</span>
       </button>
     </div>
 
-    <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+    <!-- Keys Ledger Table -->
+    <div class="glass-panel rounded-2xl overflow-hidden">
       <table class="w-full text-left text-xs">
-        <thead class="bg-slate-100/60 dark:bg-slate-900/60 text-slate-500 border-b border-slate-200 dark:border-slate-800">
+        <thead class="bg-slate-100 dark:bg-white/5 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-white/5">
           <tr>
-            <th class="p-3">Name</th>
-            <th class="p-3">Key Prefix</th>
-            <th class="p-3">Status</th>
-            <th class="p-3">Created</th>
-            <th class="p-3 text-right">Actions</th>
+            <th class="p-3.5 pl-5">Client / Name</th>
+            <th class="p-3.5">Key Prefix</th>
+            <th class="p-3.5">Status</th>
+            <th class="p-3.5">Created At</th>
+            <th class="p-3.5 pr-5 text-right">Actions</th>
           </tr>
         </thead>
-        <tbody id="keys-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
-          <tr><td colspan="5" class="p-4 text-center text-slate-400">Loading API keys...</td></tr>
+        <tbody id="keys-table-body" class="divide-y divide-slate-100 dark:divide-white/5 font-mono">
+          <tr><td colspan="5" class="p-5 text-center text-slate-400 font-sans">Loading API keys...</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 5. DATA SOURCES MODAL (DRAWER)                                            -->
+  <!-- 5. MODALS & POPUPS                                                        -->
   <!-- ========================================================================= -->
-  <div id="sources-modal" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="glass border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-5">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-        <div class="flex items-center space-x-2">
-          <i class="fa-solid fa-sliders text-brand-600"></i>
-          <h3 class="font-bold text-sm">Configure Data Sources</h3>
+
+  <!-- Data Sources Modal -->
+  <div id="sources-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-5 animate-scale-up">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-white/10">
+        <div class="flex items-center space-x-2.5">
+          <i class="fa-solid fa-sliders text-brand-500"></i>
+          <h3 class="font-extrabold text-sm text-slate-900 dark:text-white">Configure Active Sources</h3>
         </div>
-        <button onclick="closeDataSourcesModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <button onclick="closeDataSourcesModal()" class="text-slate-400 hover:text-slate-200 transition">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
       <div class="space-y-3 text-xs">
         <!-- Source 1: Web -->
-        <label class="flex items-start space-x-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 cursor-pointer hover:border-brand-500 transition">
-          <input type="checkbox" id="ds-web" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+        <label class="flex items-start space-x-3 p-3.5 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 cursor-pointer hover:border-brand-500/50 transition">
+          <input type="checkbox" id="ds-web" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500 accent-emerald-500">
           <div>
-            <div class="font-semibold text-slate-800 dark:text-slate-200">Web Search (Tavily & DuckDuckGo)</div>
-            <div class="text-slate-400 mt-0.5">High-accuracy realtime search with technical documentation and news sources.</div>
+            <div class="font-bold text-slate-900 dark:text-white">Web Search (Tavily & DuckDuckGo)</div>
+            <div class="text-slate-400 mt-0.5 leading-relaxed">High-fidelity web discovery with technical docs, research papers, and live news.</div>
           </div>
         </label>
 
         <!-- Source 2: Reddit -->
-        <label class="flex items-start space-x-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 cursor-pointer hover:border-brand-500 transition">
-          <input type="checkbox" id="ds-reddit" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+        <label class="flex items-start space-x-3 p-3.5 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 cursor-pointer hover:border-brand-500/50 transition">
+          <input type="checkbox" id="ds-reddit" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500 accent-emerald-500">
           <div>
-            <div class="font-semibold text-slate-800 dark:text-slate-200">Reddit & Community Discussions</div>
-            <div class="text-slate-400 mt-0.5">Zero-auth public Reddit search for authentic local advice, real estate, and reviews.</div>
+            <div class="font-bold text-slate-900 dark:text-white">Reddit & Public Discourse</div>
+            <div class="text-slate-400 mt-0.5 leading-relaxed">Zero-auth sentiment mining for authentic feedback, local discussions, and peer reviews.</div>
           </div>
         </label>
 
-        <!-- Source 3: Autonomous Skills & MCP Marketplace -->
-        <label class="flex items-start space-x-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 cursor-pointer hover:border-brand-500 transition">
-          <input type="checkbox" id="ds-skills" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+        <!-- Source 3: Autonomous Skills & MCP -->
+        <label class="flex items-start space-x-3 p-3.5 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 cursor-pointer hover:border-brand-500/50 transition">
+          <input type="checkbox" id="ds-skills" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500 accent-emerald-500">
           <div>
-            <div class="font-semibold text-slate-800 dark:text-slate-200">Autonomous Skills & MCP Marketplace</div>
-            <div class="text-slate-400 mt-0.5">Strict zero-auth skill resolver that pulls specialized scrapers and financial tools dynamically.</div>
+            <div class="font-bold text-slate-900 dark:text-white">Autonomous MCP & Custom Skills</div>
+            <div class="text-slate-400 mt-0.5 leading-relaxed">Dynamic marketplace tools including financial scrapers and academic calculators.</div>
           </div>
         </label>
       </div>
 
       <div class="flex justify-end pt-2">
-        <button onclick="saveDataSourcesSettings()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
-          Save Settings
+        <button onclick="saveDataSourcesSettings()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition shadow-glow-emerald">
+          Save Preferences
         </button>
       </div>
     </div>
   </div>
 
   <!-- Create API Key Modal -->
-  <div id="create-key-modal" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="glass border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
-        <h3 class="font-bold text-sm">Generate API Key</h3>
-        <button onclick="closeCreateKeyModal()" class="text-slate-400 hover:text-slate-600">
+  <div id="create-key-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-white/10">
+        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Generate Client API Key</h3>
+        <button onclick="closeCreateKeyModal()" class="text-slate-400 hover:text-slate-200">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       <div>
-        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Key Name / Client ID</label>
-        <input type="text" id="input-new-key-name" placeholder="e.g. Telegram Bot, Analytics Service" class="w-full bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
+        <label class="block text-xs font-semibold text-slate-400 mb-1.5">Client Identifier / Purpose</label>
+        <input type="text" id="input-new-key-name" placeholder="e.g. Telegram Bot, Analytics Service" class="w-full glass-input p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
       </div>
       <div class="flex justify-end space-x-2 pt-2">
-        <button onclick="closeCreateKeyModal()" class="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-700">Cancel</button>
-        <button onclick="submitNewApiKey()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold transition">Generate Key</button>
+        <button onclick="closeCreateKeyModal()" class="px-3.5 py-1.5 text-xs text-slate-400 hover:text-white">Cancel</button>
+        <button onclick="submitNewApiKey()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold shadow-glow-emerald transition">Generate Key</button>
       </div>
     </div>
   </div>
 
-  <!-- API Key Display Modal -->
-  <div id="key-created-modal" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="glass border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
-      <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400">
-        <i class="fa-solid fa-circle-check text-lg"></i>
-        <h3 class="font-bold text-sm text-slate-900 dark:text-white">API Key Generated Successfully</h3>
+  <!-- Key Created Modal -->
+  <div id="key-created-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center space-x-2.5 text-emerald-500">
+        <i class="fa-solid fa-circle-check text-xl"></i>
+        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Token Generated Successfully</h3>
       </div>
-      <p class="text-xs text-slate-500 dark:text-slate-400">
-        Please copy and store your API key now. For your security, this token will never be displayed in full again.
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Please copy and securely record your bearer key now. For zero-leakage security, this full token is never displayed again.
       </p>
-      <div class="flex items-center space-x-2 p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-        <input type="text" id="created-key-input" readonly class="flex-1 bg-transparent font-mono text-xs text-brand-600 dark:text-brand-400 outline-none select-all">
-        <button onclick="copyGeneratedKey()" class="px-3 py-1 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold transition flex items-center space-x-1">
+      <div class="flex items-center space-x-2 p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+        <input type="text" id="created-key-input" readonly class="flex-1 bg-transparent font-mono text-xs text-brand-500 outline-none select-all">
+        <button onclick="copyGeneratedKey()" class="px-3 py-1 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1">
           <i class="fa-regular fa-copy"></i>
           <span>Copy</span>
         </button>
       </div>
       <div class="flex justify-end pt-2">
-        <button onclick="closeKeyCreatedModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 rounded-lg text-xs font-semibold transition">
+        <button onclick="closeKeyCreatedModal()" class="px-4 py-2 bg-slate-200 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/20 text-slate-800 dark:text-slate-100 rounded-xl text-xs font-bold transition">
           Done
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Toast Notification Container -->
-  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+  <!-- Toast Notification Stack -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
   <!-- ========================================================================= -->
-  <!-- 6. APPLICATION STATE & 1:1 INTERACTIVITY LOGIC                            -->
+  <!-- 6. APPLICATION STATE & 1:1 INTERACTIVITY ENGINE                           -->
   <!-- ========================================================================= -->
   <script>
-    // App State Store
+    // Configure Marked options
+    marked.setOptions({
+      highlight: function(code, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          return hljs.highlight(code, { language: lang }).value;
+        }
+        return hljs.highlightAuto(code).value;
+      },
+      breaks: true,
+      gfm: true
+    });
+
+    // Reactive State Store
     const state = {
       sessions: [],
       currentSessionId: null,
+      activeView: 'playground',
+      activeResearchTab: 'report',
       isStreaming: false,
-      activeEventSource: null,
       activeJobId: null,
-      rightPanelOpen: false,
-      sessionsRailOpen: true,
-      researchTab: 'tasks', // 'tasks' | 'thinking' | 'report' | 'sources'
-      thinkingTimer: null,
+      activeEventSource: null,
       thinkingStartTime: null,
+      isCanvasExpanded: false,
+      dataSources: {
+        web: true,
+        reddit: true,
+        skills: true
+      }
     };
 
-    // Initialize App on DOM Load
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof marked !== 'undefined') {
-        marked.setOptions({
-          gfm: true,
-          breaks: true
-        });
-      }
+    // -------------------------------------------------------------------------
+    // Initialization
+    // -------------------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
       initTheme();
       initModelSelector();
       initDataSources();
       loadSessionsFromStorage();
-      if (!state.currentSessionId && state.sessions.length > 0) {
-        selectSession(state.sessions[0].id);
-      } else if (!state.currentSessionId) {
+
+      if (state.sessions.length === 0) {
         createNewSession();
+      } else {
+        selectSession(state.sessions[0].id);
       }
 
-      const promptInput = document.getElementById('prompt-input');
-      if (promptInput) {
-        promptInput.addEventListener('input', () => {
-          promptInput.style.height = 'auto';
-          promptInput.style.height = Math.min(promptInput.scrollHeight, 180) + 'px';
-        });
-      }
-
-      setInterval(pollSystemMetrics, 10000);
-      pollSystemMetrics();
+      // Keyboard Shortcuts
+      window.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + K: New Session
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          createNewSession();
+        }
+      });
     });
 
-    // Theme & Preference Logic
+    // Theme Management
     function initTheme() {
-      if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      const savedTheme = localStorage.getItem('deep_researcher_theme') || 'dark';
+      if (savedTheme === 'dark') {
         document.documentElement.classList.add('dark');
         document.getElementById('theme-icon').className = 'fa-solid fa-sun text-sm';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('theme-icon').className = 'fa-solid fa-moon text-sm';
       }
     }
 
     function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
-      const isDark = document.documentElement.classList.contains('dark');
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('deep_researcher_theme', isDark ? 'dark' : 'light');
       document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun text-sm' : 'fa-solid fa-moon text-sm';
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
 
+    // Model Selector
     function initModelSelector() {
-      const savedModel = localStorage.getItem('dr_selected_model') || 'nvidia/nemotron-3.5-lightning-30b-a3b';
-      const select = document.getElementById('select-model');
-      if (select) select.value = savedModel;
+      const saved = localStorage.getItem('deep_researcher_model');
+      if (saved) {
+        const sel = document.getElementById('select-model');
+        if (sel) sel.value = saved;
+      }
     }
 
     function handleModelChange(model) {
-      localStorage.setItem('dr_selected_model', model);
-      showToast(`Active model updated: ${model}`);
+      localStorage.setItem('deep_researcher_model', model);
+      showToast(`Active model changed to: ${model}`, 'info');
     }
 
+    // Data Sources
     function initDataSources() {
-      const web = localStorage.getItem('dr_sources_web') !== 'false';
-      const reddit = localStorage.getItem('dr_sources_reddit') !== 'false';
-      const skills = localStorage.getItem('dr_sources_skills') !== 'false';
+      const saved = localStorage.getItem('deep_researcher_sources');
+      if (saved) {
+        try {
+          state.dataSources = JSON.parse(saved);
+        } catch (e) {}
+      }
+      document.getElementById('ds-web').checked = !!state.dataSources.web;
+      document.getElementById('ds-reddit').checked = !!state.dataSources.reddit;
+      document.getElementById('ds-skills').checked = !!state.dataSources.skills;
+      updateSourcesBadge();
+    }
 
-      if (document.getElementById('ds-web')) document.getElementById('ds-web').checked = web;
-      if (document.getElementById('ds-reddit')) document.getElementById('ds-reddit').checked = reddit;
-      if (document.getElementById('ds-skills')) document.getElementById('ds-skills').checked = skills;
-
-      let count = (web ? 1 : 0) + (reddit ? 1 : 0) + (skills ? 1 : 0);
-      const badge = document.getElementById('sources-count-badge');
-      if (badge) badge.innerText = count;
+    function updateSourcesBadge() {
+      let count = 0;
+      if (state.dataSources.web) count++;
+      if (state.dataSources.reddit) count++;
+      if (state.dataSources.skills) count++;
+      document.getElementById('sources-count-badge').innerText = count;
     }
 
     function saveDataSourcesSettings() {
-      const web = document.getElementById('ds-web').checked;
-      const reddit = document.getElementById('ds-reddit').checked;
-      const skills = document.getElementById('ds-skills').checked;
-
-      localStorage.setItem('dr_sources_web', web);
-      localStorage.setItem('dr_sources_reddit', reddit);
-      localStorage.setItem('dr_sources_skills', skills);
-
-      let count = (web ? 1 : 0) + (reddit ? 1 : 0) + (skills ? 1 : 0);
-      const badge = document.getElementById('sources-count-badge');
-      if (badge) badge.innerText = count;
-
+      state.dataSources.web = document.getElementById('ds-web').checked;
+      state.dataSources.reddit = document.getElementById('ds-reddit').checked;
+      state.dataSources.skills = document.getElementById('ds-skills').checked;
+      localStorage.setItem('deep_researcher_sources', JSON.stringify(state.dataSources));
+      updateSourcesBadge();
       closeDataSourcesModal();
-      showToast(`Data sources updated (${count} active)`);
+      showToast('Data source preferences updated!');
     }
 
-    // Top Navigation Switching
+    function openDataSourcesModal() {
+      document.getElementById('sources-modal').classList.remove('hidden');
+    }
+
+    function closeDataSourcesModal() {
+      document.getElementById('sources-modal').classList.add('hidden');
+    }
+
+    // Views Switcher
     function switchView(viewName) {
+      state.activeView = viewName;
+
       ['playground', 'dashboard', 'keys'].forEach(v => {
-        document.getElementById(`view-${v}`).classList.add('hidden');
+        const el = document.getElementById(`view-${v}`);
         const btn = document.getElementById(`nav-${v}`);
-        btn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-xs', 'font-semibold');
-        btn.classList.add('text-slate-600', 'dark:text-slate-400');
+        if (v === viewName) {
+          el.classList.remove('hidden');
+          btn.className = 'px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold';
+        } else {
+          el.classList.add('hidden');
+          btn.className = 'px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+        }
       });
 
-      document.getElementById(`view-${viewName}`).classList.remove('hidden');
-      const activeBtn = document.getElementById(`nav-${viewName}`);
-      activeBtn.classList.add('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-xs', 'font-semibold');
-      activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
-
-      if (viewName === 'dashboard') refreshDashboard();
-      if (viewName === 'keys') refreshApiKeys();
+      if (viewName === 'dashboard') {
+        refreshDashboard();
+      } else if (viewName === 'keys') {
+        refreshApiKeys();
+      }
     }
 
+    // -------------------------------------------------------------------------
     // Sessions Management
+    // -------------------------------------------------------------------------
     function loadSessionsFromStorage() {
       try {
-        const saved = localStorage.getItem('dr_sessions');
-        if (saved) state.sessions = JSON.parse(saved);
+        const raw = localStorage.getItem('deep_researcher_sessions');
+        state.sessions = raw ? JSON.parse(raw) : [];
       } catch (e) {
         state.sessions = [];
       }
@@ -866,13 +1138,15 @@
     }
 
     function saveSessionsToStorage() {
-      localStorage.setItem('dr_sessions', JSON.stringify(state.sessions));
+      try {
+        localStorage.setItem('deep_researcher_sessions', JSON.stringify(state.sessions));
+      } catch (e) {}
       renderSessionsList();
     }
 
     function createNewSession() {
-      const id = 'sess_' + Date.now();
-      const newSession = {
+      const id = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const newSess = {
         id,
         title: 'New Research Inquiry',
         created_at: new Date().toISOString(),
@@ -882,38 +1156,45 @@
         report: null,
         sources: []
       };
-      state.sessions.unshift(newSession);
-      state.currentSessionId = id;
+
+      state.sessions.unshift(newSess);
       saveSessionsToStorage();
-      renderCurrentSessionChat();
-      clearResearchPanel();
+      selectSession(id);
+
+      // Focus input
+      setTimeout(() => {
+        const inp = document.getElementById('prompt-input');
+        if (inp) inp.focus();
+      }, 50);
     }
 
     function selectSession(id) {
       state.currentSessionId = id;
-      saveSessionsToStorage();
+      renderSessionsList();
       renderCurrentSessionChat();
       renderSessionResearchInspector();
     }
 
     function deleteSession(id, event) {
-      event.stopPropagation();
+      if (event) event.stopPropagation();
       state.sessions = state.sessions.filter(s => s.id !== id);
-      if (state.currentSessionId === id) {
-        state.currentSessionId = state.sessions.length > 0 ? state.sessions[0].id : null;
-      }
       saveSessionsToStorage();
-      if (!state.currentSessionId) createNewSession();
-      else renderCurrentSessionChat();
+
+      if (state.currentSessionId === id) {
+        if (state.sessions.length > 0) {
+          selectSession(state.sessions[0].id);
+        } else {
+          createNewSession();
+        }
+      }
     }
 
     function clearAllSessions() {
-      if (confirm('Are you sure you want to delete all research sessions?')) {
-        state.sessions = [];
-        state.currentSessionId = null;
-        saveSessionsToStorage();
-        createNewSession();
-      }
+      if (!confirm('Clear all research history from browser storage?')) return;
+      state.sessions = [];
+      saveSessionsToStorage();
+      createNewSession();
+      showToast('All sessions cleared.');
     }
 
     function filterSessions(query) {
@@ -921,85 +1202,108 @@
     }
 
     function renderSessionsList(filter = '') {
-      const listEl = document.getElementById('sessions-list');
-      listEl.innerHTML = '';
+      const container = document.getElementById('sessions-list');
+      const countText = document.getElementById('session-count-text');
+      if (!container) return;
 
-      const filtered = state.sessions.filter(s => s.title.toLowerCase().includes(filter));
-      document.getElementById('session-count-text').innerText = `${state.sessions.length} sessions`;
+      const filtered = state.sessions.filter(s => (s.title || '').toLowerCase().includes(filter));
+      countText.innerText = `${state.sessions.length} sessions`;
 
-      filtered.forEach(sess => {
-        const isActive = sess.id === state.currentSessionId;
-        const item = document.createElement('div');
-        item.className = `group flex items-center justify-between p-2.5 rounded-xl cursor-pointer text-xs transition ${
-          isActive 
-            ? 'bg-brand-50 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 font-semibold border border-brand-200 dark:border-brand-900/60' 
-            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-        }`;
-        item.onclick = () => selectSession(sess.id);
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 italic">No sessions found.</div>`;
+        return;
+      }
 
-        item.innerHTML = `
-          <div class="flex items-center space-x-2 truncate">
-            <i class="fa-regular fa-message text-[11px] ${isActive ? 'text-brand-600' : 'text-slate-400'}"></i>
-            <span class="truncate">${escapeHtml(sess.title)}</span>
+      container.innerHTML = filtered.map(s => {
+        const isActive = s.id === state.currentSessionId;
+        const activeClass = isActive
+          ? 'bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white font-semibold border-brand-500/40'
+          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 border-transparent';
+
+        return `
+          <div onclick="selectSession('${s.id}')" class="group flex items-center justify-between p-2.5 rounded-xl border cursor-pointer text-xs transition duration-150 ${activeClass}">
+            <div class="flex items-center space-x-2.5 min-w-0 pr-1">
+              <i class="fa-regular fa-message text-[11px] ${isActive ? 'text-brand-500' : 'text-slate-400'}"></i>
+              <span class="truncate">${escapeHtml(s.title || 'Untitled Research')}</span>
+            </div>
+            <button onclick="deleteSession('${s.id}', event)" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-500 rounded transition">
+              <i class="fa-regular fa-trash-can text-[10px]"></i>
+            </button>
           </div>
-          <button onclick="deleteSession('${sess.id}', event)" class="opacity-0 group-hover:opacity-100 p-1 hover:text-rose-500 transition" title="Delete Session">
-            <i class="fa-regular fa-trash-can text-[11px]"></i>
-          </button>
         `;
-        listEl.appendChild(item);
-      });
+      }).join('');
     }
 
-    // Toggle Left Rail & Right Panel
     function toggleSessionsRail() {
       const rail = document.getElementById('sessions-rail');
-      state.sessionsRailOpen = !state.sessionsRailOpen;
-      if (state.sessionsRailOpen) {
-        rail.classList.remove('w-0', 'p-0', 'border-none');
-        rail.classList.add('w-72');
-      } else {
-        rail.classList.remove('w-72');
-        rail.classList.add('w-0', 'p-0', 'border-none');
-      }
+      rail.classList.toggle('-ml-72');
     }
 
+    // -------------------------------------------------------------------------
+    // Artifact Canvas & Right Inspector Controls
+    // -------------------------------------------------------------------------
     function toggleResearchPanel() {
       const panel = document.getElementById('research-panel');
-      state.rightPanelOpen = !state.rightPanelOpen;
-      if (state.rightPanelOpen) {
-        panel.classList.remove('w-0');
-        panel.classList.add('w-96', 'lg:w-[480px]');
+      if (panel.classList.contains('w-0')) {
+        openResearchPanel();
       } else {
-        panel.classList.remove('w-96', 'lg:w-[480px]');
-        panel.classList.add('w-0');
+        closeResearchPanel();
       }
     }
 
     function openResearchPanel() {
-      if (!state.rightPanelOpen) toggleResearchPanel();
+      const panel = document.getElementById('research-panel');
+      panel.classList.remove('w-0');
+      if (state.isCanvasExpanded) {
+        panel.classList.add('w-full', 'md:w-3/4');
+        panel.classList.remove('w-full', 'md:w-[480px]', 'lg:w-[540px]');
+      } else {
+        panel.classList.add('w-full', 'md:w-[480px]', 'lg:w-[540px]');
+        panel.classList.remove('w-full', 'md:w-3/4');
+      }
     }
 
-    // Segmented Tabs in Right Panel
+    function closeResearchPanel() {
+      const panel = document.getElementById('research-panel');
+      panel.classList.remove('w-full', 'md:w-[480px]', 'lg:w-[540px]', 'md:w-3/4');
+      panel.classList.add('w-0');
+    }
+
+    function toggleResearchPanelExpand() {
+      state.isCanvasExpanded = !state.isCanvasExpanded;
+      const btn = document.getElementById('btn-canvas-expand');
+      if (state.isCanvasExpanded) {
+        btn.innerHTML = `<i class="fa-solid fa-down-left-and-up-right-to-center text-xs"></i>`;
+        btn.title = "Standard Width";
+      } else {
+        btn.innerHTML = `<i class="fa-solid fa-up-right-and-down-left-from-center text-xs"></i>`;
+        btn.title = "Fullscreen Width";
+      }
+      openResearchPanel();
+    }
+
     function switchResearchTab(tab) {
-      state.researchTab = tab;
-      ['tasks', 'thinking', 'report', 'sources'].forEach(t => {
-        document.getElementById(`rview-${t}`).classList.add('hidden');
+      state.activeResearchTab = tab;
+      ['report', 'tasks', 'thinking', 'sources'].forEach(t => {
+        const view = document.getElementById(`rview-${t}`);
         const btn = document.getElementById(`rtab-${t}`);
-        btn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-xs', 'font-semibold');
-        btn.classList.add('text-slate-500');
+        if (t === tab) {
+          view.classList.remove('hidden');
+          btn.className = 'px-3 py-1 rounded-lg bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold transition';
+        } else {
+          view.classList.add('hidden');
+          btn.className = 'px-3 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
+        }
       });
-
-      document.getElementById(`rview-${tab}`).classList.remove('hidden');
-      const activeBtn = document.getElementById(`rtab-${tab}`);
-      activeBtn.classList.add('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-xs', 'font-semibold');
-      activeBtn.classList.remove('text-slate-500');
     }
 
-    // Chat Area Rendering
     function getCurrentSession() {
       return state.sessions.find(s => s.id === state.currentSessionId);
     }
 
+    // -------------------------------------------------------------------------
+    // Chat Canvas Rendering
+    // -------------------------------------------------------------------------
     function renderCurrentSessionChat() {
       const sess = getCurrentSession();
       if (!sess) return;
@@ -1018,81 +1322,108 @@
 
       sess.messages.forEach((msg, idx) => {
         if (msg.role === 'user') {
-          // Render User Message Card
+          // User Message
           const userCard = document.createElement('div');
           userCard.className = 'flex justify-end';
           userCard.innerHTML = `
-            <div class="max-w-2xl bg-brand-600 text-white rounded-2xl rounded-tr-xs px-4 py-3 shadow-sm text-sm">
+            <div class="max-w-2xl bg-gradient-to-tr from-brand-600 to-emerald-600 text-white rounded-2xl rounded-tr-xs px-4 py-3 shadow-md text-sm leading-relaxed font-medium">
               <div>${escapeHtml(msg.content)}</div>
-              <div class="text-[10px] text-brand-200 mt-1 text-right">${formatTime(msg.timestamp)}</div>
+              <div class="text-[10px] text-brand-200 mt-1.5 text-right font-mono">${formatTime(msg.timestamp)}</div>
             </div>
           `;
           turns.appendChild(userCard);
         } else if (msg.role === 'assistant') {
-          // Render Assistant Response Card with Thinking Accordion + Report
+          // Assistant Card
           const botCard = document.createElement('div');
-          botCard.className = 'glass border border-slate-200 dark:border-slate-800 rounded-2xl p-4 md:p-6 shadow-sm space-y-4';
+          botCard.className = 'glass-panel rounded-3xl p-5 md:p-7 shadow-canvas space-y-4';
 
+          // 1. Thinking Process Stepper Accordion
           let thinkingHtml = '';
           if (msg.thinking && msg.thinking.length > 0) {
             thinkingHtml = `
-              <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-slate-50/50 dark:bg-slate-900/50">
-                <button onclick="toggleThinkingDisclosure('thinking-${idx}')" class="w-full px-3.5 py-2.5 flex items-center justify-between text-left text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition">
-                  <div class="flex items-center space-x-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    <span>Thought Process (${msg.thinkingDuration || 'Completed in depth'})</span>
+              <div class="border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden bg-slate-50/60 dark:bg-surface-darker/60">
+                <button onclick="toggleThinkingDisclosure('thinking-${idx}')" class="w-full px-4 py-3 flex items-center justify-between text-left text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-white/5 transition">
+                  <div class="flex items-center space-x-2.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Reasoning Monologue (${msg.thinkingDuration || `${msg.thinking.length} steps logged`})</span>
                   </div>
-                  <i id="thinking-${idx}-icon" class="fa-solid fa-chevron-down text-xs transition-transform"></i>
+                  <i id="thinking-${idx}-icon" class="fa-solid fa-chevron-down text-xs transition-transform text-slate-400"></i>
                 </button>
-                <div id="thinking-${idx}" class="p-3.5 pt-0 border-t border-slate-200/60 dark:border-slate-800/60 space-y-2 text-xs font-mono text-slate-600 dark:text-slate-400">
-                  ${msg.thinking.map(step => `<div class="flex items-start space-x-2"><i class="fa-solid fa-angle-right text-brand-500 mt-0.5"></i><span>${escapeHtml(step)}</span></div>`).join('')}
-                </div>
-              </div>
-            `;
-          }
-
-          let reportHtml = '';
-          if (msg.report) {
-            reportHtml = `<div class="markdown-body prose dark:prose-invert max-w-none text-sm leading-relaxed">${marked.parse(msg.report)}</div>`;
-          } else if (msg.content) {
-            reportHtml = `<div class="markdown-body prose dark:prose-invert max-w-none text-sm leading-relaxed">${marked.parse(msg.content)}</div>`;
-          }
-
-          // Verified Citations Strip
-          let sourcesHtml = '';
-          if (msg.sources && msg.sources.length > 0) {
-            sourcesHtml = `
-              <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Verified Sources</div>
-                <div class="flex flex-wrap gap-2">
-                  ${msg.sources.map(s => `
-                    <a href="${s.url}" target="_blank" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-950 text-xs transition border border-slate-200/60 dark:border-slate-700/60">
-                      <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400"></i>
-                      <span class="font-medium truncate max-w-xs">${escapeHtml(s.title || s.url)}</span>
-                    </a>
+                <div id="thinking-${idx}" class="p-4 pt-1 border-t border-slate-200 dark:border-white/5 space-y-2 text-xs font-mono text-slate-600 dark:text-slate-400 max-h-60 overflow-y-auto">
+                  ${msg.thinking.map(step => `
+                    <div class="flex items-start space-x-2">
+                      <i class="fa-solid fa-angle-right text-brand-500 mt-0.5 text-[10px]"></i>
+                      <span class="leading-relaxed">${escapeHtml(step)}</span>
+                    </div>
                   `).join('')}
                 </div>
               </div>
             `;
           }
 
-          // Card Action Footer
+          // 2. Synthesized Report Markdown Content
+          let reportHtml = '';
+          if (msg.report) {
+            reportHtml = `
+              <div class="artifact-body leading-relaxed max-w-none">
+                ${marked.parse(msg.report)}
+              </div>
+            `;
+          } else if (msg.content) {
+            reportHtml = `
+              <div class="artifact-body leading-relaxed max-w-none">
+                ${marked.parse(msg.content)}
+              </div>
+            `;
+          }
+
+          // 3. Verified Citations Grid
+          let sourcesHtml = '';
+          if (msg.sources && msg.sources.length > 0) {
+            sourcesHtml = `
+              <div class="pt-4 border-t border-slate-200 dark:border-white/5">
+                <div class="flex items-center space-x-2 text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider mb-2.5">
+                  <i class="fa-solid fa-link text-brand-500"></i>
+                  <span>Primary Verified Citations (${msg.sources.length})</span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  ${msg.sources.map(s => {
+                    const domain = extractDomain(s.url);
+                    return `
+                      <a href="${s.url}" target="_blank" class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-brand-500/10 hover:text-brand-500 text-xs transition border border-slate-200 dark:border-white/5 max-w-xs truncate" title="${escapeHtml(s.title || s.url)}">
+                        <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=32" alt="" class="w-3.5 h-3.5 rounded-xs shrink-0" onerror="this.style.display='none'">
+                        <span class="font-medium truncate">${escapeHtml(s.title || domain)}</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-slate-400 shrink-0"></i>
+                      </a>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          }
+
+          // 4. Action Footer & "Open in Artifact Canvas" CTA
           const footerHtml = `
-            <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80 text-xs text-slate-400">
-              <div class="flex items-center space-x-2">
+            <div class="flex flex-wrap items-center justify-between pt-4 border-t border-slate-200 dark:border-white/5 text-xs text-slate-400 gap-2">
+              <div class="flex items-center space-x-2 font-mono text-[11px]">
                 <i class="fa-solid fa-clock text-[10px]"></i>
                 <span>${formatTime(msg.timestamp)}</span>
               </div>
               <div class="flex items-center space-x-2">
-                <button onclick="downloadMessageMd(${idx})" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="Download Markdown (.md)">
-                  <i class="fa-regular fa-file-lines text-brand-500"></i>
-                  <span>Download .md</span>
+                <!-- Open in Canvas CTA -->
+                <button onclick="openMessageInArtifactCanvas(${idx})" class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold hover:bg-brand-500/20 transition flex items-center space-x-1.5">
+                  <i class="fa-solid fa-layer-group text-[10px]"></i>
+                  <span>Inspect in Canvas</span>
                 </button>
-                <button onclick="downloadMessagePdf(${idx})" class="hover:text-rose-600 dark:hover:text-rose-400 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="Export PDF document">
-                  <i class="fa-regular fa-file-pdf text-rose-500"></i>
-                  <span>Export PDF</span>
+                <button onclick="downloadMessageMd(${idx})" class="hover:text-brand-500 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-white/5" title="Download Markdown (.md)">
+                  <i class="fa-regular fa-file-lines"></i>
+                  <span>.md</span>
                 </button>
-                <button onclick="copyMessageContent(${idx})" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="Copy Markdown">
+                <button onclick="downloadMessagePdf(${idx})" class="hover:text-rose-500 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-white/5" title="Export PDF">
+                  <i class="fa-regular fa-file-pdf"></i>
+                  <span>PDF</span>
+                </button>
+                <button onclick="copyMessageContent(${idx})" class="hover:text-brand-500 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-white/5" title="Copy Markdown">
                   <i class="fa-regular fa-copy"></i>
                   <span>Copy</span>
                 </button>
@@ -1105,7 +1436,7 @@
         }
       });
 
-      // Scroll to bottom
+      // Smooth scroll to bottom
       const container = document.getElementById('chat-messages-container');
       container.scrollTop = container.scrollHeight;
     }
@@ -1122,11 +1453,21 @@
       }
     }
 
+    function openMessageInArtifactCanvas(idx) {
+      const sess = getCurrentSession();
+      if (!sess || !sess.messages[idx]) return;
+      openResearchPanel();
+      switchResearchTab('report');
+    }
+
+    // -------------------------------------------------------------------------
+    // Inspector & Artifact Canvas Rendering
+    // -------------------------------------------------------------------------
     function renderSessionResearchInspector() {
       const sess = getCurrentSession();
       if (!sess) return;
 
-      // Render Plan & Tasks
+      // 1. Plan & Tasks
       const titleEl = document.getElementById('plan-title-display');
       const tasksListEl = document.getElementById('tasks-list');
       const progressBar = document.getElementById('plan-progress-bar');
@@ -1138,18 +1479,18 @@
         let completed = 0;
         const total = sess.plan.sub_queries.length;
 
-        sess.plan.sub_queries.forEach((sq, i) => {
+        sess.plan.sub_queries.forEach((sq) => {
           const isDone = sq.status === 'completed';
           if (isDone) completed++;
           const taskDiv = document.createElement('div');
-          taskDiv.className = 'p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 space-y-1.5';
+          taskDiv.className = 'p-3.5 rounded-2xl glass-panel space-y-1.5';
           taskDiv.innerHTML = `
             <div class="flex items-center justify-between text-xs">
-              <span class="font-bold text-slate-700 dark:text-slate-200">${sq.query}</span>
-              ${isDone ? '<i class="fa-solid fa-circle-check text-emerald-500"></i>' : '<i class="fa-solid fa-spinner animate-spin text-brand-500"></i>'}
+              <span class="font-bold text-slate-800 dark:text-slate-100 leading-snug">${escapeHtml(sq.query)}</span>
+              ${isDone ? '<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>' : '<i class="fa-solid fa-circle-notch animate-spin text-brand-500"></i>'}
             </div>
-            <div class="flex items-center space-x-2 text-[11px] text-slate-400">
-              <span class="px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono">${sq.target_angle}</span>
+            <div class="flex items-center space-x-2 text-[11px] text-slate-400 font-mono">
+              <span class="px-2 py-0.5 rounded-md bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-slate-300">${escapeHtml(sq.target_angle)}</span>
             </div>
           `;
           tasksListEl.appendChild(taskDiv);
@@ -1159,72 +1500,108 @@
         progressBar.style.width = `${pct}%`;
         progressPct.innerText = `${pct}%`;
       } else {
-        titleEl.innerText = 'No active plan generated yet.';
+        titleEl.innerText = 'No active plan formulated.';
         tasksListEl.innerHTML = '<div class="text-xs text-slate-400 italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>';
         progressBar.style.width = '0%';
         progressPct.innerText = '0%';
       }
 
-      // Thinking log
+      // 2. Monologue / Traces Log
       const thinkingList = document.getElementById('thinking-stream-list');
+      const thinkingCount = document.getElementById('thinking-step-count');
       if (sess.thinkingSteps && sess.thinkingSteps.length > 0) {
+        thinkingCount.innerText = `${sess.thinkingSteps.length} steps logged`;
         thinkingList.innerHTML = sess.thinkingSteps.map(step => `
-          <div class="flex items-start space-x-2">
-            <i class="fa-solid fa-angle-right text-brand-500 mt-0.5"></i>
+          <div class="flex items-start space-x-2.5 leading-relaxed">
+            <i class="fa-solid fa-angle-right text-brand-500 mt-1 text-[10px]"></i>
             <span>${escapeHtml(step)}</span>
           </div>
         `).join('');
       } else {
+        thinkingCount.innerText = '0 steps logged';
         thinkingList.innerHTML = '<div class="text-xs text-slate-400 italic font-sans">No research thinking active.</div>';
       }
 
-      // Report panel
+      // 3. Artifact Document Canvas
       const reportContent = document.getElementById('panel-report-content');
+      const wordCountEl = document.getElementById('artifact-word-count');
+      const readingTimeEl = document.getElementById('artifact-reading-time');
+      const statusPillEl = document.getElementById('artifact-status-pill');
+
       if (sess.report) {
-        reportContent.className = 'markdown-body prose dark:prose-invert max-w-none text-xs md:text-sm leading-relaxed';
+        reportContent.className = 'artifact-body max-w-none leading-relaxed';
         reportContent.innerHTML = marked.parse(sess.report);
+        
+        // Calculate Word Count & Reading Time
+        const words = sess.report.trim().split(/\s+/).length;
+        const readTime = Math.max(1, Math.ceil(words / 220));
+        wordCountEl.innerText = `${words.toLocaleString()} words`;
+        readingTimeEl.innerText = `${readTime} min read`;
+        statusPillEl.innerText = 'SYNTHESIZED';
+        statusPillEl.className = 'text-emerald-500 font-bold';
       } else {
-        reportContent.className = 'markdown-body prose dark:prose-invert max-w-none text-xs md:text-sm leading-relaxed';
-        reportContent.innerHTML = '<div class="text-slate-400 italic">No report completed in this session yet.</div>';
+        reportContent.className = 'artifact-body max-w-none leading-relaxed';
+        reportContent.innerHTML = `
+          <div class="text-slate-400 italic py-10 text-center">
+            <i class="fa-solid fa-file-circle-question text-3xl mb-3 text-slate-300 dark:text-slate-600 block"></i>
+            No synthesis generated yet in this session. Run an inquiry to inspect the document canvas.
+          </div>
+        `;
+        wordCountEl.innerText = '0 words';
+        readingTimeEl.innerText = '1 min read';
+        statusPillEl.innerText = 'IDLE';
+        statusPillEl.className = 'text-slate-400 font-bold';
       }
 
-      // Sources panel
+      // 4. Sources Panel
       const sourcesList = document.getElementById('panel-sources-list');
+      const sourcesTotal = document.getElementById('sources-badge-total');
       if (sess.sources && sess.sources.length > 0) {
-        sourcesList.innerHTML = sess.sources.map(s => `
-          <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 space-y-1">
-            <a href="${s.url}" target="_blank" class="font-bold text-xs text-brand-600 dark:text-brand-400 hover:underline flex items-center space-x-1">
-              <span>${escapeHtml(s.title || s.url)}</span>
-              <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-            </a>
-            <div class="text-[11px] text-slate-500 line-clamp-2">${escapeHtml(s.snippet || s.url)}</div>
-          </div>
-        `).join('');
+        sourcesTotal.innerText = `${sess.sources.length} captured`;
+        sourcesList.innerHTML = sess.sources.map(s => {
+          const domain = extractDomain(s.url);
+          return `
+            <div class="p-3.5 rounded-2xl glass-panel space-y-1.5">
+              <div class="flex items-center space-x-2">
+                <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=32" alt="" class="w-3.5 h-3.5 rounded-xs shrink-0" onerror="this.style.display='none'">
+                <a href="${s.url}" target="_blank" class="font-bold text-xs text-brand-600 dark:text-brand-400 hover:underline flex items-center space-x-1 truncate">
+                  <span class="truncate">${escapeHtml(s.title || domain)}</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[9px] shrink-0"></i>
+                </a>
+              </div>
+              <div class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">${escapeHtml(s.snippet || s.url)}</div>
+            </div>
+          `;
+        }).join('');
       } else {
+        sourcesTotal.innerText = '0 captured';
         sourcesList.innerHTML = '<div class="text-xs text-slate-400 italic">Sources collected by concurrent workers will be listed here.</div>';
       }
     }
 
     function clearResearchPanel() {
-      document.getElementById('plan-title-display').innerText = 'No active plan generated yet.';
+      document.getElementById('plan-title-display').innerText = 'No active plan formulated.';
       document.getElementById('tasks-list').innerHTML = '<div class="text-xs text-slate-400 italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>';
       document.getElementById('plan-progress-bar').style.width = '0%';
       document.getElementById('plan-progress-pct').innerText = '0%';
       document.getElementById('thinking-stream-list').innerHTML = '<div class="text-xs text-slate-400 italic font-sans">No research thinking active.</div>';
-      document.getElementById('panel-report-content').innerHTML = '<div class="text-slate-400 italic">No report completed in this session yet.</div>';
+      document.getElementById('panel-report-content').innerHTML = '<div class="text-slate-400 italic py-10 text-center">No report completed in this session yet.</div>';
       document.getElementById('panel-sources-list').innerHTML = '<div class="text-xs text-slate-400 italic">Sources collected by concurrent workers will be listed here.</div>';
     }
 
-    // Input & Submission Handling
+    // -------------------------------------------------------------------------
+    // Query Execution & Realtime SSE Stream Handling
+    // -------------------------------------------------------------------------
     function handleInputKeydown(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
+      if ((e.key === 'Enter' && !e.shiftKey) || (e.ctrlKey && e.key === 'Enter')) {
         e.preventDefault();
         handleSendOrStop();
       }
     }
 
     function fillAndSubmitPrompt(promptText) {
-      document.getElementById('prompt-input').value = promptText;
+      const input = document.getElementById('prompt-input');
+      input.value = promptText;
       handleSendOrStop();
     }
 
@@ -1242,12 +1619,12 @@
       const sess = getCurrentSession();
       if (!sess) return;
 
-      // Update Session Title if first query
+      // Update Session Title on First Query
       if (sess.messages.length === 0) {
-        sess.title = query.length > 35 ? query.substring(0, 35) + '...' : query;
+        sess.title = query.length > 40 ? query.substring(0, 40) + '...' : query;
       }
 
-      // Append User Message
+      // Append User Inquiry
       sess.messages.push({
         role: 'user',
         content: query,
@@ -1256,10 +1633,10 @@
       saveSessionsToStorage();
       renderCurrentSessionChat();
 
-      // Open Right Inspector Automatically
+      // Automatically Open Right Artifact Canvas
       openResearchPanel();
 
-      // UI state transition
+      // UI State Transition
       setStreamingUiState(true);
 
       const botMessage = {
@@ -1295,7 +1672,7 @@
           document.getElementById('queue-banner-msg').innerText = data.message;
         }
 
-        // Connect SSE event stream
+        // Connect SSE Event Stream
         const eventSource = new EventSource(`/v1/jobs/async/${jobId}/events`);
         state.activeEventSource = eventSource;
 
@@ -1303,7 +1680,6 @@
           const ev = JSON.parse(e.data);
           const stepMsg = ev.content;
 
-          // Check if verified sources were collected
           if (ev.event_type === 'sources_collected') {
             try {
               const srcs = JSON.parse(stepMsg);
@@ -1354,7 +1730,7 @@
       const elapsedSec = ((Date.now() - state.thinkingStartTime) / 1000).toFixed(1);
       botMessage.thinkingDuration = `Thought for ${elapsedSec}s`;
 
-      // Fetch final report & tokenomics
+      // Fetch Final Report & Tokenomics
       try {
         const res = await fetch(`/v1/jobs/async/${jobId}`);
         const jobData = await res.json();
@@ -1363,7 +1739,6 @@
           sess.report = jobData.report;
         }
 
-        // Extract sources if any
         if (sess.plan && sess.plan.sub_queries) {
           sess.plan.sub_queries.forEach(sq => {
             sq.status = 'completed';
@@ -1384,142 +1759,133 @@
       }
       setStreamingUiState(false);
       document.getElementById('queue-banner').classList.add('hidden');
-      showToast('Active research was stopped.', 'info');
+      showToast('Research stream paused by user.');
     }
 
     function setStreamingUiState(streaming) {
       state.isStreaming = streaming;
-      const sendIcon = document.getElementById('btn-send-icon');
       const sendBtn = document.getElementById('btn-send');
-      const stopBtn = document.getElementById('btn-panel-stop');
-      const spinner = document.getElementById('research-spinner');
-      const staticIcon = document.getElementById('research-static-icon');
+      const sendIcon = document.getElementById('btn-send-icon');
+      const researchSpinner = document.getElementById('research-spinner');
+      const researchStaticIcon = document.getElementById('research-static-icon');
 
       if (streaming) {
+        sendBtn.className = 'w-9 h-9 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center transition shadow-lg cursor-pointer';
         sendIcon.className = 'fa-solid fa-stop text-xs';
-        sendBtn.className = 'w-8 h-8 rounded-xl bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center transition shadow-sm cursor-pointer';
-        stopBtn.classList.remove('hidden');
-        spinner.classList.remove('hidden');
-        staticIcon.classList.add('hidden');
+        sendBtn.title = 'Stop Research';
+        researchSpinner.classList.remove('hidden');
+        researchStaticIcon.classList.add('hidden');
       } else {
+        sendBtn.className = 'w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white flex items-center justify-center transition shadow-glow-emerald cursor-pointer';
         sendIcon.className = 'fa-solid fa-arrow-up text-xs';
-        sendBtn.className = 'w-8 h-8 rounded-xl bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center transition shadow-sm cursor-pointer';
-        stopBtn.classList.add('hidden');
-        spinner.classList.add('hidden');
-        staticIcon.classList.remove('hidden');
+        sendBtn.title = 'Run Research Inquiry';
+        researchSpinner.classList.add('hidden');
+        researchStaticIcon.classList.remove('hidden');
       }
     }
 
-    // Data Sources Modal
-    function openDataSourcesModal() {
-      document.getElementById('sources-modal').classList.remove('hidden');
-    }
-
-    function closeDataSourcesModal() {
-      document.getElementById('sources-modal').classList.add('hidden');
-    }
-
-    // Dashboard Polling & View
+    // -------------------------------------------------------------------------
+    // Observability & Metrics Dashboard
+    // -------------------------------------------------------------------------
     async function pollSystemMetrics() {
       try {
-        const res = await fetch('/health');
-        const data = await res.json();
-        const ram = data.system_ram_pct.toFixed(1);
-        const rss = data.process_rss_mb;
-      } catch (e) {}
+        const res = await fetch('/api/dashboard/stats');
+        if (!res.ok) return null;
+        return await res.json();
+      } catch (e) {
+        return null;
+      }
     }
 
     async function refreshDashboard() {
+      const data = await pollSystemMetrics();
+      if (!data) return;
+
+      // Extract metrics from stats response
+      const metrics = data.metrics || {};
+      const tokenomics = data.tokenomics || {};
+      const jobsSummary = data.jobs_summary || {};
+
+      // RAM %
+      const ramPct = metrics.ram_usage_percent !== undefined ? Math.round(metrics.ram_usage_percent) : 0;
+      document.getElementById('stat-system-ram').innerText = `${ramPct}%`;
+      document.getElementById('stat-ram-bar').style.width = `${Math.min(100, ramPct)}%`;
+
+      // Process RSS
+      const rssMb = metrics.process_rss_mb !== undefined ? metrics.process_rss_mb : 0;
+      document.getElementById('stat-process-rss').innerText = `${rssMb} MB`;
+      const rssPct = Math.min(100, Math.round((rssMb / 512) * 100));
+      document.getElementById('stat-rss-bar').style.width = `${rssPct}%`;
+
+      // Active & Queued Jobs
+      const activeJobs = jobsSummary.active !== undefined ? jobsSummary.active : (metrics.active_jobs || 0);
+      const queuedJobs = jobsSummary.queued !== undefined ? jobsSummary.queued : (metrics.queue_length || 0);
+      document.getElementById('stat-jobs-count').innerText = `${activeJobs} / ${queuedJobs}`;
+
+      // Tokens & Estimated Cost
+      const tokens = tokenomics.total_tokens_consumed || 0;
+      document.getElementById('stat-tokens').innerText = Number(tokens).toLocaleString();
+      const estCost = tokenomics.estimated_cost_usd !== undefined ? Number(tokenomics.estimated_cost_usd).toFixed(4) : (tokens * 0.0000007).toFixed(4);
+      document.getElementById('stat-cost').innerText = `Est. Cost: $${estCost}`;
+
+      // History Table from /api/dashboard/jobs
       try {
-        const res = await fetch('/api/dashboard/stats');
-        const data = await res.json();
-
-        const ramPct = data.metrics.ram_usage_percent.toFixed(1);
-        document.getElementById('stat-system-ram').innerText = `${ramPct}%`;
-        document.getElementById('stat-ram-bar').style.width = `${Math.min(ramPct, 100)}%`;
-
-        if (ramPct >= 85) {
-          document.getElementById('stat-ram-bar').className = 'bg-rose-500 h-full rounded-full transition-all';
-        } else {
-          document.getElementById('stat-ram-bar').className = 'bg-emerald-500 h-full rounded-full transition-all';
-        }
-
-        document.getElementById('stat-process-rss').innerText = `${data.metrics.process_rss_mb} MB`;
-        document.getElementById('stat-jobs-count').innerText = `${data.metrics.active_jobs} / ${data.metrics.queue_length}`;
-        document.getElementById('stat-tokens').innerText = Number(data.tokenomics.total_tokens_consumed).toLocaleString();
-        document.getElementById('stat-cost').innerText = `Est. Cost: $${data.tokenomics.estimated_cost_usd.toFixed(4)}`;
-
-        // Populate Jobs Table from /api/dashboard/jobs
-        const jobsRes = await fetch('/api/dashboard/jobs');
-        const jobs = await jobsRes.json();
+        const resJobs = await fetch('/api/dashboard/jobs');
+        if (!resJobs.ok) return;
+        const jobs = await resJobs.json();
         const tbody = document.getElementById('dashboard-jobs-body');
+        if (jobs && jobs.length > 0) {
+          tbody.innerHTML = jobs.map(j => {
+            let badgeColor = 'bg-slate-500/10 text-slate-400';
+            if (j.status === 'COMPLETED') badgeColor = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+            else if (j.status === 'RUNNING') badgeColor = 'bg-brand-500/10 text-brand-400 animate-pulse border border-brand-500/20';
+            else if (j.status === 'FAILED') badgeColor = 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
 
-        if (!jobs || jobs.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 font-sans">No research jobs executed yet.</td></tr>';
-          return;
+            return `
+              <tr class="hover:bg-slate-100/50 dark:hover:bg-white/5 transition">
+                <td class="p-3.5 pl-5 text-brand-500 font-bold">${j.id.substring(0, 8)}...</td>
+                <td class="p-3.5 font-sans truncate max-w-xs text-slate-800 dark:text-slate-200">${escapeHtml(j.query)}</td>
+                <td class="p-3.5"><span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${badgeColor}">${j.status}</span></td>
+                <td class="p-3.5">${(j.total_tokens || 0).toLocaleString()}</td>
+                <td class="p-3.5 pr-5 text-slate-400">${formatTime(j.created_at)}</td>
+              </tr>
+            `;
+          }).join('');
+        } else {
+          tbody.innerHTML = `<tr><td colspan="5" class="p-5 text-center text-slate-400 font-sans">No research jobs recorded yet.</td></tr>`;
         }
-
-        tbody.innerHTML = jobs.map(j => {
-          const isDone = j.status === 'COMPLETED';
-          const isFail = j.status === 'FAILED';
-          const isQueued = j.status === 'QUEUED_ON_HOLD';
-          const statusClass = isDone 
-            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
-            : isFail
-            ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300'
-            : isQueued
-            ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300'
-            : 'bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300 animate-pulse';
-
-          return `
-            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-              <td class="p-3 text-brand-600 dark:text-brand-400 font-mono text-[11px]">
-                <button onclick="copyText('${j.id}')" title="Click to copy Job ID" class="hover:underline flex items-center space-x-1">
-                  <span>${j.id.substring(0, 8)}...</span>
-                  <i class="fa-regular fa-copy text-[10px] text-slate-400"></i>
-                </button>
-              </td>
-              <td class="p-3 font-sans text-xs text-slate-700 dark:text-slate-200 max-w-xs truncate" title="${escapeHtml(j.query)}">
-                ${escapeHtml(j.query)}
-              </td>
-              <td class="p-3">
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusClass}">${j.status}</span>
-              </td>
-              <td class="p-3 font-mono text-xs text-slate-600 dark:text-slate-300">
-                ${Number(j.total_tokens || 0).toLocaleString()}
-              </td>
-              <td class="p-3 text-[11px] text-slate-400 font-sans">
-                ${formatTime(j.created_at)}
-              </td>
-            </tr>
-          `;
-        }).join('');
-      } catch (err) {}
+      } catch (err) {
+        console.error('Failed to load recent jobs:', err);
+      }
     }
 
+    // -------------------------------------------------------------------------
     // API Keys Management
+    // -------------------------------------------------------------------------
     async function refreshApiKeys() {
+      const tbody = document.getElementById('keys-table-body');
       try {
         const res = await fetch('/api/keys');
         const keys = await res.json();
-        const tbody = document.getElementById('keys-table-body');
-        if (!keys || keys.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 font-sans">No API keys created yet.</td></tr>';
-          return;
-        }
 
-        tbody.innerHTML = keys.map(k => `
-          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-            <td class="p-3 font-sans font-medium text-slate-800 dark:text-slate-200">${escapeHtml(k.name)}</td>
-            <td class="p-3 text-brand-600 font-mono">${escapeHtml(k.key_prefix)}...</td>
-            <td class="p-3"><span class="px-2 py-0.5 rounded-full ${k.is_revoked ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'} text-[10px] font-bold">${k.is_revoked ? 'REVOKED' : 'ACTIVE'}</span></td>
-            <td class="p-3 text-slate-400 font-sans">${formatTime(k.created_at)}</td>
-            <td class="p-3 text-right">
-              ${!k.is_revoked ? `<button onclick="revokeApiKey('${k.id}')" class="text-rose-500 hover:underline">Revoke</button>` : '<span class="text-slate-400">Revoked</span>'}
-            </td>
-          </tr>
-        `).join('');
-      } catch (err) {}
+        if (keys && keys.length > 0) {
+          tbody.innerHTML = keys.map(k => `
+            <tr class="hover:bg-slate-100/50 dark:hover:bg-white/5 transition">
+              <td class="p-3.5 pl-5 font-sans font-semibold text-slate-800 dark:text-slate-200">${escapeHtml(k.name)}</td>
+              <td class="p-3.5 text-brand-500 font-bold">${escapeHtml(k.key_prefix || k.prefix || '')}...</td>
+              <td class="p-3.5"><span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${k.is_revoked ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">${k.is_revoked ? 'REVOKED' : 'ACTIVE'}</span></td>
+              <td class="p-3.5 text-slate-400">${formatTime(k.created_at)}</td>
+              <td class="p-3.5 pr-5 text-right">
+                ${k.is_revoked ? '<span class="text-slate-500 text-[10px]">Revoked</span>' : `<button onclick="revokeApiKey('${k.id}')" class="text-slate-400 hover:text-rose-500 transition px-2 py-1 rounded" title="Revoke Key"><i class="fa-regular fa-trash-can"></i></button>`}
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          tbody.innerHTML = `<tr><td colspan="5" class="p-5 text-center text-slate-400 font-sans">No active client keys generated.</td></tr>`;
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-5 text-center text-rose-400 font-sans">Failed to load API keys.</td></tr>`;
+      }
     }
 
     function createApiKey() {
@@ -1527,7 +1893,6 @@
     }
 
     function openCreateKeyModal() {
-      document.getElementById('input-new-key-name').value = '';
       document.getElementById('create-key-modal').classList.remove('hidden');
       document.getElementById('input-new-key-name').focus();
     }
@@ -1538,8 +1903,8 @@
 
     async function submitNewApiKey() {
       const input = document.getElementById('input-new-key-name');
-      const name = input.value.trim() || 'Default Client Key';
-      closeCreateKeyModal();
+      const name = input.value.trim();
+      if (!name) return;
 
       try {
         const res = await fetch('/api/keys', {
@@ -1548,12 +1913,14 @@
           body: JSON.stringify({ name })
         });
         const data = await res.json();
-        document.getElementById('created-key-input').value = data.api_key;
+        closeCreateKeyModal();
+        input.value = '';
+
+        document.getElementById('created-key-input').value = data.api_key || data.key || '';
         document.getElementById('key-created-modal').classList.remove('hidden');
         refreshApiKeys();
-        showToast('API key generated successfully!');
       } catch (err) {
-        showToast('Failed to generate key: ' + err, 'error');
+        showToast('Failed to create key: ' + err, 'error');
       }
     }
 
@@ -1563,40 +1930,57 @@
 
     function copyGeneratedKey() {
       const input = document.getElementById('created-key-input');
-      navigator.clipboard.writeText(input.value);
-      showToast('API key copied to clipboard!');
+      copyText(input.value);
+      showToast('API Key copied to clipboard!');
     }
 
     async function revokeApiKey(id) {
-      if (confirm('Revoke this API key? External clients using it will lose access immediately.')) {
+      if (!confirm('Revoke this bearer API key? External clients will immediately lose access.')) return;
+      try {
         await fetch(`/api/keys/${id}`, { method: 'DELETE' });
+        showToast('API Key revoked.');
         refreshApiKeys();
-        showToast('API key revoked.');
+      } catch (err) {
+        showToast('Failed to revoke key: ' + err, 'error');
       }
     }
 
-    // Utilities & Export Functions
+    // -------------------------------------------------------------------------
+    // Utilities: Toasts, Copy & PDF/Markdown Generation
+    // -------------------------------------------------------------------------
     function showToast(msg, type = 'info') {
       const container = document.getElementById('toast-container');
-      if (!container) return;
       const toast = document.createElement('div');
-      toast.className = 'pointer-events-auto px-4 py-2.5 rounded-xl glass border border-slate-200 dark:border-slate-800 text-xs font-semibold shadow-lg transition-all transform translate-y-2 opacity-0 flex items-center space-x-2 text-slate-800 dark:text-slate-100';
-      const icon = type === 'error' ? 'fa-circle-xmark text-rose-500' : 'fa-circle-check text-emerald-500';
-      toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${escapeHtml(msg)}</span>`;
+      
+      let icon = 'fa-solid fa-circle-check text-emerald-400';
+      if (type === 'error') icon = 'fa-solid fa-circle-exclamation text-rose-400';
+      else if (type === 'warn') icon = 'fa-solid fa-triangle-exclamation text-amber-400';
+
+      toast.className = 'glass-panel px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-3 text-xs font-semibold text-slate-800 dark:text-slate-100 pointer-events-auto transform transition duration-300 translate-y-2 opacity-0';
+      toast.innerHTML = `<i class="${icon}"></i><span>${escapeHtml(msg)}</span>`;
       container.appendChild(toast);
+
       setTimeout(() => {
         toast.classList.remove('translate-y-2', 'opacity-0');
       }, 10);
+
       setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-2');
+        toast.classList.add('translate-y-2', 'opacity-0');
         setTimeout(() => toast.remove(), 300);
-      }, 3000);
+      }, 3500);
     }
 
     function copyText(txt) {
-      if (!txt) return;
-      navigator.clipboard.writeText(txt);
-      showToast('Copied to clipboard!');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(txt);
+      } else {
+        const t = document.createElement('textarea');
+        t.value = txt;
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand('copy');
+        document.body.removeChild(t);
+      }
     }
 
     function copyMessageContent(idx) {
@@ -1604,39 +1988,42 @@
       if (!sess || !sess.messages[idx]) return;
       const text = sess.messages[idx].report || sess.messages[idx].content || '';
       copyText(text);
+      showToast('Markdown copied to clipboard!');
     }
 
     function copyCurrentReport() {
       const sess = getCurrentSession();
-      if (sess && sess.report) {
-        copyText(sess.report);
-      } else {
-        showToast('No report available in this session.', 'error');
+      if (!sess || !sess.report) {
+        showToast('No synthesized report to copy.', 'warn');
+        return;
       }
+      copyText(sess.report);
+      showToast('Report Markdown copied!');
     }
 
     function downloadMessageMd(idx) {
       const sess = getCurrentSession();
       if (!sess || !sess.messages[idx]) return;
       const msg = sess.messages[idx];
-      const text = msg.report || msg.content || '';
-      if (!text) { showToast('No content to export as Markdown.', 'error'); return; }
+      let text = msg.report || msg.content || '';
+      if (!text) {
+        showToast('No content to download.', 'warn');
+        return;
+      }
 
-      let fullMd = text;
       if (msg.sources && msg.sources.length > 0) {
-        fullMd += '\n\n## Verified Sources\n';
+        text += '\n\n## Verified Sources\n';
         msg.sources.forEach(s => {
-          fullMd += `- [${s.title || s.url}](${s.url})\n`;
+          text += `- [${s.title || s.url}](${s.url})\n`;
         });
       }
 
-      const rawTitle = sess.title || 'research-report';
-      const cleanTitle = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      const blob = new Blob([fullMd], { type: 'text/markdown;charset=utf-8' });
+      const safeTitle = (sess.title || 'research-report').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${cleanTitle || 'research-report'}.md`;
+      a.download = `${safeTitle || 'research-report'}.md`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -1646,7 +2033,10 @@
 
     function downloadCurrentReportMd() {
       const sess = getCurrentSession();
-      if (!sess || !sess.report) { showToast('No completed report to download.', 'error'); return; }
+      if (!sess || !sess.report) {
+        showToast('No synthesized report to download.', 'warn');
+        return;
+      }
 
       let fullMd = sess.report;
       if (sess.sources && sess.sources.length > 0) {
@@ -1656,13 +2046,12 @@
         });
       }
 
-      const rawTitle = sess.title || 'research-report';
-      const cleanTitle = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const safeTitle = (sess.title || 'research-report').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       const blob = new Blob([fullMd], { type: 'text/markdown;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${cleanTitle || 'research-report'}.md`;
+      a.download = `${safeTitle || 'research-report'}.md`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -1674,8 +2063,8 @@
       const safeFileName = (title || 'research-report').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
       const printWrapper = document.createElement('div');
-      printWrapper.className = 'markdown-body p-8 bg-white text-slate-900';
-      printWrapper.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+      printWrapper.className = 'artifact-body p-8 bg-white text-slate-900';
+      printWrapper.style.fontFamily = "'Inter', 'Plus Jakarta Sans', sans-serif";
       printWrapper.style.maxWidth = "800px";
       printWrapper.style.position = "fixed";
       printWrapper.style.left = "-9999px";
@@ -1684,18 +2073,18 @@
       let sourcesListHtml = '';
       if (sources && sources.length > 0) {
         sourcesListHtml = `
-          <div style="margin-top: 32px; border-top: 1px solid #cbd5e1; padding-top: 16px;">
-            <h3 style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px; text-transform: uppercase;">Verified Sources & Citations</h3>
+          <div style="margin-top: 36px; border-top: 1px solid #cbd5e1; padding-top: 18px;">
+            <h3 style="font-size: 13px; font-weight: 800; color: #047857; margin-bottom: 8px; text-transform: uppercase;">Verified Sources & Citations</h3>
             <ul style="font-size: 11px; color: #475569; padding-left: 20px;">
-              ${sources.map(s => `<li style="margin-bottom: 4px;"><a href="${s.url}" target="_blank" style="color: #4f46e5; text-decoration: underline;">${escapeHtml(s.title || s.url)}</a></li>`).join('')}
+              ${sources.map(s => `<li style="margin-bottom: 4px;"><a href="${s.url}" target="_blank" style="color: #059669; text-decoration: underline;">${escapeHtml(s.title || s.url)}</a></li>`).join('')}
             </ul>
           </div>
         `;
       }
 
       printWrapper.innerHTML = `
-        <div style="border-bottom: 2px solid #4f46e5; padding-bottom: 12px; margin-bottom: 24px;">
-          <h1 style="color: #1e1b4b; font-size: 22px; font-weight: 800; margin: 0 0 6px 0;">${escapeHtml(title || 'Research Report')}</h1>
+        <div style="border-bottom: 2px solid #059669; padding-bottom: 14px; margin-bottom: 26px;">
+          <h1 style="color: #0f172a; font-size: 22px; font-weight: 800; margin: 0 0 6px 0;">${escapeHtml(title || 'Research Synthesis')}</h1>
           <div style="font-size: 11px; color: #64748b; font-weight: 500;">
             Autonomous Deep Research Synthesis • Generated on ${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
           </div>
@@ -1718,7 +2107,7 @@
         html2pdf().set(opt).from(printWrapper).save().then(() => {
           document.body.removeChild(printWrapper);
           showToast('PDF exported successfully!');
-        }).catch((err) => {
+        }).catch(() => {
           document.body.removeChild(printWrapper);
           showToast('PDF export completed.');
         });
@@ -1741,6 +2130,15 @@
       const sess = getCurrentSession();
       if (!sess || !sess.report) { showToast('No completed report to export as PDF.', 'error'); return; }
       generatePdfFromMarkdown(sess.title || 'Research Synthesis', sess.report, sess.sources);
+    }
+
+    function extractDomain(url) {
+      try {
+        const u = new URL(url);
+        return u.hostname.replace(/^www\./, '');
+      } catch (e) {
+        return url;
+      }
     }
 
     function escapeHtml(str) {

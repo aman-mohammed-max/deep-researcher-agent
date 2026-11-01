@@ -1,6 +1,13 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
-use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
+use sqlx::{
+    postgres::PgPoolOptions,
+    sqlite::SqlitePoolOptions,
+    Pool, Postgres, Sqlite,
+};
 use tracing::info;
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
@@ -35,26 +42,89 @@ pub struct ApiKeyRecord {
     pub is_revoked: bool,
 }
 
+/// Persistent Storage Backend supporting either PostgreSQL or persistent SQLite
+#[derive(Clone)]
+pub enum PersistentBackend {
+    Sqlite(Pool<Sqlite>),
+    Postgres(Pool<Postgres>),
+}
+
+/// Tiered Storage Engine:
+/// - `runtime_pool`: Ephemeral / RAM-like SQLite for active research workflows, streaming events & tasks.
+/// - `persistent_backend`: Persistent SQL (PostgreSQL or persistent SQLite) for API keys and durable data.
 #[derive(Clone)]
 pub struct Storage {
-    pool: Pool<Sqlite>,
+    runtime_pool: Pool<Sqlite>,
+    persistent_backend: PersistentBackend,
+    runtime_url: String,
 }
 
 impl Storage {
-    pub async fn new(database_url: &str) -> Result<Self, sqlx::Error> {
-        let pool = SqlitePoolOptions::new()
+    /// Initialize tiered dual-storage with separate ephemeral runtime and persistent database URLs.
+    ///
+    /// - `runtime_url`: e.g. "sqlite::memory:?cache=shared" or local SQLite for ephemeral research jobs.
+    /// - `persistent_url`: e.g. "postgres://user:pass@host:5432/db" or "sqlite:deep_researcher_keys.db?mode=rwc".
+    pub async fn new(runtime_url: &str, persistent_url: &str) -> Result<Self, sqlx::Error> {
+        info!("Initializing Tiered Storage Engine...");
+        info!("  Runtime DB (RAM/Ephemeral): {}", runtime_url);
+
+        // 1. Initialize Runtime SQLite Pool (Jobs, Streaming Events, Working Memory)
+        let runtime_pool = SqlitePoolOptions::new()
             .max_connections(5)
-            .connect(database_url)
+            .connect(runtime_url)
             .await?;
 
-        let storage = Self { pool };
+        // 2. Initialize Persistent Backend (PostgreSQL or SQLite for API Keys)
+        let persistent_backend = if persistent_url.starts_with("postgres://")
+            || persistent_url.starts_with("postgresql://")
+        {
+            info!("  Persistent DB: PostgreSQL [{}]", persistent_url);
+            let pg_pool = PgPoolOptions::new()
+                .max_connections(10)
+                .acquire_timeout(std::time::Duration::from_secs(3))
+                .connect(persistent_url)
+                .await?;
+            PersistentBackend::Postgres(pg_pool)
+        } else {
+            info!("  Persistent DB: SQLite [{}]", persistent_url);
+            let sqlite_pool = SqlitePoolOptions::new()
+                .max_connections(5)
+                .connect(persistent_url)
+                .await?;
+            PersistentBackend::Sqlite(sqlite_pool)
+        };
+
+        let storage = Self {
+            runtime_pool,
+            persistent_backend,
+            runtime_url: runtime_url.to_string(),
+        };
+
         storage.init_tables().await?;
         Ok(storage)
     }
 
-    async fn init_tables(&self) -> Result<(), sqlx::Error> {
-        info!("Initializing SQLite storage tables...");
+    /// Single URL convenience constructor (used in unit tests and default standalone CLI).
+    pub async fn from_url(database_url: &str) -> Result<Self, sqlx::Error> {
+        Self::new(database_url, database_url).await
+    }
 
+    /// Report persistent store driver type ("PostgreSQL" or "SQLite").
+    pub fn persistent_type(&self) -> &'static str {
+        match self.persistent_backend {
+            PersistentBackend::Postgres(_) => "PostgreSQL",
+            PersistentBackend::Sqlite(_) => "SQLite",
+        }
+    }
+
+    /// Whether the runtime storage is running in volatile RAM (in-memory).
+    pub fn is_in_memory_runtime(&self) -> bool {
+        self.runtime_url.contains(":memory:")
+    }
+
+    /// Initialize tables across both runtime and persistent database tiers.
+    async fn init_tables(&self) -> Result<(), sqlx::Error> {
+        // 1. Runtime Tables: jobs & job_events (in-memory / ephemeral SQLite)
         sqlx::query(
             r#"
             CREATE TABLE IF NOT EXISTS jobs (
@@ -77,21 +147,51 @@ impl Storage {
                 content TEXT NOT NULL,
                 timestamp TEXT NOT NULL
             );
-
-            CREATE TABLE IF NOT EXISTS api_keys (
-                id TEXT PRIMARY KEY,
-                key_prefix TEXT NOT NULL,
-                name TEXT NOT NULL,
-                created_at TEXT NOT NULL,
-                is_revoked BOOLEAN NOT NULL DEFAULT 0
-            );
             "#,
         )
-        .execute(&self.pool)
+        .execute(&self.runtime_pool)
         .await?;
+
+        // 2. Persistent Table: api_keys (PostgreSQL or persistent SQLite)
+        match &self.persistent_backend {
+            PersistentBackend::Postgres(pg_pool) => {
+                sqlx::query(
+                    r#"
+                    CREATE TABLE IF NOT EXISTS api_keys (
+                        id VARCHAR(64) PRIMARY KEY,
+                        key_prefix VARCHAR(32) NOT NULL,
+                        name VARCHAR(255) NOT NULL,
+                        created_at VARCHAR(64) NOT NULL,
+                        is_revoked BOOLEAN NOT NULL DEFAULT FALSE
+                    );
+                    "#,
+                )
+                .execute(pg_pool)
+                .await?;
+            }
+            PersistentBackend::Sqlite(sqlite_pool) => {
+                sqlx::query(
+                    r#"
+                    CREATE TABLE IF NOT EXISTS api_keys (
+                        id TEXT PRIMARY KEY,
+                        key_prefix TEXT NOT NULL,
+                        name TEXT NOT NULL,
+                        created_at TEXT NOT NULL,
+                        is_revoked BOOLEAN NOT NULL DEFAULT 0
+                    );
+                    "#,
+                )
+                .execute(sqlite_pool)
+                .await?;
+            }
+        }
 
         Ok(())
     }
+
+    // =========================================================================
+    // EPHEMERAL RUNTIME (RAM / JOBS / EVENTS)
+    // =========================================================================
 
     pub async fn create_job(&self, id: &str, query: &str) -> Result<(), sqlx::Error> {
         let now = Utc::now().to_rfc3339();
@@ -102,7 +202,7 @@ impl Storage {
         .bind(query)
         .bind(&now)
         .bind(&now)
-        .execute(&self.pool)
+        .execute(&self.runtime_pool)
         .await?;
         Ok(())
     }
@@ -113,7 +213,7 @@ impl Storage {
             .bind(status)
             .bind(&now)
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.runtime_pool)
             .await?;
         Ok(())
     }
@@ -140,7 +240,7 @@ impl Storage {
         .bind(total_tokens as i64)
         .bind(&now)
         .bind(id)
-        .execute(&self.pool)
+        .execute(&self.runtime_pool)
         .await?;
         Ok(())
     }
@@ -151,7 +251,7 @@ impl Storage {
             .bind(error)
             .bind(&now)
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.runtime_pool)
             .await?;
         Ok(())
     }
@@ -159,14 +259,14 @@ impl Storage {
     pub async fn get_job(&self, id: &str) -> Result<Option<JobRecord>, sqlx::Error> {
         sqlx::query_as::<_, JobRecord>("SELECT * FROM jobs WHERE id = ?")
             .bind(id)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.runtime_pool)
             .await
     }
 
     pub async fn list_jobs(&self, limit: i64) -> Result<Vec<JobRecord>, sqlx::Error> {
         sqlx::query_as::<_, JobRecord>("SELECT * FROM jobs ORDER BY updated_at DESC LIMIT ?")
             .bind(limit)
-            .fetch_all(&self.pool)
+            .fetch_all(&self.runtime_pool)
             .await
     }
 
@@ -177,7 +277,7 @@ impl Storage {
             .bind(event_type)
             .bind(content)
             .bind(&now)
-            .execute(&self.pool)
+            .execute(&self.runtime_pool)
             .await?;
         Ok(())
     }
@@ -185,9 +285,13 @@ impl Storage {
     pub async fn get_events(&self, job_id: &str) -> Result<Vec<JobEventRecord>, sqlx::Error> {
         sqlx::query_as::<_, JobEventRecord>("SELECT * FROM job_events WHERE job_id = ? ORDER BY id ASC")
             .bind(job_id)
-            .fetch_all(&self.pool)
+            .fetch_all(&self.runtime_pool)
             .await
     }
+
+    // =========================================================================
+    // PERSISTENT STORAGE (POSTGRESQL OR PERSISTENT SQLITE)
+    // =========================================================================
 
     pub async fn create_api_key(&self, name: &str) -> Result<String, sqlx::Error> {
         let id = uuid::Uuid::new_v4().to_string();
@@ -195,13 +299,30 @@ impl Storage {
         let prefix = &key[0..7];
         let now = Utc::now().to_rfc3339();
 
-        sqlx::query("INSERT INTO api_keys (id, key_prefix, name, created_at, is_revoked) VALUES (?, ?, ?, ?, 0)")
-            .bind(&id)
-            .bind(prefix)
-            .bind(name)
-            .bind(&now)
-            .execute(&self.pool)
-            .await?;
+        match &self.persistent_backend {
+            PersistentBackend::Postgres(pg_pool) => {
+                sqlx::query(
+                    "INSERT INTO api_keys (id, key_prefix, name, created_at, is_revoked) VALUES ($1, $2, $3, $4, FALSE)",
+                )
+                .bind(&id)
+                .bind(prefix)
+                .bind(name)
+                .bind(&now)
+                .execute(pg_pool)
+                .await?;
+            }
+            PersistentBackend::Sqlite(sqlite_pool) => {
+                sqlx::query(
+                    "INSERT INTO api_keys (id, key_prefix, name, created_at, is_revoked) VALUES (?, ?, ?, ?, 0)",
+                )
+                .bind(&id)
+                .bind(prefix)
+                .bind(name)
+                .bind(&now)
+                .execute(sqlite_pool)
+                .await?;
+            }
+        }
 
         Ok(key)
     }
@@ -211,27 +332,63 @@ impl Storage {
             return Ok(false);
         }
         let prefix = &key[0..7];
-        let record = sqlx::query_as::<_, ApiKeyRecord>(
-            "SELECT * FROM api_keys WHERE key_prefix = ? AND is_revoked = 0",
-        )
-        .bind(prefix)
-        .fetch_optional(&self.pool)
-        .await?;
+
+        let record = match &self.persistent_backend {
+            PersistentBackend::Postgres(pg_pool) => {
+                sqlx::query_as::<_, ApiKeyRecord>(
+                    "SELECT id, key_prefix, name, created_at, is_revoked FROM api_keys WHERE key_prefix = $1 AND is_revoked = FALSE",
+                )
+                .bind(prefix)
+                .fetch_optional(pg_pool)
+                .await?
+            }
+            PersistentBackend::Sqlite(sqlite_pool) => {
+                sqlx::query_as::<_, ApiKeyRecord>(
+                    "SELECT id, key_prefix, name, created_at, is_revoked FROM api_keys WHERE key_prefix = ? AND is_revoked = 0",
+                )
+                .bind(prefix)
+                .fetch_optional(sqlite_pool)
+                .await?
+            }
+        };
 
         Ok(record.is_some())
     }
 
     pub async fn list_api_keys(&self) -> Result<Vec<ApiKeyRecord>, sqlx::Error> {
-        sqlx::query_as::<_, ApiKeyRecord>("SELECT * FROM api_keys ORDER BY created_at DESC")
-            .fetch_all(&self.pool)
-            .await
+        match &self.persistent_backend {
+            PersistentBackend::Postgres(pg_pool) => {
+                sqlx::query_as::<_, ApiKeyRecord>(
+                    "SELECT id, key_prefix, name, created_at, is_revoked FROM api_keys ORDER BY created_at DESC",
+                )
+                .fetch_all(pg_pool)
+                .await
+            }
+            PersistentBackend::Sqlite(sqlite_pool) => {
+                sqlx::query_as::<_, ApiKeyRecord>(
+                    "SELECT id, key_prefix, name, created_at, is_revoked FROM api_keys ORDER BY created_at DESC",
+                )
+                .fetch_all(sqlite_pool)
+                .await
+            }
+        }
     }
 
     pub async fn revoke_api_key(&self, id: &str) -> Result<(), sqlx::Error> {
-        sqlx::query("UPDATE api_keys SET is_revoked = 1 WHERE id = ?")
-            .bind(id)
-            .execute(&self.pool)
-            .await?;
+        match &self.persistent_backend {
+            PersistentBackend::Postgres(pg_pool) => {
+                sqlx::query("UPDATE api_keys SET is_revoked = TRUE WHERE id = $1")
+                    .bind(id)
+                    .execute(pg_pool)
+                    .await?;
+            }
+            PersistentBackend::Sqlite(sqlite_pool) => {
+                sqlx::query("UPDATE api_keys SET is_revoked = 1 WHERE id = ?")
+                    .bind(id)
+                    .execute(sqlite_pool)
+                    .await?;
+            }
+        }
         Ok(())
     }
 }

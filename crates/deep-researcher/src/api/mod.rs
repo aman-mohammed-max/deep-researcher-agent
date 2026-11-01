@@ -26,9 +26,12 @@ pub fn create_router(state: AppState) -> Router {
         .route("/websocket", get(websocket::websocket_handler))
         // Observability Dashboard & Playground API
         .route("/api/dashboard/stats", get(routes::dashboard_stats_handler))
+        .route("/v1/system/metrics", get(routes::dashboard_stats_handler))
         .route("/api/dashboard/jobs", get(routes::dashboard_jobs_handler))
         .route("/api/keys", post(routes::create_api_key_handler).get(routes::list_api_keys_handler))
+        .route("/v1/keys", post(routes::create_api_key_handler).get(routes::list_api_keys_handler))
         .route("/api/keys/{id}", delete(routes::revoke_api_key_handler))
+        .route("/v1/keys/{id}", delete(routes::revoke_api_key_handler))
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state)

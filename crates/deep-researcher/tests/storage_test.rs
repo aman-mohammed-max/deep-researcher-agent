@@ -1,8 +1,11 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 use deep_researcher_agent::storage::Storage;
 
 #[tokio::test]
 async fn test_storage_job_lifecycle_and_events() {
-    let storage = Storage::new("sqlite::memory:")
+    let storage = Storage::from_url("sqlite::memory:")
         .await
         .expect("Failed to create in-memory SQLite storage");
 
@@ -70,7 +73,7 @@ async fn test_storage_job_lifecycle_and_events() {
 
 #[tokio::test]
 async fn test_storage_api_keys() {
-    let storage = Storage::new("sqlite::memory:")
+    let storage = Storage::from_url("sqlite::memory:")
         .await
         .expect("Failed to create in-memory SQLite storage");
 
@@ -100,4 +103,64 @@ async fn test_storage_api_keys() {
     let keys = storage.list_api_keys().await.expect("Failed to list keys");
     assert_eq!(keys.len(), 1);
     assert_eq!(keys[0].name, "Development Key");
+}
+
+#[tokio::test]
+async fn test_tiered_dual_storage_architecture() {
+    // Runtime = RAM SQLite (ephemeral memory for jobs)
+    // Persistent = SQLite (simulating durable SQL for API keys)
+    let storage = Storage::new(
+        "sqlite::memory:",
+        "sqlite::memory:",
+    )
+    .await
+    .expect("Failed to initialize tiered storage");
+
+    assert!(storage.is_in_memory_runtime());
+    assert_eq!(storage.persistent_type(), "SQLite");
+
+    // 1. Create a job in runtime RAM
+    storage
+        .create_job("runtime-job-001", "Simulated quantum algorithm research")
+        .await
+        .expect("Failed to create job in runtime storage");
+
+    let job = storage
+        .get_job("runtime-job-001")
+        .await
+        .expect("Query failed")
+        .expect("Job should exist in runtime RAM");
+    assert_eq!(job.query, "Simulated quantum algorithm research");
+
+    // 2. Create persistent API key
+    let key = storage
+        .create_api_key("Production Telegram Bridge")
+        .await
+        .expect("Failed to create key");
+    assert!(key.starts_with("dr_"));
+
+    let verified = storage.verify_api_key(&key).await.expect("Key check failed");
+    assert!(verified);
+}
+
+#[tokio::test]
+async fn test_postgres_url_driver_routing() {
+    // Verifies that a postgres:// URL routes directly into the PostgreSQL driver pool
+    let result = Storage::new(
+        "sqlite::memory:",
+        "postgres://testuser:testpass@127.0.0.1:5432/deep_researcher_test",
+    )
+    .await;
+
+    // Because there is no PostgreSQL daemon running on 127.0.0.1:5432 in this container,
+    // sqlx::postgres must return a connection error (confirming PostgreSQL driver engagement).
+    assert!(result.is_err(), "Expected connection error to unhosted PostgreSQL database");
+    let err_str = result.err().unwrap().to_string();
+    assert!(
+        err_str.contains("pool timed out")
+            || err_str.contains("Connection refused")
+            || err_str.contains("error connecting"),
+        "Expected PostgreSQL connection or timeout error, got: {}",
+        err_str
+    );
 }

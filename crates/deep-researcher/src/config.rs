@@ -5,6 +5,8 @@ pub struct AppConfig {
     pub host: String,
     pub port: u16,
     pub database_url: String,
+    pub runtime_database_url: String,
+    pub persistent_database_url: String,
 
     // LLM Settings
     pub llm_base_url: String,
@@ -39,8 +41,16 @@ impl AppConfig {
             .and_then(|p| p.parse().ok())
             .unwrap_or(8000);
 
-        let database_url = env::var("DATABASE_URL")
-            .unwrap_or_else(|_| "sqlite:deep_researcher.db?mode=rwc".to_string());
+        let runtime_database_url = env::var("RUNTIME_DATABASE_URL")
+            .or_else(|_| env::var("EPHEMERAL_DATABASE_URL"))
+            .unwrap_or_else(|_| "sqlite::memory:?cache=shared".to_string());
+
+        let persistent_database_url = env::var("PERSISTENT_DATABASE_URL")
+            .or_else(|_| env::var("POSTGRES_URL"))
+            .or_else(|_| env::var("DATABASE_URL"))
+            .unwrap_or_else(|_| "sqlite:deep_researcher_persistent.db?mode=rwc".to_string());
+
+        let database_url = persistent_database_url.clone();
 
         // LLM configurations (checks NVIDIA_API_KEY, then OPENAI_API_KEY, then DEEPSEEK_API_KEY)
         let (default_base_url, default_model, api_key) = if let Ok(k) = env::var("NVIDIA_API_KEY") {
@@ -95,6 +105,8 @@ impl AppConfig {
             host,
             port,
             database_url,
+            runtime_database_url,
+            persistent_database_url,
             llm_base_url,
             llm_model,
             llm_api_key,

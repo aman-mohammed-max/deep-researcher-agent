@@ -5,9 +5,9 @@ Integrates directly with the Rust backend via /v1/jobs/async and SSE streaming e
 """
 
 import asyncio
-import json
 import os
 import sys
+
 import aiohttp
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -47,13 +47,14 @@ async def submit_and_track_job(session: aiohttp.ClientSession, chat_id: int, que
         status = data.get("status", "SUBMITTED")
 
     if status == "QUEUED_ON_HOLD":
-        await send_telegram_message(
-            session,
-            chat_id,
-            "⏳ *Server under load*: Memory threshold reached. Your query is safely held in queue and will start immediately once resources free up.",
+        msg = (
+            "⏳ *Server under load*: Memory threshold reached. "
+            "Your query is safely held in queue and will start immediately once resources free up."
         )
+        await send_telegram_message(session, chat_id, msg)
     else:
-        await send_telegram_message(session, chat_id, f"🔍 *Deep Research Started*\nJob ID: `{job_id}`\nAnalyzing query...")
+        msg = f"🔍 *Deep Research Started*\nJob ID: `{job_id}`\nAnalyzing query..."
+        await send_telegram_message(session, chat_id, msg)
 
     # Poll / wait for completion
     while True:
@@ -71,7 +72,9 @@ async def submit_and_track_job(session: aiohttp.ClientSession, chat_id: int, que
                 total_toks = job_data.get("total_tokens", 0)
 
                 # Telegram max message length is 4096 chars
-                summary_header = f"📊 *Research Completed*\nTokens: {total_toks} ({prompt_toks} prompt / {comp_toks} completion)\n\n"
+                summary_header = (
+                    f"📊 *Research Completed*\nTokens: {total_toks} ({prompt_toks} prompt / {comp_toks} completion)\n\n"
+                )
                 full_text = summary_header + result
                 if len(full_text) > 4000:
                     chunks = [full_text[i : i + 3900] for i in range(0, len(full_text), 3900)]
@@ -107,11 +110,11 @@ async def main():
 
                             if chat_id and text:
                                 if text.startswith("/start"):
-                                    await send_telegram_message(
-                                        session,
-                                        chat_id,
-                                        "👋 *Welcome to Deep Researcher AI*\nSend me any complex question, market inquiry, or research query!",
+                                    welcome = (
+                                        "👋 *Welcome to Deep Researcher AI*\n"
+                                        "Send me any complex question, market inquiry, or research query!"
                                     )
+                                    await send_telegram_message(session, chat_id, welcome)
                                 else:
                                     asyncio.create_task(submit_and_track_job(session, chat_id, text))
             except Exception as e:
