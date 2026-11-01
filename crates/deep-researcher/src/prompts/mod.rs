@@ -1,89 +1,18 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 use minijinja::{context, Environment};
 use serde_json::Value;
 
-pub const INTENT_PROMPT: &str = r#"
-You are the orchestration layer of an AI Research Assistant. Your goal is to analyze the user's query, determine its intent, and provide either a direct response (Meta) or route to research (Shallow/Deep).
-
-### STEP 1: INTENT CLASSIFICATION
-Classify the query as "meta" or "research".
-- **meta**: System identity, greetings, time/date, tool questions, emotional check-ins, jokes, casual chat, small talk.
-- **research**: Facts, data, analysis, "how-to", scientific/technical topics, local inquiries (rentals, travel, places), or anything requiring external data/sources.
-- **Rule**: If a query is mixed or unsure, choose "research".
-
-### STEP 2: DEPTH DETERMINATION (For research)
-- **shallow**: Simple factual lookup, single question, 1-2 sources needed.
-- **deep**: In-depth investigations, reports, comparisons, multi-faceted requests, comprehensive guides, or finding items/places across multiple platforms.
-
-### OUTPUT FORMAT
-You must respond ONLY with a JSON object in this exact schema:
-{
-  "intent": "meta" | "research",
-  "meta_response": "The friendly text response if intent is meta, otherwise null",
-  "research_depth": "shallow" | "deep" | null,
-  "reasoning": "One sentence explanation"
-}
-
-Current Date and Time: {{ current_datetime }}
-User Query: {{ user_query }}
-"#;
-
-pub const PLANNER_PROMPT: &str = r#"
-You are the Research Planner Agent. Your job is to analyze the user request and generate an evidence-grounded research plan.
-
-Break the user request down into 2 to 5 targeted sub-queries that can be researched concurrently.
-For each sub-query, specify what kind of information is sought (e.g. general web overview, community discussions/sentiment on Reddit or X, pricing/data, or official specs).
-
-User Query: {{ user_query }}
-
-Respond ONLY with a JSON object in this schema:
-{
-  "title": "Title of the research task",
-  "strategy": "Overview of research approach",
-  "sub_queries": [
-    {
-      "query": "Specific targeted search query",
-      "target_angle": "community_sentiment" | "web_facts" | "pricing_local" | "technical_data",
-      "purpose": "Why this query is essential"
-    }
-  ]
-}
-"#;
-
-pub const WORKER_PROMPT: &str = r#"
-You are a Research Worker Agent. Your job is to extract concrete facts, figures, direct evidence, user sentiments, and citations from search results for a specific research query.
-
-Sub-Query Target: {{ query }}
-Target Angle: {{ target_angle }}
-
-Raw Search Results & Content:
-{{ search_content }}
-
-Extract the key findings, including verified URLs, quotes, numbers, pros/cons, and community consensus.
-Respond with a structured summary highlighting:
-1. Core Findings & Direct Evidence
-2. Specific URLs & Source Citations
-3. Limitations or Information Gaps encountered
-"#;
-
-pub const WRITER_PROMPT: &str = r#"
-You are the Lead Research Report Writer. Your job is to synthesize all research findings into a comprehensive, professional, well-structured Markdown report.
-
-User Original Query: {{ user_query }}
-Research Plan Title: {{ plan_title }}
-
-Collected Research Notes & Evidence:
-{{ research_notes }}
-
-Verified Sources Captured:
-{{ verified_sources }}
-
-Instructions for Synthesis:
-1. Write a clear, executive-grade Markdown document with appropriate headings (#, ##, ###).
-2. Incorporate specific numbers, dates, prices, direct quotes, and community consensus found in the research notes.
-3. Every major factual claim or recommendation MUST cite its corresponding source using Markdown links [Source Name](URL).
-4. If information for certain parts was limited or unavailable, honestly describe the gap.
-5. End with a "Summary & Recommendations" section.
-"#;
+// Canonical NVIDIA Jinja2 Prompt Templates (100% Unabridged Byte-for-Byte Preservation)
+pub const ORCHESTRATOR_TEMPLATE: &str = include_str!("templates/orchestrator.j2");
+pub const PLANNER_TEMPLATE: &str = include_str!("templates/planner.j2");
+pub const RESEARCHER_TEMPLATE: &str = include_str!("templates/researcher.j2");
+pub const WRITER_TEMPLATE: &str = include_str!("templates/writer.j2");
+pub const SOURCE_ROUTER_TEMPLATE: &str = include_str!("templates/source_router.j2");
+pub const SOURCE_REGISTRY_TEMPLATE: &str = include_str!("templates/source_registry.j2");
+pub const INTENT_TEMPLATE: &str = include_str!("templates/intent_classification.j2");
+pub const CONTEXT_INTENT_TEMPLATE: &str = include_str!("templates/context_aware_intent_router.j2");
 
 pub struct PromptEngine {
     env: Environment<'static>,
@@ -98,31 +27,170 @@ impl Default for PromptEngine {
 impl PromptEngine {
     pub fn new() -> Self {
         let mut env = Environment::new();
-        env.add_template("intent", INTENT_PROMPT).unwrap();
-        env.add_template("planner", PLANNER_PROMPT).unwrap();
-        env.add_template("worker", WORKER_PROMPT).unwrap();
-        env.add_template("writer", WRITER_PROMPT).unwrap();
+        env.add_template("orchestrator", ORCHESTRATOR_TEMPLATE).unwrap();
+        env.add_template("planner", PLANNER_TEMPLATE).unwrap();
+        env.add_template("researcher", RESEARCHER_TEMPLATE).unwrap();
+        env.add_template("writer", WRITER_TEMPLATE).unwrap();
+        env.add_template("source_router", SOURCE_ROUTER_TEMPLATE).unwrap();
+        env.add_template("source_registry", SOURCE_REGISTRY_TEMPLATE).unwrap();
+        env.add_template("intent", INTENT_TEMPLATE).unwrap();
+        env.add_template("context_intent", CONTEXT_INTENT_TEMPLATE).unwrap();
         Self { env }
     }
 
-    pub fn render_intent(&self, user_query: &str) -> Result<String, String> {
+    /// Render Intent Classifier system prompt
+    pub fn render_intent_system(
+        &self,
+        current_datetime: Option<&str>,
+        available_documents: Option<&Value>,
+    ) -> Result<String, String> {
         let tmpl = self.env.get_template("intent").map_err(|e| e.to_string())?;
-        let current_datetime = chrono::Utc::now().to_rfc3339();
-        tmpl.render(context! { user_query, current_datetime })
-            .map_err(|e| e.to_string())
+        let now_str = current_datetime
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string());
+        let docs = available_documents.cloned().unwrap_or_else(|| serde_json::json!([]));
+        tmpl.render(context! {
+            current_datetime => now_str,
+            available_documents => docs,
+        })
+        .map_err(|e| e.to_string())
     }
 
-    pub fn render_planner(&self, user_query: &str) -> Result<String, String> {
+    /// Render Research Planner system prompt matching NVIDIA factory.py
+    pub fn render_planner_system(
+        &self,
+        tools: &[serde_json::Value],
+        enable_source_router: bool,
+        max_research_concurrency: usize,
+        current_datetime: Option<&str>,
+        user_info: Option<&Value>,
+        available_documents: Option<&Value>,
+    ) -> Result<String, String> {
         let tmpl = self.env.get_template("planner").map_err(|e| e.to_string())?;
-        tmpl.render(context! { user_query }).map_err(|e| e.to_string())
+        let now_str = current_datetime
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string());
+        let docs = available_documents.cloned().unwrap_or_else(|| serde_json::json!([]));
+        let uinfo = user_info.cloned().unwrap_or_else(|| serde_json::json!({}));
+        tmpl.render(context! {
+            current_datetime => now_str,
+            user_info => uinfo,
+            available_documents => docs,
+            tools => tools,
+            enable_source_router => enable_source_router,
+            max_research_concurrency => max_research_concurrency,
+        })
+        .map_err(|e| e.to_string())
     }
 
+    /// Render Researcher Worker system prompt matching NVIDIA factory.py
+    pub fn render_researcher_system(
+        &self,
+        tools: &[serde_json::Value],
+        current_datetime: Option<&str>,
+        user_info: Option<&Value>,
+        available_documents: Option<&Value>,
+        execution_enabled: bool,
+    ) -> Result<String, String> {
+        let tmpl = self.env.get_template("researcher").map_err(|e| e.to_string())?;
+        let now_str = current_datetime
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string());
+        let docs = available_documents.cloned().unwrap_or_else(|| serde_json::json!([]));
+        let uinfo = user_info.cloned().unwrap_or_else(|| serde_json::json!({}));
+        tmpl.render(context! {
+            current_datetime => now_str,
+            user_info => uinfo,
+            available_documents => docs,
+            tools => tools,
+            execution_enabled => execution_enabled,
+            sandbox_workdir => "/tmp/workspace",
+            sandbox_artifact_dir => "/tmp/artifacts",
+        })
+        .map_err(|e| e.to_string())
+    }
+
+    /// Render Synthesis Writer system prompt matching NVIDIA factory.py
+    pub fn render_writer_system(
+        &self,
+        current_datetime: Option<&str>,
+        user_info: Option<&Value>,
+        parent_report_context_available: bool,
+        chart_skill_enabled: bool,
+        execution_enabled: bool,
+    ) -> Result<String, String> {
+        let tmpl = self.env.get_template("writer").map_err(|e| e.to_string())?;
+        let now_str = current_datetime
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string());
+        let uinfo = user_info.cloned().unwrap_or_else(|| serde_json::json!({}));
+        tmpl.render(context! {
+            current_datetime => now_str,
+            user_info => uinfo,
+            parent_report_context_available => parent_report_context_available,
+            chart_skill_enabled => chart_skill_enabled,
+            execution_enabled => execution_enabled,
+            sandbox_workdir => "/tmp/workspace",
+            sandbox_artifact_dir => "/tmp/artifacts",
+        })
+        .map_err(|e| e.to_string())
+    }
+
+    /// Backward-compatible intent prompt renderer
+    pub fn render_intent(&self, user_query: &str) -> Result<String, String> {
+        let system_prompt = self.render_intent_system(None, None)?;
+        Ok(format!("{}\n\nUser Query: {}", system_prompt, user_query))
+    }
+
+    /// Backward-compatible planner prompt renderer (now backed by full NVIDIA planner.j2)
+    pub fn render_planner(&self, user_query: &str) -> Result<String, String> {
+        let default_tools = vec![
+            serde_json::json!({
+                "name": "tavily_search",
+                "description": "Comprehensive web search engine returning relevant snippets, titles, and verified URLs."
+            }),
+            serde_json::json!({
+                "name": "think",
+                "description": "Record reasoning steps, plan decomposition, evaluate evidence gaps, and verify constraints."
+            }),
+        ];
+        let system_prompt = self.render_planner_system(
+            &default_tools,
+            false,
+            6,
+            None,
+            None,
+            None,
+        )?;
+        Ok(format!("{}\n\n## User Research Task\n{}", system_prompt, user_query))
+    }
+
+    /// Backward-compatible worker prompt renderer (backed by full NVIDIA researcher.j2)
     pub fn render_worker(&self, query: &str, target_angle: &str, search_content: &str) -> Result<String, String> {
-        let tmpl = self.env.get_template("worker").map_err(|e| e.to_string())?;
-        tmpl.render(context! { query, target_angle, search_content })
-            .map_err(|e| e.to_string())
+        let default_tools = vec![
+            serde_json::json!({
+                "name": "tavily_search",
+                "description": "Run targeted search queries for specific factual evidence and data points."
+            }),
+            serde_json::json!({
+                "name": "think",
+                "description": "Analyze results, identify information gaps, and evaluate confidence."
+            }),
+        ];
+        let system_prompt = self.render_researcher_system(
+            &default_tools,
+            None,
+            None,
+            None,
+            false,
+        )?;
+        Ok(format!(
+            "{}\n\n## Assigned Research Query\n**Query:** {}\n**Target Angle:** {}\n\n## Search Findings\n{}",
+            system_prompt, query, target_angle, search_content
+        ))
     }
 
+    /// Backward-compatible writer prompt renderer (backed by full NVIDIA writer.j2)
     pub fn render_writer(
         &self,
         user_query: &str,
@@ -130,8 +198,14 @@ impl PromptEngine {
         research_notes: &str,
         verified_sources: &Value,
     ) -> Result<String, String> {
-        let tmpl = self.env.get_template("writer").map_err(|e| e.to_string())?;
-        tmpl.render(context! { user_query, plan_title, research_notes, verified_sources })
-            .map_err(|e| e.to_string())
+        let system_prompt = self.render_writer_system(None, None, false, false, false)?;
+        Ok(format!(
+            "{}\n\n## User Request\n**Query:** {}\n**Research Plan Title:** {}\n\n## Compiled Research Notes & Evidence\n{}\n\n## Verified Sources Whitelist\n```json\n{}\n```",
+            system_prompt,
+            user_query,
+            plan_title,
+            research_notes,
+            serde_json::to_string_pretty(verified_sources).unwrap_or_default()
+        ))
     }
 }
