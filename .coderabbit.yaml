@@ -101,7 +101,7 @@ reviews:
         Review automation and packaging changes for least-privilege permissions, pinned versions where appropriate,
         copy-pr-bot pull-request/<N> branch behavior, reproducible uv/npm setup, secret handling, and consistency with
         the documented validation matrix.
-    - path: "{docs/**,README.md,CONTRIBUTING.md,SECURITY.md,CODE-OF-CONDUCT.md}"
+    - path: "{docs/**,README.md,CONTRIBUTING.md}"
       instructions: |
         Review documentation for command accuracy, branch-name consistency, current CI and copy-pr-bot behavior, public
         vs internal boundary clarity, stale examples, and links that no longer match the repository layout.
