@@ -12,6 +12,7 @@ Standardized evaluation suites for measuring research quality.
 | [FreshQA](./freshqa.md) | Factual accuracy on current knowledge | 600 questions | Shallow, Full pipeline |
 | [Deep Research Bench](./deep-research-bench.md) | Report quality (RACE + FACT metrics) | 100 topics | Deep researcher |
 | [DeepSearchQA](./deepsearch-qa.md) | Document QA across categories | 900 problems | Deep researcher |
+| [Python vs. Rust Port Audit](./python-vs-rust-audit.md) | Architectural fidelity, math precision, and research quality | 2 comprehensive runs | Python & Rust engines |
 
 ```{toctree}
 :titlesonly:
@@ -19,4 +20,5 @@ Standardized evaluation suites for measuring research quality.
 freshqa.md
 deep-research-bench.md
 deepsearch-qa.md
+python-vs-rust-audit.md
 ```
