@@ -108,7 +108,11 @@ pub async fn submit_job_handler(
 
             tokio::spawn(async move {
                 let _permit = permit; // RAII release on task finish
-                let _ = coordinator.run_workflow(&j_id, &q).await;
+                if let Err(err) = coordinator.run_workflow(&j_id, &q).await {
+                    tracing::error!("Job '{}' workflow failed: {}", j_id, err);
+                    let _ = coordinator.storage.fail_job(&j_id, &err.to_string()).await;
+                    let _ = coordinator.storage.add_event(&j_id, "error", &format!("Research failed: {}", err)).await;
+                }
             });
 
             Ok(Json(SubmitJobResponse {
@@ -142,7 +146,11 @@ pub async fn submit_job_handler(
                     Ok(permit) => {
                         let _permit = permit;
                         let _ = storage.add_event(&j_id, "dequeued", "Memory freed. Starting research now.").await;
-                        let _ = coordinator.run_workflow(&j_id, &q).await;
+                        if let Err(err) = coordinator.run_workflow(&j_id, &q).await {
+                            tracing::error!("Job '{}' workflow failed: {}", j_id, err);
+                            let _ = coordinator.storage.fail_job(&j_id, &err.to_string()).await;
+                            let _ = coordinator.storage.add_event(&j_id, "error", &format!("Research failed: {}", err)).await;
+                        }
                     }
                     Err(err) => {
                         let _ = storage.fail_job(&j_id, &err).await;

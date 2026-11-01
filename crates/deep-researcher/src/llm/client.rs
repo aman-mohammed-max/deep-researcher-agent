@@ -46,6 +46,8 @@ struct CompletionPayload<'a> {
     messages: &'a [ChatMessage],
     temperature: f32,
     max_tokens: u32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    chat_template_kwargs: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -55,8 +57,19 @@ struct CompletionResponse {
 }
 
 #[derive(Debug, Deserialize)]
+struct ChoiceMessage {
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub role: Option<String>,
+    #[serde(default)]
+    pub content: Option<String>,
+    #[serde(default)]
+    pub reasoning_content: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
 struct Choice {
-    message: ChatMessage,
+    message: ChoiceMessage,
 }
 
 #[derive(Clone)]
@@ -102,11 +115,19 @@ impl LlmClient {
     ) -> Result<(String, TokenUsage), AppError> {
         let endpoint = format!("{}/chat/completions", self.base_url);
 
+        let is_nim = model.contains("nemotron") || self.base_url.contains("nvidia");
+        let chat_template_kwargs = if is_nim {
+            Some(serde_json::json!({ "enable_thinking": false }))
+        } else {
+            None
+        };
+
         let payload = CompletionPayload {
             model,
             messages,
             temperature: temperature.unwrap_or(0.2),
             max_tokens: 8192,
+            chat_template_kwargs,
         };
 
         debug!("Calling LLM endpoint: {} with model: {}", endpoint, model);
@@ -140,7 +161,14 @@ impl LlmClient {
         let text = parsed
             .choices
             .first()
-            .map(|c| c.message.content.clone())
+            .and_then(|c| {
+                if let Some(ref cnt) = c.message.content {
+                    if !cnt.trim().is_empty() {
+                        return Some(cnt.clone());
+                    }
+                }
+                c.message.reasoning_content.clone()
+            })
             .unwrap_or_default();
 
         let usage = parsed.usage.unwrap_or_default();

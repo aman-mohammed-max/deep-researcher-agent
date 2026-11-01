@@ -46,7 +46,7 @@ impl AppConfig {
         let (default_base_url, default_model, api_key) = if let Ok(k) = env::var("NVIDIA_API_KEY") {
             (
                 "https://integrate.api.nvidia.com/v1".to_string(),
-                env::var("DEEP_RESEARCHER_MODEL").unwrap_or_else(|_| "meta/llama-3.1-70b-instruct".to_string()),
+                env::var("DEEP_RESEARCHER_MODEL").unwrap_or_else(|_| "nvidia/nemotron-3.5-lightning-30b-a3b".to_string()),
                 k,
             )
         } else if let Ok(k) = env::var("DEEPSEEK_API_KEY") {
@@ -64,7 +64,7 @@ impl AppConfig {
         } else {
             (
                 env::var("LLM_BASE_URL").unwrap_or_else(|_| "https://integrate.api.nvidia.com/v1".to_string()),
-                env::var("DEEP_RESEARCHER_MODEL").unwrap_or_else(|_| "meta/llama-3.1-70b-instruct".to_string()),
+                env::var("DEEP_RESEARCHER_MODEL").unwrap_or_else(|_| "nvidia/nemotron-3.5-lightning-30b-a3b".to_string()),
                 env::var("LLM_API_KEY").unwrap_or_default(),
             )
         };
