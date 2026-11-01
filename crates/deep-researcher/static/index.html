@@ -8,11 +8,24 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     code, pre { font-family: 'JetBrains Mono', monospace; }
-    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
-    .dark .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); }
+    .glass { background: rgba(255, 255, 255, 0.90); backdrop-filter: blur(12px); }
+    .dark .glass { background: rgba(15, 23, 42, 0.90); backdrop-filter: blur(12px); }
+    
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: rgba(75, 85, 99, 0.4); }
+
+    /* Custom Animations */
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .animate-pulse-slow { animation: pulse-slow 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
   </style>
   <script>
     tailwind.config = {
@@ -20,7 +33,15 @@
       theme: {
         extend: {
           colors: {
-            brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3'
+            },
             slate: { 850: '#111827', 950: '#030712' }
           }
         }
@@ -28,299 +49,979 @@
     }
   </script>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 h-screen flex flex-col overflow-hidden transition-colors duration-200">
 
-  <!-- Navigation Bar -->
-  <header class="sticky top-0 z-50 glass border-b border-slate-200 dark:border-slate-800 px-6 py-3.5 flex items-center justify-between">
+  <!-- ========================================================================= -->
+  <!-- 1. TOP APP BAR (AppBar)                                                   -->
+  <!-- ========================================================================= -->
+  <header class="h-14 shrink-0 glass border-b border-slate-200 dark:border-slate-800 px-4 flex items-center justify-between z-40">
     <div class="flex items-center space-x-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-        <i class="fa-solid fa-atom text-lg"></i>
+      <!-- Toggle Sessions Rail Button -->
+      <button onclick="toggleSessionsRail()" class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Sessions Rail">
+        <i class="fa-solid fa-bars text-sm"></i>
+      </button>
+
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-sm shadow-brand-500/20">
+          <i class="fa-solid fa-atom text-sm"></i>
+        </div>
+        <span class="font-bold text-base tracking-tight bg-gradient-to-r from-slate-900 via-indigo-950 to-brand-600 dark:from-white dark:via-indigo-200 dark:to-indigo-400 bg-clip-text text-transparent hidden sm:inline">
+          Deep Researcher Agent
+        </span>
       </div>
-      <div>
-        <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-slate-900 via-indigo-950 to-brand-600 dark:from-white dark:via-indigo-200 dark:to-indigo-400 bg-clip-text text-transparent">Deep Researcher Agent</span>
-        <span class="text-xs font-semibold px-2 py-0.5 ml-1.5 rounded-full bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">Rust Core</span>
+
+      <!-- Navigation Tabs (Playground, Dashboard, Keys) -->
+      <div class="hidden md:flex items-center space-x-1 ml-4 bg-slate-200/60 dark:bg-slate-800/60 p-0.5 rounded-lg text-xs font-medium">
+        <button onclick="switchView('playground')" id="nav-playground" class="px-3 py-1 rounded-md transition-all flex items-center space-x-1.5 bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-xs font-semibold">
+          <i class="fa-solid fa-flask-vial"></i>
+          <span>Playground</span>
+        </button>
+        <button onclick="switchView('dashboard')" id="nav-dashboard" class="px-3 py-1 rounded-md transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Observability</span>
+        </button>
+        <button onclick="switchView('keys')" id="nav-keys" class="px-3 py-1 rounded-md transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-key"></i>
+          <span>API Keys</span>
+        </button>
       </div>
     </div>
 
-    <!-- Tab Navigation -->
-    <nav class="flex items-center space-x-1 bg-slate-200/60 dark:bg-slate-800/60 p-1 rounded-xl text-sm font-medium">
-      <button onclick="switchTab('research')" id="tab-research" class="px-3.5 py-1.5 rounded-lg transition-all flex items-center space-x-2 bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm">
-        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-        <span>Research</span>
-      </button>
-      <button onclick="switchTab('playground')" id="tab-playground" class="px-3.5 py-1.5 rounded-lg transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-        <i class="fa-solid fa-terminal text-xs"></i>
-        <span>Playground</span>
-      </button>
-      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-3.5 py-1.5 rounded-lg transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-        <i class="fa-solid fa-chart-line text-xs"></i>
-        <span>Dashboard</span>
-      </button>
-      <button onclick="switchTab('keys')" id="tab-keys" class="px-3.5 py-1.5 rounded-lg transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-        <i class="fa-solid fa-key text-xs"></i>
-        <span>API Keys</span>
-      </button>
-    </nav>
-
-    <!-- Header Actions -->
-    <div class="flex items-center space-x-3">
-      <div id="ram-indicator" class="hidden sm:flex items-center space-x-2 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-slate-500 dark:text-slate-400">RAM:</span>
-        <span id="header-ram-val" class="font-semibold text-slate-700 dark:text-slate-200">--%</span>
+    <!-- Right Controls in AppBar -->
+    <div class="flex items-center space-x-2">
+      <!-- LLM Model Selector -->
+      <div class="hidden lg:flex items-center space-x-1.5 px-2 py-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg text-xs border border-slate-200/80 dark:border-slate-700/80">
+        <i class="fa-solid fa-microchip text-brand-500"></i>
+        <select id="select-model" class="bg-transparent focus:outline-none font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
+          <option value="meta/llama-3.1-70b-instruct">NVIDIA Llama 3.1 70B</option>
+          <option value="deepseek-chat">DeepSeek Chat</option>
+          <option value="gpt-4o">OpenAI GPT-4o</option>
+          <option value="llama-3.3-70b-versatile">Groq Llama 3.3 70B</option>
+        </select>
       </div>
-      <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-        <i id="theme-icon" class="fa-solid fa-moon"></i>
+
+      <!-- Data Sources Button -->
+      <button onclick="openDataSourcesModal()" class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1.5 transition">
+        <i class="fa-solid fa-globe text-brand-500"></i>
+        <span class="hidden sm:inline">Data Sources</span>
+        <span class="w-4 h-4 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300 text-[10px] flex items-center justify-center font-bold">3</span>
+      </button>
+
+      <!-- Show Research Toggle Button (Right Panel) -->
+      <button id="btn-toggle-research" onclick="toggleResearchPanel()" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-medium hover:border-brand-500 flex items-center space-x-1.5 transition relative">
+        <span id="research-spinner" class="hidden">
+          <i class="fa-solid fa-circle-notch animate-spin text-brand-500"></i>
+        </span>
+        <span id="research-static-icon">
+          <i class="fa-solid fa-network-wired text-brand-500"></i>
+        </span>
+        <span class="font-semibold">Research Panel</span>
+      </button>
+
+      <!-- New Session Button -->
+      <button onclick="createNewSession()" class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Start New Session">
+        <i class="fa-solid fa-pen-to-square text-sm"></i>
+      </button>
+
+      <!-- Dark Mode Toggle -->
+      <button onclick="toggleDarkMode()" class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Theme">
+        <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
       </button>
     </div>
   </header>
 
-  <!-- Main Content Areas -->
-  <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6">
+  <!-- ========================================================================= -->
+  <!-- 2. MAIN WORKSPACE VIEW (PLAYGROUND 1:1 UX)                                -->
+  <!-- ========================================================================= -->
+  <div id="view-playground" class="flex-1 flex overflow-hidden relative">
 
-    <!-- 1. RESEARCH TAB -->
-    <section id="view-research" class="space-y-6">
-      <div class="text-center py-6">
-        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Autonomous Deep Research</h1>
-        <p class="text-slate-500 dark:text-slate-400 mt-2 max-w-xl mx-auto text-sm">
-          Multi-angle investigation across web, Reddit, community discussions, and zero-auth skills with verified citations.
-        </p>
+    <!-- --------------------------------------------------------------------- -->
+    <!-- A. SESSIONS PANEL (LEFT COLLAPSIBLE RAIL)                              -->
+    <!-- --------------------------------------------------------------------- -->
+    <aside id="sessions-rail" class="w-72 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 flex flex-col transition-all duration-300 z-30">
+      <!-- Rail Header -->
+      <div class="p-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Research Sessions</span>
+        <button onclick="createNewSession()" class="px-2 py-1 rounded bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-300 text-xs font-semibold hover:bg-brand-100 transition flex items-center space-x-1">
+          <i class="fa-solid fa-plus text-[10px]"></i>
+          <span>New</span>
+        </button>
       </div>
 
-      <!-- Search Input Box -->
-      <div class="glass border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-4 transition focus-within:ring-2 focus-within:ring-brand-500/50">
-        <div class="flex flex-col space-y-3">
-          <textarea id="research-query" rows="3" placeholder="What would you like to investigate? (e.g. 'Find a room or flatmate in Kochi, Kerala with prices and reviews' or 'Comprehensive market valuation of Nvidia with 10-K analysis')" class="w-full bg-transparent resize-none focus:outline-none text-base placeholder-slate-400"></textarea>
-          
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800/80">
-            <div class="flex items-center space-x-2 text-xs">
-              <span class="text-slate-400">Sources:</span>
-              <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Web</span>
-              <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Reddit</span>
-              <span class="px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-brand-600 dark:text-brand-300 font-medium">Adaptive Skills</span>
-            </div>
-            
-            <button onclick="startResearch()" id="btn-submit" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm flex items-center space-x-2 shadow-md shadow-brand-600/30 transition">
-              <span>Start Research</span>
-              <i class="fa-solid fa-arrow-right text-xs"></i>
+      <!-- Search Sessions -->
+      <div class="p-2.5">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
+          <input type="text" id="sessions-search" placeholder="Filter sessions..." oninput="filterSessions(this.value)" class="w-full bg-slate-100 dark:bg-slate-800 pl-8 pr-3 py-1.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 text-slate-700 dark:text-slate-200">
+        </div>
+      </div>
+
+      <!-- Sessions List -->
+      <div id="sessions-list" class="flex-1 overflow-y-auto px-2 space-y-1 py-1">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Rail Footer (Clear All) -->
+      <div class="p-2 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-[11px] text-slate-400">
+        <span id="session-count-text">0 sessions</span>
+        <button onclick="clearAllSessions()" class="hover:text-rose-500 transition">Clear all</button>
+      </div>
+    </aside>
+
+    <!-- --------------------------------------------------------------------- -->
+    <!-- B. CHAT AREA & INPUT (CENTER)                                         -->
+    <!-- --------------------------------------------------------------------- -->
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50 dark:bg-slate-950/50 relative overflow-hidden">
+      
+      <!-- Queue Backpressure Notice Banner -->
+      <div id="queue-banner" class="hidden shrink-0 bg-amber-50 dark:bg-amber-950/50 border-b border-amber-200 dark:border-amber-900/60 px-4 py-2 text-xs flex items-center space-x-2.5 text-amber-800 dark:text-amber-300">
+        <i class="fa-solid fa-clock text-amber-500 animate-spin"></i>
+        <div class="flex-1 font-medium">
+          <span class="font-bold">Server Under Concurrency / RAM Guard:</span>
+          <span id="queue-banner-msg">Your query is safely queued and will begin the moment active jobs complete.</span>
+        </div>
+      </div>
+
+      <!-- Scrollable Messages Container -->
+      <div id="chat-messages-container" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+        
+        <!-- Welcome / Hero State (Shown when session is empty) -->
+        <div id="hero-welcome" class="max-w-2xl mx-auto py-12 text-center space-y-6">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-indigo-300 flex items-center justify-center text-white text-2xl shadow-xl shadow-brand-500/20">
+            <i class="fa-solid fa-atom"></i>
+          </div>
+
+          <div class="space-y-2">
+            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">What would you like to research today?</h1>
+            <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
+              Autonomous multi-agent research across live web, Reddit community sentiment, local discussions, and zero-auth skills with strict source verification.
+            </p>
+          </div>
+
+          <!-- Suggested Query Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left pt-4">
+            <button onclick="fillAndSubmitPrompt('Find affordable rental rooms or flats in Kakkanad, Kochi with monthly rates and deposit feedback')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-brand-500/60 dark:hover:border-brand-500/60 shadow-xs hover:shadow-md transition group">
+              <div class="flex items-center space-x-2 text-brand-600 dark:text-brand-400 text-xs font-semibold mb-1">
+                <i class="fa-solid fa-house"></i>
+                <span>Local Housing & Room Finder</span>
+              </div>
+              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
+                "Find rental rooms or flats in Kakkanad, Kochi with monthly rates and community feedback"
+              </div>
             </button>
+
+            <button onclick="fillAndSubmitPrompt('Comprehensive financial valuation of Nvidia (NVDA) including 10-K datacenter revenue and competitive risks')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-brand-500/60 dark:hover:border-brand-500/60 shadow-xs hover:shadow-md transition group">
+              <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 text-xs font-semibold mb-1">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Financial Analysis & 10-K</span>
+              </div>
+              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
+                "Comprehensive valuation of Nvidia (NVDA) with datacenter growth and competitive risks"
+              </div>
+            </button>
+
+            <button onclick="fillAndSubmitPrompt('Compare Rust Axum vs Node.js for high-concurrency microservices with memory benchmarks')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-brand-500/60 dark:hover:border-brand-500/60 shadow-xs hover:shadow-md transition group">
+              <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 text-xs font-semibold mb-1">
+                <i class="fa-solid fa-code-compare"></i>
+                <span>System Architecture</span>
+              </div>
+              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
+                "Compare Rust Axum vs Node.js for high-concurrency microservices with memory benchmarks"
+              </div>
+            </button>
+
+            <button onclick="fillAndSubmitPrompt('Commercial nuclear fusion timeline, stellarator vs tokamak milestones, and grid roadmap')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-brand-500/60 dark:hover:border-brand-500/60 shadow-xs hover:shadow-md transition group">
+              <div class="flex items-center space-x-2 text-violet-600 dark:text-violet-400 text-xs font-semibold mb-1">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Deep Tech Roadmap</span>
+              </div>
+              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
+                "Commercial nuclear fusion timeline, stellarator vs tokamak milestones, and grid roadmap"
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Chat Turns (Rendered via JS) -->
+        <div id="chat-turns" class="space-y-6 max-w-4xl mx-auto w-full"></div>
+
+      </div>
+
+      <!-- ------------------------------------------------------------------- -->
+      <!-- C. INPUT AREA (BOTTOM CONTAINER)                                    -->
+      <!-- ------------------------------------------------------------------- -->
+      <div class="p-4 border-t border-slate-200/80 dark:border-slate-800/80 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md">
+        <div class="max-w-4xl mx-auto">
+          <div class="glass border border-slate-300 dark:border-slate-700/80 rounded-2xl shadow-lg p-3 transition focus-within:ring-2 focus-within:ring-brand-500/50">
+            <!-- Textarea -->
+            <textarea 
+              id="prompt-input" 
+              rows="2" 
+              placeholder="Check data sources and ask a research question... (Press Enter to submit)" 
+              onkeydown="handleInputKeydown(event)"
+              class="w-full bg-transparent resize-none focus:outline-none text-sm placeholder-slate-400 text-slate-800 dark:text-slate-100"
+            ></textarea>
+
+            <!-- Bottom Action Row -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div class="flex items-center space-x-2 text-xs">
+                <!-- Deep Research Mode Badge -->
+                <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 font-semibold border border-brand-200 dark:border-brand-900/60">
+                  <i class="fa-solid fa-diagram-project text-[10px]"></i>
+                  <span>Deep Research</span>
+                </div>
+
+                <!-- Enabled Sources Indicator -->
+                <div class="hidden sm:flex items-center space-x-1 text-slate-500 dark:text-slate-400 text-[11px]">
+                  <span>Sources:</span>
+                  <span class="font-medium text-slate-700 dark:text-slate-300">Web, Reddit, Zero-Auth Skills</span>
+                </div>
+              </div>
+
+              <!-- Submit / Stop Action Button -->
+              <div class="flex items-center space-x-2">
+                <span class="text-[11px] text-slate-400 hidden md:inline">Shift+Enter for newline</span>
+                <button 
+                  id="btn-send" 
+                  onclick="handleSendOrStop()" 
+                  class="w-8 h-8 rounded-xl bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center transition shadow-sm cursor-pointer"
+                  title="Send Research Inquiry"
+                >
+                  <i id="btn-send-icon" class="fa-solid fa-arrow-up text-xs"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- --------------------------------------------------------------------- -->
+    <!-- D. RESEARCH PANEL (RIGHT COLLAPSIBLE INSPECTOR - 1:1 UX)               -->
+    <!-- --------------------------------------------------------------------- -->
+    <aside id="research-panel" class="w-0 overflow-hidden border-l border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 flex flex-col transition-all duration-300 z-30">
+      
+      <!-- Panel Header & Segmented Tabs -->
+      <div class="h-14 shrink-0 px-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <!-- Segmented Tab Controls (Tasks, Thinking, Report, Sources) -->
+        <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg text-xs font-medium">
+          <button onclick="switchResearchTab('tasks')" id="rtab-tasks" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-xs font-semibold">
+            Tasks
+          </button>
+          <button onclick="switchResearchTab('thinking')" id="rtab-thinking" class="px-2.5 py-1 rounded-md text-slate-500 hover:text-slate-900 dark:hover:text-white">
+            Thinking
+          </button>
+          <button onclick="switchResearchTab('report')" id="rtab-report" class="px-2.5 py-1 rounded-md text-slate-500 hover:text-slate-900 dark:hover:text-white">
+            Report
+          </button>
+          <button onclick="switchResearchTab('sources')" id="rtab-sources" class="px-2.5 py-1 rounded-md text-slate-500 hover:text-slate-900 dark:hover:text-white">
+            Sources
+          </button>
+        </div>
+
+        <!-- Header Actions (Stop & Close) -->
+        <div class="flex items-center space-x-2">
+          <button id="btn-panel-stop" onclick="stopActiveResearch()" class="hidden px-2 py-1 rounded bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-xs font-semibold transition flex items-center space-x-1">
+            <i class="fa-solid fa-stop text-[10px]"></i>
+            <span>Stop</span>
+          </button>
+          <button onclick="toggleResearchPanel()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Tasks / Plan Tab -->
+      <div id="rview-tasks" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <div>
+          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Research Plan</div>
+          <h3 id="plan-title-display" class="font-bold text-sm text-slate-800 dark:text-slate-100 mt-1">No active plan generated yet.</h3>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs text-slate-500">
+            <span>Overall Progress</span>
+            <span id="plan-progress-pct" class="font-bold text-brand-600">0%</span>
+          </div>
+          <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+            <div id="plan-progress-bar" class="bg-brand-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Sub-queries list -->
+        <div class="space-y-2 pt-2">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Sub-Query Tasks</div>
+          <div id="tasks-list" class="space-y-2">
+            <div class="text-xs text-slate-400 italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>
           </div>
         </div>
       </div>
 
-      <!-- Progress / Queue Banner -->
-      <div id="queue-banner" class="hidden p-4 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800/50 text-amber-800 dark:text-amber-200 flex items-center space-x-3 text-sm">
-        <i class="fa-solid fa-clock-rotate-left animate-spin text-amber-500"></i>
-        <span id="queue-msg">Job Queued: Waiting for memory headroom...</span>
+      <!-- Tab 2: Thinking Tab -->
+      <div id="rview-thinking" class="hidden flex-1 overflow-y-auto p-4 space-y-3 font-mono text-xs">
+        <div class="text-[11px] font-sans font-bold text-slate-400 uppercase tracking-wider">Agent Monologue & Monitored Traces</div>
+        <div id="thinking-stream-list" class="space-y-2 text-slate-700 dark:text-slate-300">
+          <div class="text-xs text-slate-400 italic font-sans">No research thinking active.</div>
+        </div>
       </div>
 
-      <!-- Active Execution Steps Timeline -->
-      <div id="steps-card" class="hidden glass border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Live Investigation Trajectory</h3>
-        <div id="steps-timeline" class="space-y-2 text-sm"></div>
-      </div>
-
-      <!-- Final Report View -->
-      <div id="report-card" class="hidden glass border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
-          <div class="flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            <span class="font-semibold text-sm">Synthesis Complete</span>
-          </div>
-          <button onclick="copyReport()" class="text-xs text-brand-600 hover:underline flex items-center space-x-1">
+      <!-- Tab 3: Dedicated Report View -->
+      <div id="rview-report" class="hidden flex-1 overflow-y-auto p-6 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Document Synthesis</span>
+          <button onclick="copyCurrentReport()" class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-medium hover:bg-slate-200 transition flex items-center space-x-1">
             <i class="fa-regular fa-copy"></i>
             <span>Copy Markdown</span>
           </button>
         </div>
-        <div id="report-content" class="prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 leading-relaxed"></div>
-      </div>
-    </section>
-
-    <!-- 2. PLAYGROUND TAB -->
-    <section id="view-playground" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold">Research Playground</h2>
-          <p class="text-sm text-slate-500">Test prompts, switch LLM models, and observe real-time agent reasoning steps.</p>
-        </div>
-        <div class="flex items-center space-x-2">
-          <label class="text-xs text-slate-400">Model:</label>
-          <select id="playground-model" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-1.5 text-xs font-medium">
-            <option value="meta/llama-3.1-70b-instruct">NVIDIA Llama 3.1 70B (Default)</option>
-            <option value="deepseek-chat">DeepSeek Chat</option>
-            <option value="gpt-4o">OpenAI GPT-4o</option>
-            <option value="llama-3.3-70b-versatile">Groq Llama 3.3 70B</option>
-          </select>
+        <div id="panel-report-content" class="prose dark:prose-invert max-w-none text-xs md:text-sm leading-relaxed">
+          <div class="text-slate-400 italic">No report completed in this session yet.</div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="space-y-4">
-          <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Prompt Input</label>
-            <textarea id="playground-input" rows="6" class="w-full bg-transparent resize-none focus:outline-none text-sm placeholder-slate-400" placeholder="Enter research prompt..."></textarea>
-            <button onclick="runPlayground()" class="mt-3 w-full py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium transition">Execute Run</button>
-          </div>
-        </div>
-
-        <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <label class="text-xs font-bold text-slate-500 uppercase">Agent Reasoning Log</label>
-            <span id="playground-tokens" class="text-xs text-brand-600 font-mono">0 tokens</span>
-          </div>
-          <pre id="playground-output" class="bg-slate-100 dark:bg-slate-900/80 p-3 rounded-lg text-xs overflow-auto max-h-96 text-slate-700 dark:text-slate-300 font-mono whitespace-pre-wrap">Waiting for execution...</pre>
+      <!-- Tab 4: Sources Tab -->
+      <div id="rview-sources" class="hidden flex-1 overflow-y-auto p-4 space-y-3">
+        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Verified Sources Captured</div>
+        <div id="panel-sources-list" class="space-y-2">
+          <div class="text-xs text-slate-400 italic">Sources collected by concurrent workers will be listed here.</div>
         </div>
       </div>
-    </section>
+    </aside>
 
-    <!-- 3. DASHBOARD TAB -->
-    <section id="view-dashboard" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold">Observability & System Dashboard</h2>
-          <p class="text-sm text-slate-500">Live memory, process RSS, queue backpressure, and tokenomics metrics.</p>
-        </div>
-        <button onclick="refreshDashboard()" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs hover:bg-slate-100 dark:hover:bg-slate-900 transition">
-          <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh
-        </button>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. OBSERVABILITY DASHBOARD VIEW                                           -->
+  <!-- ========================================================================= -->
+  <div id="view-dashboard" class="hidden flex-1 overflow-y-auto p-6 max-w-6xl w-full mx-auto space-y-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold">Observability & System Dashboard</h2>
+        <p class="text-sm text-slate-500">Render 512MB RAM monitor, Process RSS Blame, and Dynamic Backpressure Queue.</p>
       </div>
+      <button onclick="refreshDashboard()" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs hover:bg-slate-100 dark:hover:bg-slate-900 transition">
+        <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh
+      </button>
+    </div>
 
-      <!-- Resource Gauges (Render 512MB Monitor) -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-          <div class="text-xs text-slate-400">System RAM Usage</div>
-          <div id="stat-system-ram" class="text-2xl font-bold mt-1 text-slate-800 dark:text-slate-100">--%</div>
-          <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-            <div id="stat-ram-bar" class="bg-emerald-500 h-full rounded-full transition-all" style="width: 0%"></div>
-          </div>
-        </div>
-
-        <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-          <div class="text-xs text-slate-400">Process RSS (Agent)</div>
-          <div id="stat-process-rss" class="text-2xl font-bold mt-1 text-brand-600">-- MB</div>
-          <div class="text-xs text-slate-400 mt-1">Render Free Limit: 512 MB</div>
-        </div>
-
-        <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-          <div class="text-xs text-slate-400">Active / Queued Jobs</div>
-          <div id="stat-jobs-count" class="text-2xl font-bold mt-1 text-slate-800 dark:text-slate-100">0 / 0</div>
-          <div class="text-xs text-emerald-500 mt-1">OOM Guard Active</div>
-        </div>
-
-        <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-          <div class="text-xs text-slate-400">Total Tokens Consumed</div>
-          <div id="stat-tokens" class="text-2xl font-bold mt-1 text-indigo-500">0</div>
-          <div id="stat-cost" class="text-xs text-slate-400 mt-1">Est. Cost: $0.00</div>
+    <!-- Resource Gauges (Render 512MB Monitor) -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+        <div class="text-xs text-slate-400">System RAM Usage</div>
+        <div id="stat-system-ram" class="text-2xl font-bold mt-1 text-slate-800 dark:text-slate-100">--%</div>
+        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+          <div id="stat-ram-bar" class="bg-emerald-500 h-full rounded-full transition-all" style="width: 0%"></div>
         </div>
       </div>
 
-      <!-- Job History Table -->
-      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-          <h3 class="font-semibold text-sm">Recent Research Jobs</h3>
-          <span class="text-xs text-slate-400">Failure inspection & traces</span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-100/60 dark:bg-slate-900/60 text-slate-500 border-b border-slate-200 dark:border-slate-800">
-              <tr>
-                <th class="p-3">Job ID</th>
-                <th class="p-3">Query</th>
-                <th class="p-3">Status</th>
-                <th class="p-3">Tokens</th>
-                <th class="p-3">Timestamp</th>
-              </tr>
-            </thead>
-            <tbody id="dashboard-jobs-body" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
-              <tr><td colspan="5" class="p-4 text-center text-slate-400">No jobs recorded yet.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. API KEYS TAB -->
-    <section id="view-keys" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold">API Key Manager</h2>
-          <p class="text-sm text-slate-500">Generate and manage bearer keys for your Telegram bot and external clients.</p>
-        </div>
-        <button onclick="createApiKey()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
-          <i class="fa-solid fa-plus mr-1"></i> Generate New Key
-        </button>
+      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+        <div class="text-xs text-slate-400">Process RSS (Agent)</div>
+        <div id="stat-process-rss" class="text-2xl font-bold mt-1 text-brand-600">-- MB</div>
+        <div class="text-xs text-slate-400 mt-1">Render Free Limit: 512 MB</div>
       </div>
 
-      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+        <div class="text-xs text-slate-400">Active / Queued Jobs</div>
+        <div id="stat-jobs-count" class="text-2xl font-bold mt-1 text-slate-800 dark:text-slate-100">0 / 0</div>
+        <div class="text-xs text-emerald-500 mt-1">OOM Guard Active</div>
+      </div>
+
+      <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+        <div class="text-xs text-slate-400">Total Tokens Consumed</div>
+        <div id="stat-tokens" class="text-2xl font-bold mt-1 text-indigo-500">0</div>
+        <div id="stat-cost" class="text-xs text-slate-400 mt-1">Est. Cost: $0.00</div>
+      </div>
+    </div>
+
+    <!-- Job History Table -->
+    <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+      <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <h3 class="font-semibold text-sm">Recent Research Jobs</h3>
+        <span class="text-xs text-slate-400">Failure inspection & traces</span>
+      </div>
+      <div class="overflow-x-auto">
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-100/60 dark:bg-slate-900/60 text-slate-500 border-b border-slate-200 dark:border-slate-800">
             <tr>
-              <th class="p-3">Name</th>
-              <th class="p-3">Key Prefix</th>
+              <th class="p-3">Job ID</th>
+              <th class="p-3">Query</th>
               <th class="p-3">Status</th>
-              <th class="p-3">Created</th>
-              <th class="p-3 text-right">Actions</th>
+              <th class="p-3">Tokens</th>
+              <th class="p-3">Timestamp</th>
             </tr>
           </thead>
-          <tbody id="keys-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
-            <tr><td colspan="5" class="p-4 text-center text-slate-400">Loading API keys...</td></tr>
+          <tbody id="dashboard-jobs-body" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
+            <tr><td colspan="5" class="p-4 text-center text-slate-400">No jobs recorded yet.</td></tr>
           </tbody>
         </table>
       </div>
-    </section>
+    </div>
+  </div>
 
-  </main>
+  <!-- ========================================================================= -->
+  <!-- 4. API KEYS VIEW                                                          -->
+  <!-- ========================================================================= -->
+  <div id="view-keys" class="hidden flex-1 overflow-y-auto p-6 max-w-6xl w-full mx-auto space-y-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold">API Key Manager</h2>
+        <p class="text-sm text-slate-500">Generate and manage bearer keys for your Telegram bot and external clients.</p>
+      </div>
+      <button onclick="createApiKey()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+        <i class="fa-solid fa-plus mr-1"></i> Generate New Key
+      </button>
+    </div>
 
+    <div class="glass border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-slate-100/60 dark:bg-slate-900/60 text-slate-500 border-b border-slate-200 dark:border-slate-800">
+          <tr>
+            <th class="p-3">Name</th>
+            <th class="p-3">Key Prefix</th>
+            <th class="p-3">Status</th>
+            <th class="p-3">Created</th>
+            <th class="p-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="keys-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
+          <tr><td colspan="5" class="p-4 text-center text-slate-400">Loading API keys...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 5. DATA SOURCES MODAL (DRAWER)                                            -->
+  <!-- ========================================================================= -->
+  <div id="sources-modal" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="glass border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-sliders text-brand-600"></i>
+          <h3 class="font-bold text-sm">Configure Data Sources</h3>
+        </div>
+        <button onclick="closeDataSourcesModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <!-- Source 1: Web -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 cursor-pointer hover:border-brand-500 transition">
+          <input type="checkbox" id="ds-web" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+          <div>
+            <div class="font-semibold text-slate-800 dark:text-slate-200">Web Search (Tavily & DuckDuckGo)</div>
+            <div class="text-slate-400 mt-0.5">High-accuracy realtime search with technical documentation and news sources.</div>
+          </div>
+        </label>
+
+        <!-- Source 2: Reddit -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 cursor-pointer hover:border-brand-500 transition">
+          <input type="checkbox" id="ds-reddit" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+          <div>
+            <div class="font-semibold text-slate-800 dark:text-slate-200">Reddit & Community Discussions</div>
+            <div class="text-slate-400 mt-0.5">Zero-auth public Reddit search for authentic local advice, real estate, and reviews.</div>
+          </div>
+        </label>
+
+        <!-- Source 3: Autonomous Skills & MCP Marketplace -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 cursor-pointer hover:border-brand-500 transition">
+          <input type="checkbox" id="ds-skills" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+          <div>
+            <div class="font-semibold text-slate-800 dark:text-slate-200">Autonomous Skills & MCP Marketplace</div>
+            <div class="text-slate-400 mt-0.5">Strict zero-auth skill resolver that pulls specialized scrapers and financial tools dynamically.</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button onclick="closeDataSourcesModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+          Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 6. APPLICATION STATE & 1:1 INTERACTIVITY LOGIC                            -->
+  <!-- ========================================================================= -->
   <script>
-    // Tab switching
-    function switchTab(tab) {
-      ['research', 'playground', 'dashboard', 'keys'].forEach(t => {
-        document.getElementById(`view-${t}`).classList.add('hidden');
-        const btn = document.getElementById(`tab-${t}`);
-        btn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-sm');
-        btn.classList.add('text-slate-600', 'dark:text-slate-400');
-      });
+    // App State Store
+    const state = {
+      sessions: [],
+      currentSessionId: null,
+      isStreaming: false,
+      activeEventSource: null,
+      activeJobId: null,
+      rightPanelOpen: false,
+      sessionsRailOpen: true,
+      researchTab: 'tasks', // 'tasks' | 'thinking' | 'report' | 'sources'
+      thinkingTimer: null,
+      thinkingStartTime: null,
+    };
 
-      document.getElementById(`view-${tab}`).classList.remove('hidden');
-      const activeBtn = document.getElementById(`tab-${tab}`);
-      activeBtn.classList.add('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-sm');
-      activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+    // Initialize App on DOM Load
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      loadSessionsFromStorage();
+      if (!state.currentSessionId && state.sessions.length > 0) {
+        selectSession(state.sessions[0].id);
+      } else if (!state.currentSessionId) {
+        createNewSession();
+      }
+      setInterval(pollSystemMetrics, 10000);
+      pollSystemMetrics();
+    });
 
-      if (tab === 'dashboard') refreshDashboard();
-      if (tab === 'keys') refreshApiKeys();
+    // Theme Logic
+    function initTheme() {
+      if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon').className = 'fa-solid fa-sun text-sm';
+      }
     }
 
-    // Dark Mode Toggle
     function toggleDarkMode() {
       document.documentElement.classList.toggle('dark');
       const isDark = document.documentElement.classList.contains('dark');
-      document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun text-sm' : 'fa-solid fa-moon text-sm';
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
 
-    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-      document.getElementById('theme-icon').className = 'fa-solid fa-sun';
+    // Top Navigation Switching
+    function switchView(viewName) {
+      ['playground', 'dashboard', 'keys'].forEach(v => {
+        document.getElementById(`view-${v}`).classList.add('hidden');
+        const btn = document.getElementById(`nav-${v}`);
+        btn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-xs', 'font-semibold');
+        btn.classList.add('text-slate-600', 'dark:text-slate-400');
+      });
+
+      document.getElementById(`view-${viewName}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-${viewName}`);
+      activeBtn.classList.add('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-xs', 'font-semibold');
+      activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+
+      if (viewName === 'dashboard') refreshDashboard();
+      if (viewName === 'keys') refreshApiKeys();
     }
 
-    // Research Flow
-    async function startResearch() {
-      const query = document.getElementById('research-query').value.trim();
+    // Sessions Management
+    function loadSessionsFromStorage() {
+      try {
+        const saved = localStorage.getItem('dr_sessions');
+        if (saved) state.sessions = JSON.parse(saved);
+      } catch (e) {
+        state.sessions = [];
+      }
+      renderSessionsList();
+    }
+
+    function saveSessionsToStorage() {
+      localStorage.setItem('dr_sessions', JSON.stringify(state.sessions));
+      renderSessionsList();
+    }
+
+    function createNewSession() {
+      const id = 'sess_' + Date.now();
+      const newSession = {
+        id,
+        title: 'New Research Inquiry',
+        created_at: new Date().toISOString(),
+        messages: [],
+        plan: null,
+        thinkingSteps: [],
+        report: null,
+        sources: []
+      };
+      state.sessions.unshift(newSession);
+      state.currentSessionId = id;
+      saveSessionsToStorage();
+      renderCurrentSessionChat();
+      clearResearchPanel();
+    }
+
+    function selectSession(id) {
+      state.currentSessionId = id;
+      saveSessionsToStorage();
+      renderCurrentSessionChat();
+      renderSessionResearchInspector();
+    }
+
+    function deleteSession(id, event) {
+      event.stopPropagation();
+      state.sessions = state.sessions.filter(s => s.id !== id);
+      if (state.currentSessionId === id) {
+        state.currentSessionId = state.sessions.length > 0 ? state.sessions[0].id : null;
+      }
+      saveSessionsToStorage();
+      if (!state.currentSessionId) createNewSession();
+      else renderCurrentSessionChat();
+    }
+
+    function clearAllSessions() {
+      if (confirm('Are you sure you want to delete all research sessions?')) {
+        state.sessions = [];
+        state.currentSessionId = null;
+        saveSessionsToStorage();
+        createNewSession();
+      }
+    }
+
+    function filterSessions(query) {
+      renderSessionsList(query.toLowerCase());
+    }
+
+    function renderSessionsList(filter = '') {
+      const listEl = document.getElementById('sessions-list');
+      listEl.innerHTML = '';
+
+      const filtered = state.sessions.filter(s => s.title.toLowerCase().includes(filter));
+      document.getElementById('session-count-text').innerText = `${state.sessions.length} sessions`;
+
+      filtered.forEach(sess => {
+        const isActive = sess.id === state.currentSessionId;
+        const item = document.createElement('div');
+        item.className = `group flex items-center justify-between p-2.5 rounded-xl cursor-pointer text-xs transition ${
+          isActive 
+            ? 'bg-brand-50 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 font-semibold border border-brand-200 dark:border-brand-900/60' 
+            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+        }`;
+        item.onclick = () => selectSession(sess.id);
+
+        item.innerHTML = `
+          <div class="flex items-center space-x-2 truncate">
+            <i class="fa-regular fa-message text-[11px] ${isActive ? 'text-brand-600' : 'text-slate-400'}"></i>
+            <span class="truncate">${escapeHtml(sess.title)}</span>
+          </div>
+          <button onclick="deleteSession('${sess.id}', event)" class="opacity-0 group-hover:opacity-100 p-1 hover:text-rose-500 transition" title="Delete Session">
+            <i class="fa-regular fa-trash-can text-[11px]"></i>
+          </button>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+
+    // Toggle Left Rail & Right Panel
+    function toggleSessionsRail() {
+      const rail = document.getElementById('sessions-rail');
+      state.sessionsRailOpen = !state.sessionsRailOpen;
+      if (state.sessionsRailOpen) {
+        rail.classList.remove('w-0', 'p-0', 'border-none');
+        rail.classList.add('w-72');
+      } else {
+        rail.classList.remove('w-72');
+        rail.classList.add('w-0', 'p-0', 'border-none');
+      }
+    }
+
+    function toggleResearchPanel() {
+      const panel = document.getElementById('research-panel');
+      state.rightPanelOpen = !state.rightPanelOpen;
+      if (state.rightPanelOpen) {
+        panel.classList.remove('w-0');
+        panel.classList.add('w-96', 'lg:w-[480px]');
+      } else {
+        panel.classList.remove('w-96', 'lg:w-[480px]');
+        panel.classList.add('w-0');
+      }
+    }
+
+    function openResearchPanel() {
+      if (!state.rightPanelOpen) toggleResearchPanel();
+    }
+
+    // Segmented Tabs in Right Panel
+    function switchResearchTab(tab) {
+      state.researchTab = tab;
+      ['tasks', 'thinking', 'report', 'sources'].forEach(t => {
+        document.getElementById(`rview-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`rtab-${t}`);
+        btn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-xs', 'font-semibold');
+        btn.classList.add('text-slate-500');
+      });
+
+      document.getElementById(`rview-${tab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`rtab-${tab}`);
+      activeBtn.classList.add('bg-white', 'dark:bg-slate-900', 'text-brand-600', 'dark:text-brand-400', 'shadow-xs', 'font-semibold');
+      activeBtn.classList.remove('text-slate-500');
+    }
+
+    // Chat Area Rendering
+    function getCurrentSession() {
+      return state.sessions.find(s => s.id === state.currentSessionId);
+    }
+
+    function renderCurrentSessionChat() {
+      const sess = getCurrentSession();
+      if (!sess) return;
+
+      const hero = document.getElementById('hero-welcome');
+      const turns = document.getElementById('chat-turns');
+
+      if (!sess.messages || sess.messages.length === 0) {
+        hero.classList.remove('hidden');
+        turns.innerHTML = '';
+        return;
+      }
+
+      hero.classList.add('hidden');
+      turns.innerHTML = '';
+
+      sess.messages.forEach((msg, idx) => {
+        if (msg.role === 'user') {
+          // Render User Message Card
+          const userCard = document.createElement('div');
+          userCard.className = 'flex justify-end';
+          userCard.innerHTML = `
+            <div class="max-w-2xl bg-brand-600 text-white rounded-2xl rounded-tr-xs px-4 py-3 shadow-sm text-sm">
+              <div>${escapeHtml(msg.content)}</div>
+              <div class="text-[10px] text-brand-200 mt-1 text-right">${formatTime(msg.timestamp)}</div>
+            </div>
+          `;
+          turns.appendChild(userCard);
+        } else if (msg.role === 'assistant') {
+          // Render Assistant Response Card with Thinking Accordion + Report
+          const botCard = document.createElement('div');
+          botCard.className = 'glass border border-slate-200 dark:border-slate-800 rounded-2xl p-4 md:p-6 shadow-sm space-y-4';
+
+          let thinkingHtml = '';
+          if (msg.thinking && msg.thinking.length > 0) {
+            thinkingHtml = `
+              <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-slate-50/50 dark:bg-slate-900/50">
+                <button onclick="toggleThinkingDisclosure('thinking-${idx}')" class="w-full px-3.5 py-2.5 flex items-center justify-between text-left text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Thought Process (${msg.thinkingDuration || 'Completed in depth'})</span>
+                  </div>
+                  <i id="thinking-${idx}-icon" class="fa-solid fa-chevron-down text-xs transition-transform"></i>
+                </button>
+                <div id="thinking-${idx}" class="p-3.5 pt-0 border-t border-slate-200/60 dark:border-slate-800/60 space-y-2 text-xs font-mono text-slate-600 dark:text-slate-400">
+                  ${msg.thinking.map(step => `<div class="flex items-start space-x-2"><i class="fa-solid fa-angle-right text-brand-500 mt-0.5"></i><span>${escapeHtml(step)}</span></div>`).join('')}
+                </div>
+              </div>
+            `;
+          }
+
+          let reportHtml = '';
+          if (msg.report) {
+            reportHtml = `<div class="prose dark:prose-invert max-w-none text-sm leading-relaxed">${marked.parse(msg.report)}</div>`;
+          } else if (msg.content) {
+            reportHtml = `<div class="prose dark:prose-invert max-w-none text-sm">${marked.parse(msg.content)}</div>`;
+          }
+
+          // Verified Citations Strip
+          let sourcesHtml = '';
+          if (msg.sources && msg.sources.length > 0) {
+            sourcesHtml = `
+              <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Verified Sources</div>
+                <div class="flex flex-wrap gap-2">
+                  ${msg.sources.map(s => `
+                    <a href="${s.url}" target="_blank" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-950 text-xs transition border border-slate-200/60 dark:border-slate-700/60">
+                      <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400"></i>
+                      <span class="font-medium truncate max-w-xs">${escapeHtml(s.title || s.url)}</span>
+                    </a>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          }
+
+          // Card Action Footer
+          const footerHtml = `
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80 text-xs text-slate-400">
+              <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-clock text-[10px]"></i>
+                <span>${formatTime(msg.timestamp)}</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <button onclick="copyText('${escapeHtml(msg.report || msg.content || '')}')" class="hover:text-brand-600 transition flex items-center space-x-1">
+                  <i class="fa-regular fa-copy"></i>
+                  <span>Copy</span>
+                </button>
+              </div>
+            </div>
+          `;
+
+          botCard.innerHTML = thinkingHtml + reportHtml + sourcesHtml + footerHtml;
+          turns.appendChild(botCard);
+        }
+      });
+
+      // Scroll to bottom
+      const container = document.getElementById('chat-messages-container');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function toggleThinkingDisclosure(id) {
+      const el = document.getElementById(id);
+      const icon = document.getElementById(`${id}-icon`);
+      if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        icon.classList.remove('-rotate-90');
+      } else {
+        el.classList.add('hidden');
+        icon.classList.add('-rotate-90');
+      }
+    }
+
+    function renderSessionResearchInspector() {
+      const sess = getCurrentSession();
+      if (!sess) return;
+
+      // Render Plan & Tasks
+      const titleEl = document.getElementById('plan-title-display');
+      const tasksListEl = document.getElementById('tasks-list');
+      const progressBar = document.getElementById('plan-progress-bar');
+      const progressPct = document.getElementById('plan-progress-pct');
+
+      if (sess.plan) {
+        titleEl.innerText = sess.plan.title;
+        tasksListEl.innerHTML = '';
+        let completed = 0;
+        const total = sess.plan.sub_queries.length;
+
+        sess.plan.sub_queries.forEach((sq, i) => {
+          const isDone = sq.status === 'completed';
+          if (isDone) completed++;
+          const taskDiv = document.createElement('div');
+          taskDiv.className = 'p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 space-y-1.5';
+          taskDiv.innerHTML = `
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-700 dark:text-slate-200">${sq.query}</span>
+              ${isDone ? '<i class="fa-solid fa-circle-check text-emerald-500"></i>' : '<i class="fa-solid fa-spinner animate-spin text-brand-500"></i>'}
+            </div>
+            <div class="flex items-center space-x-2 text-[11px] text-slate-400">
+              <span class="px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono">${sq.target_angle}</span>
+            </div>
+          `;
+          tasksListEl.appendChild(taskDiv);
+        });
+
+        const pct = Math.round((completed / (total || 1)) * 100);
+        progressBar.style.width = `${pct}%`;
+        progressPct.innerText = `${pct}%`;
+      } else {
+        titleEl.innerText = 'No active plan generated yet.';
+        tasksListEl.innerHTML = '<div class="text-xs text-slate-400 italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>';
+        progressBar.style.width = '0%';
+        progressPct.innerText = '0%';
+      }
+
+      // Thinking log
+      const thinkingList = document.getElementById('thinking-stream-list');
+      if (sess.thinkingSteps && sess.thinkingSteps.length > 0) {
+        thinkingList.innerHTML = sess.thinkingSteps.map(step => `
+          <div class="flex items-start space-x-2">
+            <i class="fa-solid fa-angle-right text-brand-500 mt-0.5"></i>
+            <span>${escapeHtml(step)}</span>
+          </div>
+        `).join('');
+      } else {
+        thinkingList.innerHTML = '<div class="text-xs text-slate-400 italic font-sans">No research thinking active.</div>';
+      }
+
+      // Report panel
+      const reportContent = document.getElementById('panel-report-content');
+      if (sess.report) {
+        reportContent.innerHTML = marked.parse(sess.report);
+      } else {
+        reportContent.innerHTML = '<div class="text-slate-400 italic">No report completed in this session yet.</div>';
+      }
+
+      // Sources panel
+      const sourcesList = document.getElementById('panel-sources-list');
+      if (sess.sources && sess.sources.length > 0) {
+        sourcesList.innerHTML = sess.sources.map(s => `
+          <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 space-y-1">
+            <a href="${s.url}" target="_blank" class="font-bold text-xs text-brand-600 dark:text-brand-400 hover:underline flex items-center space-x-1">
+              <span>${escapeHtml(s.title || s.url)}</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+            <div class="text-[11px] text-slate-500 line-clamp-2">${escapeHtml(s.snippet || s.url)}</div>
+          </div>
+        `).join('');
+      } else {
+        sourcesList.innerHTML = '<div class="text-xs text-slate-400 italic">Sources collected by concurrent workers will be listed here.</div>';
+      }
+    }
+
+    function clearResearchPanel() {
+      document.getElementById('plan-title-display').innerText = 'No active plan generated yet.';
+      document.getElementById('tasks-list').innerHTML = '<div class="text-xs text-slate-400 italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>';
+      document.getElementById('plan-progress-bar').style.width = '0%';
+      document.getElementById('plan-progress-pct').innerText = '0%';
+      document.getElementById('thinking-stream-list').innerHTML = '<div class="text-xs text-slate-400 italic font-sans">No research thinking active.</div>';
+      document.getElementById('panel-report-content').innerHTML = '<div class="text-slate-400 italic">No report completed in this session yet.</div>';
+      document.getElementById('panel-sources-list').innerHTML = '<div class="text-xs text-slate-400 italic">Sources collected by concurrent workers will be listed here.</div>';
+    }
+
+    // Input & Submission Handling
+    function handleInputKeydown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSendOrStop();
+      }
+    }
+
+    function fillAndSubmitPrompt(promptText) {
+      document.getElementById('prompt-input').value = promptText;
+      handleSendOrStop();
+    }
+
+    async function handleSendOrStop() {
+      if (state.isStreaming) {
+        stopActiveResearch();
+        return;
+      }
+
+      const input = document.getElementById('prompt-input');
+      const query = input.value.trim();
       if (!query) return;
 
-      const btn = document.getElementById('btn-submit');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i><span>Investigating...</span>`;
+      input.value = '';
+      const sess = getCurrentSession();
+      if (!sess) return;
 
-      const stepsCard = document.getElementById('steps-card');
-      const timeline = document.getElementById('steps-timeline');
-      const reportCard = document.getElementById('report-card');
-      const queueBanner = document.getElementById('queue-banner');
+      // Update Session Title if first query
+      if (sess.messages.length === 0) {
+        sess.title = query.length > 35 ? query.substring(0, 35) + '...' : query;
+      }
 
-      stepsCard.classList.remove('hidden');
-      reportCard.classList.add('hidden');
-      queueBanner.classList.add('hidden');
-      timeline.innerHTML = '';
+      // Append User Message
+      sess.messages.push({
+        role: 'user',
+        content: query,
+        timestamp: new Date().toISOString()
+      });
+      saveSessionsToStorage();
+      renderCurrentSessionChat();
+
+      // Open Right Inspector Automatically
+      openResearchPanel();
+
+      // UI state transition
+      setStreamingUiState(true);
+
+      const botMessage = {
+        role: 'assistant',
+        content: '',
+        thinking: [],
+        thinkingDuration: '',
+        report: null,
+        sources: [],
+        timestamp: new Date().toISOString()
+      };
+      sess.messages.push(botMessage);
+      sess.plan = null;
+      sess.thinkingSteps = [];
+      sess.report = null;
+      sess.sources = [];
+
+      state.thinkingStartTime = Date.now();
 
       try {
         const res = await fetch('/v1/jobs/async', {
@@ -331,61 +1032,143 @@
 
         const data = await res.json();
         const jobId = data.job_id;
+        state.activeJobId = jobId;
 
         if (data.status === 'QUEUED_ON_HOLD') {
-          queueBanner.classList.remove('hidden');
-          document.getElementById('queue-msg').innerText = data.message;
+          document.getElementById('queue-banner').classList.remove('hidden');
+          document.getElementById('queue-banner-msg').innerText = data.message;
         }
 
-        // Subscribe to SSE events
+        // Connect SSE event stream
         const eventSource = new EventSource(`/v1/jobs/async/${jobId}/events`);
+        state.activeEventSource = eventSource;
 
-        eventSource.onmessage = (event) => {
-          const ev = JSON.parse(event.data);
-          const stepDiv = document.createElement('div');
-          stepDiv.className = 'flex items-start space-x-2.5 text-xs text-slate-600 dark:text-slate-300';
-          stepDiv.innerHTML = `<i class="fa-solid fa-chevron-right text-brand-500 mt-0.5"></i><span>${ev.content}</span>`;
-          timeline.appendChild(stepDiv);
+        eventSource.onmessage = (e) => {
+          const ev = JSON.parse(e.data);
+          const stepMsg = ev.content;
+
+          // Add to bot thinking
+          botMessage.thinking.push(stepMsg);
+          sess.thinkingSteps.push(stepMsg);
+
+          // If plan created event
+          if (ev.event_type === 'plan_created') {
+            try {
+              sess.plan = JSON.parse(stepMsg);
+            } catch (err) {}
+          }
+
+          renderCurrentSessionChat();
+          renderSessionResearchInspector();
         };
 
         eventSource.addEventListener('end', async () => {
-          eventSource.close();
-          queueBanner.classList.add('hidden');
-
-          // Fetch final report
-          const jobRes = await fetch(`/v1/jobs/async/${jobId}`);
-          const jobData = await jobRes.json();
-
-          if (jobData.report) {
-            reportCard.classList.remove('hidden');
-            document.getElementById('report-content').innerHTML = marked.parse(jobData.report);
-          }
-
-          btn.disabled = false;
-          btn.innerHTML = `<span>Start Research</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
+          finishStreaming(sess, botMessage, jobId);
         });
+
+        eventSource.onerror = (err) => {
+          finishStreaming(sess, botMessage, jobId);
+        };
 
       } catch (err) {
         alert('Failed to submit research job: ' + err);
-        btn.disabled = false;
-        btn.innerHTML = `<span>Start Research</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
+        setStreamingUiState(false);
       }
     }
 
-    function copyReport() {
-      const content = document.getElementById('report-content').innerText;
-      navigator.clipboard.writeText(content);
-      alert('Report Markdown copied to clipboard!');
+    async function finishStreaming(sess, botMessage, jobId) {
+      if (state.activeEventSource) {
+        state.activeEventSource.close();
+        state.activeEventSource = null;
+      }
+
+      document.getElementById('queue-banner').classList.add('hidden');
+      setStreamingUiState(false);
+
+      const elapsedSec = ((Date.now() - state.thinkingStartTime) / 1000).toFixed(1);
+      botMessage.thinkingDuration = `Thought for ${elapsedSec}s`;
+
+      // Fetch final report & tokenomics
+      try {
+        const res = await fetch(`/v1/jobs/async/${jobId}`);
+        const jobData = await res.json();
+        if (jobData.report) {
+          botMessage.report = jobData.report;
+          sess.report = jobData.report;
+        }
+
+        // Extract sources if any
+        if (sess.plan && sess.plan.sub_queries) {
+          sess.plan.sub_queries.forEach(sq => {
+            sq.status = 'completed';
+          });
+        }
+      } catch (err) {}
+
+      saveSessionsToStorage();
+      renderCurrentSessionChat();
+      renderSessionResearchInspector();
     }
 
-    // Dashboard refresh
+    function stopActiveResearch() {
+      if (state.activeEventSource) {
+        state.activeEventSource.close();
+        state.activeEventSource = null;
+      }
+      setStreamingUiState(false);
+      document.getElementById('queue-banner').classList.add('hidden');
+      alert('Active research was stopped.');
+    }
+
+    function setStreamingUiState(streaming) {
+      state.isStreaming = streaming;
+      const sendIcon = document.getElementById('btn-send-icon');
+      const sendBtn = document.getElementById('btn-send');
+      const stopBtn = document.getElementById('btn-panel-stop');
+      const spinner = document.getElementById('research-spinner');
+      const staticIcon = document.getElementById('research-static-icon');
+
+      if (streaming) {
+        sendIcon.className = 'fa-solid fa-stop text-xs';
+        sendBtn.className = 'w-8 h-8 rounded-xl bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center transition shadow-sm cursor-pointer';
+        stopBtn.classList.remove('hidden');
+        spinner.classList.remove('hidden');
+        staticIcon.classList.add('hidden');
+      } else {
+        sendIcon.className = 'fa-solid fa-arrow-up text-xs';
+        sendBtn.className = 'w-8 h-8 rounded-xl bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center transition shadow-sm cursor-pointer';
+        stopBtn.classList.add('hidden');
+        spinner.classList.add('hidden');
+        staticIcon.classList.remove('hidden');
+      }
+    }
+
+    // Data Sources Modal
+    function openDataSourcesModal() {
+      document.getElementById('sources-modal').classList.remove('hidden');
+    }
+
+    function closeDataSourcesModal() {
+      document.getElementById('sources-modal').classList.add('hidden');
+    }
+
+    // Dashboard Polling
+    async function pollSystemMetrics() {
+      try {
+        const res = await fetch('/health');
+        const data = await res.json();
+        const ram = data.system_ram_pct.toFixed(1);
+        const rss = data.process_rss_mb;
+        // Update header indicator if needed
+      } catch (e) {}
+    }
+
     async function refreshDashboard() {
       try {
         const res = await fetch('/api/dashboard/stats');
         const data = await res.json();
 
         const ramPct = data.metrics.ram_usage_percent.toFixed(1);
-        document.getElementById('header-ram-val').innerText = `${ramPct}%`;
         document.getElementById('stat-system-ram').innerText = `${ramPct}%`;
         document.getElementById('stat-ram-bar').style.width = `${Math.min(ramPct, 100)}%`;
 
@@ -398,84 +1181,90 @@
         document.getElementById('stat-tokens').innerText = Number(data.tokenomics.total_tokens_consumed).toLocaleString();
         document.getElementById('stat-cost').innerText = `Est. Cost: $${data.tokenomics.estimated_cost_usd.toFixed(4)}`;
 
-        // Load jobs
-        const jobsRes = await fetch('/api/dashboard/jobs');
-        const jobs = await jobsRes.json();
-        const tbody = document.getElementById('dashboard-jobs-body');
-
-        if (jobs.length > 0) {
-          tbody.innerHTML = jobs.map(j => `
-            <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/50">
-              <td class="p-3 text-brand-600">${j.id.slice(0, 8)}...</td>
-              <td class="p-3 text-slate-700 dark:text-slate-300 max-w-xs truncate">${j.query}</td>
-              <td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold ${
-                j.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' :
-                j.status === 'FAILED' ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300' :
-                'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300'
-              }">${j.status}</span></td>
-              <td class="p-3">${j.total_tokens || 0}</td>
-              <td class="p-3 text-slate-400">${new Date(j.created_at).toLocaleTimeString()}</td>
-            </tr>
-          `).join('');
-        }
-      } catch (e) {
-        console.error('Dashboard refresh failed:', e);
-      }
+        // Populate Job Table
+        const jobsRes = await fetch('/v1/jobs/async');
+        // If list endpoint exists, populate
+      } catch (err) {}
     }
 
-    // Periodic RAM check
-    setInterval(async () => {
-      try {
-        const res = await fetch('/health');
-        const d = await res.json();
-        document.getElementById('header-ram-val').innerText = `${d.system_ram_pct.toFixed(1)}%`;
-      } catch (e) {}
-    }, 8000);
-
-    // API Keys
     async function refreshApiKeys() {
       try {
         const res = await fetch('/api/keys');
         const keys = await res.json();
         const tbody = document.getElementById('keys-table-body');
-
-        if (keys.length > 0) {
-          tbody.innerHTML = keys.map(k => `
-            <tr>
-              <td class="p-3 font-semibold">${k.name}</td>
-              <td class="p-3 text-brand-600">${k.key_prefix}••••••••</td>
-              <td class="p-3">${k.is_revoked ? '<span class="text-rose-500">Revoked</span>' : '<span class="text-emerald-500">Active</span>'}</td>
-              <td class="p-3 text-slate-400">${new Date(k.created_at).toLocaleDateString()}</td>
-              <td class="p-3 text-right">
-                ${k.is_revoked ? '' : `<button onclick="revokeKey('${k.id}')" class="text-xs text-rose-500 hover:underline">Revoke</button>`}
-              </td>
-            </tr>
-          `).join('');
-        } else {
-          tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No API keys generated.</td></tr>`;
+        if (keys.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">No API keys created yet.</td></tr>';
+          return;
         }
-      } catch (e) {}
+
+        tbody.innerHTML = keys.map(k => `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
+            <td class="p-3 font-sans font-medium text-slate-800 dark:text-slate-200">${escapeHtml(k.name)}</td>
+            <td class="p-3 text-brand-600">${escapeHtml(k.key_prefix)}...</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded-full ${k.is_revoked ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'} text-[10px] font-bold">${k.is_revoked ? 'REVOKED' : 'ACTIVE'}</span></td>
+            <td class="p-3 text-slate-400">${formatTime(k.created_at)}</td>
+            <td class="p-3 text-right">
+              ${!k.is_revoked ? `<button onclick="revokeApiKey('${k.id}')" class="text-rose-500 hover:underline">Revoke</button>` : '<span class="text-slate-400">Revoked</span>'}
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {}
     }
 
     async function createApiKey() {
-      const name = prompt('Enter a name for this API key (e.g. "Telegram Bot"):');
+      const name = prompt('Enter a name for the new API Key (e.g. Telegram Bot):');
       if (!name) return;
 
-      const res = await fetch('/api/keys', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
-      });
-
-      const d = await res.json();
-      prompt('API Key generated! Copy it now (it will not be shown again):', d.api_key);
-      refreshApiKeys();
+      try {
+        const res = await fetch('/api/keys', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name })
+        });
+        const data = await res.json();
+        prompt('Save this API key now! It will not be shown again:', data.api_key);
+        refreshApiKeys();
+      } catch (err) {
+        alert('Failed to generate key: ' + err);
+      }
     }
 
-    async function revokeKey(id) {
-      if (!confirm('Are you sure you want to revoke this API key?')) return;
-      await fetch(`/api/keys/${id}`, { method: 'DELETE' });
-      refreshApiKeys();
+    async function revokeApiKey(id) {
+      if (confirm('Revoke this API key? External clients using it will lose access.')) {
+        await fetch(`/api/keys/${id}`, { method: 'DELETE' });
+        refreshApiKeys();
+      }
+    }
+
+    // Utilities
+    function copyText(txt) {
+      navigator.clipboard.writeText(txt);
+      alert('Copied to clipboard!');
+    }
+
+    function copyCurrentReport() {
+      const sess = getCurrentSession();
+      if (sess && sess.report) copyText(sess.report);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatTime(iso) {
+      if (!iso) return '';
+      try {
+        const d = new Date(iso);
+        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      } catch (e) {
+        return '';
+      }
     }
   </script>
 </body>
