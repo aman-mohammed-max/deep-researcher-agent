@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deep Researcher Agent — Autonomous Intelligence Engine</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -26,6 +27,133 @@
       50% { opacity: 0.4; }
     }
     .animate-pulse-slow { animation: pulse-slow 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+    /* Rich Markdown Body Styles */
+    .markdown-body {
+      color: inherit;
+      font-size: 0.925rem;
+      line-height: 1.65;
+      word-break: break-word;
+    }
+    .markdown-body h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-top: 1.25rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid rgba(156, 163, 175, 0.25);
+    }
+    .markdown-body h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-top: 1.15rem;
+      margin-bottom: 0.5rem;
+      color: #4f46e5;
+    }
+    .dark .markdown-body h2 {
+      color: #818cf8;
+    }
+    .markdown-body h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-top: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+    .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+      font-weight: 600;
+      margin-top: 0.75rem;
+      margin-bottom: 0.35rem;
+    }
+    .markdown-body p {
+      margin-top: 0.5rem;
+      margin-bottom: 0.65rem;
+    }
+    .markdown-body ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-top: 0.4rem;
+      margin-bottom: 0.6rem;
+    }
+    .markdown-body ol {
+      list-style-type: decimal;
+      padding-left: 1.5rem;
+      margin-top: 0.4rem;
+      margin-bottom: 0.6rem;
+    }
+    .markdown-body li {
+      margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
+    }
+    .markdown-body blockquote {
+      border-left: 3px solid #6366f1;
+      padding-left: 1rem;
+      margin: 0.75rem 0;
+      color: #6b7280;
+      font-style: italic;
+    }
+    .dark .markdown-body blockquote {
+      color: #9ca3af;
+    }
+    .markdown-body pre {
+      background-color: rgba(15, 23, 42, 0.06);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+      font-size: 0.825rem;
+    }
+    .dark .markdown-body pre {
+      background-color: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .markdown-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.3rem;
+      background-color: rgba(99, 102, 241, 0.1);
+      color: #4f46e5;
+    }
+    .dark .markdown-body code {
+      background-color: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+    }
+    .markdown-body pre code {
+      background-color: transparent;
+      color: inherit;
+      padding: 0;
+    }
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+    }
+    .markdown-body th, .markdown-body td {
+      border: 1px solid rgba(156, 163, 175, 0.3);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+    .markdown-body th {
+      background-color: rgba(156, 163, 175, 0.1);
+      font-weight: 600;
+    }
+    .markdown-body a {
+      color: #6366f1;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .markdown-body a:hover {
+      color: #4f46e5;
+    }
+    .dark .markdown-body a {
+      color: #818cf8;
+    }
+    .markdown-body hr {
+      border: 0;
+      border-top: 1px solid rgba(156, 163, 175, 0.25);
+      margin: 1.5rem 0;
+    }
   </style>
   <script>
     tailwind.config = {
@@ -372,12 +500,22 @@
       <div id="rview-report" class="hidden flex-1 overflow-y-auto p-6 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Document Synthesis</span>
-          <button onclick="copyCurrentReport()" class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-medium hover:bg-slate-200 transition flex items-center space-x-1">
-            <i class="fa-regular fa-copy"></i>
-            <span>Copy Markdown</span>
-          </button>
+          <div class="flex items-center space-x-1.5">
+            <button onclick="downloadCurrentReportMd()" class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium transition flex items-center space-x-1" title="Download Markdown (.md)">
+              <i class="fa-regular fa-file-lines text-brand-500"></i>
+              <span>.md</span>
+            </button>
+            <button onclick="downloadCurrentReportPdf()" class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium transition flex items-center space-x-1" title="Export PDF">
+              <i class="fa-regular fa-file-pdf text-rose-500"></i>
+              <span>PDF</span>
+            </button>
+            <button onclick="copyCurrentReport()" class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center space-x-1" title="Copy Markdown">
+              <i class="fa-regular fa-copy"></i>
+              <span>Copy</span>
+            </button>
+          </div>
         </div>
-        <div id="panel-report-content" class="prose dark:prose-invert max-w-none text-xs md:text-sm leading-relaxed">
+        <div id="panel-report-content" class="markdown-body prose dark:prose-invert max-w-none text-xs md:text-sm leading-relaxed">
           <div class="text-slate-400 italic">No report completed in this session yet.</div>
         </div>
       </div>
@@ -565,6 +703,12 @@
 
     // Initialize App on DOM Load
     document.addEventListener('DOMContentLoaded', () => {
+      if (typeof marked !== 'undefined') {
+        marked.setOptions({
+          gfm: true,
+          breaks: true
+        });
+      }
       initTheme();
       loadSessionsFromStorage();
       if (!state.currentSessionId && state.sessions.length > 0) {
@@ -808,9 +952,9 @@
 
           let reportHtml = '';
           if (msg.report) {
-            reportHtml = `<div class="prose dark:prose-invert max-w-none text-sm leading-relaxed">${marked.parse(msg.report)}</div>`;
+            reportHtml = `<div class="markdown-body prose dark:prose-invert max-w-none text-sm leading-relaxed">${marked.parse(msg.report)}</div>`;
           } else if (msg.content) {
-            reportHtml = `<div class="prose dark:prose-invert max-w-none text-sm">${marked.parse(msg.content)}</div>`;
+            reportHtml = `<div class="markdown-body prose dark:prose-invert max-w-none text-sm leading-relaxed">${marked.parse(msg.content)}</div>`;
           }
 
           // Verified Citations Strip
@@ -839,7 +983,15 @@
                 <span>${formatTime(msg.timestamp)}</span>
               </div>
               <div class="flex items-center space-x-2">
-                <button onclick="copyText('${escapeHtml(msg.report || msg.content || '')}')" class="hover:text-brand-600 transition flex items-center space-x-1">
+                <button onclick="downloadMessageMd(${idx})" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="Download Markdown (.md)">
+                  <i class="fa-regular fa-file-lines text-brand-500"></i>
+                  <span>Download .md</span>
+                </button>
+                <button onclick="downloadMessagePdf(${idx})" class="hover:text-rose-600 dark:hover:text-rose-400 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="Export PDF document">
+                  <i class="fa-regular fa-file-pdf text-rose-500"></i>
+                  <span>Export PDF</span>
+                </button>
+                <button onclick="copyMessageContent(${idx})" class="hover:text-brand-600 dark:hover:text-brand-400 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="Copy Markdown">
                   <i class="fa-regular fa-copy"></i>
                   <span>Copy</span>
                 </button>
@@ -928,8 +1080,10 @@
       // Report panel
       const reportContent = document.getElementById('panel-report-content');
       if (sess.report) {
+        reportContent.className = 'markdown-body prose dark:prose-invert max-w-none text-xs md:text-sm leading-relaxed';
         reportContent.innerHTML = marked.parse(sess.report);
       } else {
+        reportContent.className = 'markdown-body prose dark:prose-invert max-w-none text-xs md:text-sm leading-relaxed';
         reportContent.innerHTML = '<div class="text-slate-400 italic">No report completed in this session yet.</div>';
       }
 
@@ -1237,15 +1391,142 @@
       }
     }
 
-    // Utilities
+    // Utilities & Export Functions
     function copyText(txt) {
+      if (!txt) return;
       navigator.clipboard.writeText(txt);
       alert('Copied to clipboard!');
     }
 
+    function copyMessageContent(idx) {
+      const sess = getCurrentSession();
+      if (!sess || !sess.messages[idx]) return;
+      const text = sess.messages[idx].report || sess.messages[idx].content || '';
+      copyText(text);
+    }
+
     function copyCurrentReport() {
       const sess = getCurrentSession();
-      if (sess && sess.report) copyText(sess.report);
+      if (sess && sess.report) {
+        copyText(sess.report);
+      } else {
+        alert('No report available in this session.');
+      }
+    }
+
+    function downloadMessageMd(idx) {
+      const sess = getCurrentSession();
+      if (!sess || !sess.messages[idx]) return;
+      const msg = sess.messages[idx];
+      const text = msg.report || msg.content || '';
+      if (!text) { alert('No content to export as Markdown.'); return; }
+
+      let fullMd = text;
+      if (msg.sources && msg.sources.length > 0) {
+        fullMd += '\n\n## Verified Sources\n';
+        msg.sources.forEach(s => {
+          fullMd += `- [${s.title || s.url}](${s.url})\n`;
+        });
+      }
+
+      const rawTitle = sess.title || 'research-report';
+      const cleanTitle = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const blob = new Blob([fullMd], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${cleanTitle || 'research-report'}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadCurrentReportMd() {
+      const sess = getCurrentSession();
+      if (!sess || !sess.report) { alert('No completed report to download.'); return; }
+
+      let fullMd = sess.report;
+      if (sess.sources && sess.sources.length > 0) {
+        fullMd += '\n\n## Verified Sources\n';
+        sess.sources.forEach(s => {
+          fullMd += `- [${s.title || s.url}](${s.url})\n`;
+        });
+      }
+
+      const rawTitle = sess.title || 'research-report';
+      const cleanTitle = rawTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const blob = new Blob([fullMd], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${cleanTitle || 'research-report'}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function generatePdfFromMarkdown(title, markdownContent, sources) {
+      const safeFileName = (title || 'research-report').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+      const printWrapper = document.createElement('div');
+      printWrapper.className = 'markdown-body p-8 bg-white text-slate-900';
+      printWrapper.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+      printWrapper.style.maxWidth = "800px";
+      printWrapper.style.margin = "0 auto";
+
+      let sourcesListHtml = '';
+      if (sources && sources.length > 0) {
+        sourcesListHtml = `
+          <div style="margin-top: 32px; border-top: 1px solid #cbd5e1; padding-top: 16px;">
+            <h3 style="font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 8px; text-transform: uppercase;">Verified Sources & Citations</h3>
+            <ul style="font-size: 11px; color: #475569; padding-left: 20px;">
+              ${sources.map(s => `<li style="margin-bottom: 4px;"><a href="${s.url}" target="_blank" style="color: #4f46e5; text-decoration: underline;">${escapeHtml(s.title || s.url)}</a></li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      printWrapper.innerHTML = `
+        <div style="border-bottom: 2px solid #4f46e5; padding-bottom: 12px; margin-bottom: 24px;">
+          <h1 style="color: #1e1b4b; font-size: 22px; font-weight: 800; margin: 0 0 6px 0;">${escapeHtml(title || 'Research Report')}</h1>
+          <div style="font-size: 11px; color: #64748b; font-weight: 500;">
+            Autonomous Deep Research Synthesis • Generated on ${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+          </div>
+        </div>
+        <div class="report-prose">${marked.parse(markdownContent)}</div>
+        ${sourcesListHtml}
+      `;
+
+      const opt = {
+        margin: [12, 12, 12, 12],
+        filename: `${safeFileName || 'research-report'}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      if (typeof html2pdf !== 'undefined') {
+        html2pdf().set(opt).from(printWrapper).save();
+      } else {
+        window.print();
+      }
+    }
+
+    function downloadMessagePdf(idx) {
+      const sess = getCurrentSession();
+      if (!sess || !sess.messages[idx]) return;
+      const msg = sess.messages[idx];
+      const text = msg.report || msg.content || '';
+      if (!text) { alert('No content to export as PDF.'); return; }
+      generatePdfFromMarkdown(sess.title || 'Research Synthesis', text, msg.sources);
+    }
+
+    function downloadCurrentReportPdf() {
+      const sess = getCurrentSession();
+      if (!sess || !sess.report) { alert('No completed report to export as PDF.'); return; }
+      generatePdfFromMarkdown(sess.title || 'Research Synthesis', sess.report, sess.sources);
     }
 
     function escapeHtml(str) {
