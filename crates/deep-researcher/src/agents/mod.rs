@@ -143,6 +143,12 @@ impl ResearchCoordinator {
         // Step 4: Final Synthesis & Report Writing
         let _ = self.storage.add_event(job_id, "step", "Synthesizing research notes and verifying citations...").await;
 
+        if !state.verified_sources.is_empty() {
+            if let Ok(srcs_json) = serde_json::to_string(&state.verified_sources) {
+                let _ = self.storage.add_event(job_id, "sources_collected", &srcs_json).await;
+            }
+        }
+
         let writer = ReportWriter::new(&self.llm, &self.prompts);
         let (report, writer_usage) = writer
             .write_report(

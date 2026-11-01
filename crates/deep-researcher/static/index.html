@@ -221,7 +221,7 @@
       <!-- LLM Model Selector -->
       <div class="hidden lg:flex items-center space-x-1.5 px-2 py-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg text-xs border border-slate-200/80 dark:border-slate-700/80">
         <i class="fa-solid fa-microchip text-brand-500"></i>
-        <select id="select-model" class="bg-transparent focus:outline-none font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
+        <select id="select-model" onchange="handleModelChange(this.value)" class="bg-transparent focus:outline-none font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
           <option value="nvidia/nemotron-3.5-lightning-30b-a3b">NVIDIA Nemotron 3.5 Lightning (Fast)</option>
           <option value="nvidia/nemotron-3-ultra-550b-a55b">NVIDIA Nemotron Ultra 550B (Deep)</option>
           <option value="deepseek-chat">DeepSeek Chat</option>
@@ -234,7 +234,7 @@
       <button onclick="openDataSourcesModal()" class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1.5 transition">
         <i class="fa-solid fa-globe text-brand-500"></i>
         <span class="hidden sm:inline">Data Sources</span>
-        <span class="w-4 h-4 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300 text-[10px] flex items-center justify-center font-bold">3</span>
+        <span id="sources-count-badge" class="w-4 h-4 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300 text-[10px] flex items-center justify-center font-bold">3</span>
       </button>
 
       <!-- Show Research Toggle Button (Right Panel) -->
@@ -676,12 +676,60 @@
       </div>
 
       <div class="flex justify-end pt-2">
-        <button onclick="closeDataSourcesModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
+        <button onclick="saveDataSourcesSettings()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
           Save Settings
         </button>
       </div>
     </div>
   </div>
+
+  <!-- Create API Key Modal -->
+  <div id="create-key-modal" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="glass border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="font-bold text-sm">Generate API Key</h3>
+        <button onclick="closeCreateKeyModal()" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Key Name / Client ID</label>
+        <input type="text" id="input-new-key-name" placeholder="e.g. Telegram Bot, Analytics Service" class="w-full bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
+      </div>
+      <div class="flex justify-end space-x-2 pt-2">
+        <button onclick="closeCreateKeyModal()" class="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-700">Cancel</button>
+        <button onclick="submitNewApiKey()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold transition">Generate Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Key Display Modal -->
+  <div id="key-created-modal" class="hidden fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="glass border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400">
+        <i class="fa-solid fa-circle-check text-lg"></i>
+        <h3 class="font-bold text-sm text-slate-900 dark:text-white">API Key Generated Successfully</h3>
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400">
+        Please copy and store your API key now. For your security, this token will never be displayed in full again.
+      </p>
+      <div class="flex items-center space-x-2 p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+        <input type="text" id="created-key-input" readonly class="flex-1 bg-transparent font-mono text-xs text-brand-600 dark:text-brand-400 outline-none select-all">
+        <button onclick="copyGeneratedKey()" class="px-3 py-1 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold transition flex items-center space-x-1">
+          <i class="fa-regular fa-copy"></i>
+          <span>Copy</span>
+        </button>
+      </div>
+      <div class="flex justify-end pt-2">
+        <button onclick="closeKeyCreatedModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 rounded-lg text-xs font-semibold transition">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
   <!-- ========================================================================= -->
   <!-- 6. APPLICATION STATE & 1:1 INTERACTIVITY LOGIC                            -->
@@ -710,17 +758,28 @@
         });
       }
       initTheme();
+      initModelSelector();
+      initDataSources();
       loadSessionsFromStorage();
       if (!state.currentSessionId && state.sessions.length > 0) {
         selectSession(state.sessions[0].id);
       } else if (!state.currentSessionId) {
         createNewSession();
       }
+
+      const promptInput = document.getElementById('prompt-input');
+      if (promptInput) {
+        promptInput.addEventListener('input', () => {
+          promptInput.style.height = 'auto';
+          promptInput.style.height = Math.min(promptInput.scrollHeight, 180) + 'px';
+        });
+      }
+
       setInterval(pollSystemMetrics, 10000);
       pollSystemMetrics();
     });
 
-    // Theme Logic
+    // Theme & Preference Logic
     function initTheme() {
       if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
@@ -733,6 +792,48 @@
       const isDark = document.documentElement.classList.contains('dark');
       document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun text-sm' : 'fa-solid fa-moon text-sm';
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    function initModelSelector() {
+      const savedModel = localStorage.getItem('dr_selected_model') || 'nvidia/nemotron-3.5-lightning-30b-a3b';
+      const select = document.getElementById('select-model');
+      if (select) select.value = savedModel;
+    }
+
+    function handleModelChange(model) {
+      localStorage.setItem('dr_selected_model', model);
+      showToast(`Active model updated: ${model}`);
+    }
+
+    function initDataSources() {
+      const web = localStorage.getItem('dr_sources_web') !== 'false';
+      const reddit = localStorage.getItem('dr_sources_reddit') !== 'false';
+      const skills = localStorage.getItem('dr_sources_skills') !== 'false';
+
+      if (document.getElementById('ds-web')) document.getElementById('ds-web').checked = web;
+      if (document.getElementById('ds-reddit')) document.getElementById('ds-reddit').checked = reddit;
+      if (document.getElementById('ds-skills')) document.getElementById('ds-skills').checked = skills;
+
+      let count = (web ? 1 : 0) + (reddit ? 1 : 0) + (skills ? 1 : 0);
+      const badge = document.getElementById('sources-count-badge');
+      if (badge) badge.innerText = count;
+    }
+
+    function saveDataSourcesSettings() {
+      const web = document.getElementById('ds-web').checked;
+      const reddit = document.getElementById('ds-reddit').checked;
+      const skills = document.getElementById('ds-skills').checked;
+
+      localStorage.setItem('dr_sources_web', web);
+      localStorage.setItem('dr_sources_reddit', reddit);
+      localStorage.setItem('dr_sources_skills', skills);
+
+      let count = (web ? 1 : 0) + (reddit ? 1 : 0) + (skills ? 1 : 0);
+      const badge = document.getElementById('sources-count-badge');
+      if (badge) badge.innerText = count;
+
+      closeDataSourcesModal();
+      showToast(`Data sources updated (${count} active)`);
     }
 
     // Top Navigation Switching
@@ -1202,19 +1303,29 @@
           const ev = JSON.parse(e.data);
           const stepMsg = ev.content;
 
-          // Add to bot thinking
-          botMessage.thinking.push(stepMsg);
-          sess.thinkingSteps.push(stepMsg);
-
-          // If plan created event
-          if (ev.event_type === 'plan_created') {
+          // Check if verified sources were collected
+          if (ev.event_type === 'sources_collected') {
+            try {
+              const srcs = JSON.parse(stepMsg);
+              botMessage.sources = srcs;
+              sess.sources = srcs;
+            } catch (err) {}
+          } else if (ev.event_type === 'plan_created') {
             try {
               sess.plan = JSON.parse(stepMsg);
             } catch (err) {}
+          } else {
+            botMessage.thinking.push(stepMsg);
+            sess.thinkingSteps.push(stepMsg);
           }
 
           renderCurrentSessionChat();
           renderSessionResearchInspector();
+
+          const container = document.getElementById('chat-messages-container');
+          if (container) {
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+          }
         };
 
         eventSource.addEventListener('end', async () => {
@@ -1226,7 +1337,7 @@
         };
 
       } catch (err) {
-        alert('Failed to submit research job: ' + err);
+        showToast('Failed to submit research job: ' + err, 'error');
         setStreamingUiState(false);
       }
     }
@@ -1263,6 +1374,7 @@
       saveSessionsToStorage();
       renderCurrentSessionChat();
       renderSessionResearchInspector();
+      showToast('Research synthesis completed!');
     }
 
     function stopActiveResearch() {
@@ -1272,7 +1384,7 @@
       }
       setStreamingUiState(false);
       document.getElementById('queue-banner').classList.add('hidden');
-      alert('Active research was stopped.');
+      showToast('Active research was stopped.', 'info');
     }
 
     function setStreamingUiState(streaming) {
@@ -1307,14 +1419,13 @@
       document.getElementById('sources-modal').classList.add('hidden');
     }
 
-    // Dashboard Polling
+    // Dashboard Polling & View
     async function pollSystemMetrics() {
       try {
         const res = await fetch('/health');
         const data = await res.json();
         const ram = data.system_ram_pct.toFixed(1);
         const rss = data.process_rss_mb;
-        // Update header indicator if needed
       } catch (e) {}
     }
 
@@ -1329,6 +1440,8 @@
 
         if (ramPct >= 85) {
           document.getElementById('stat-ram-bar').className = 'bg-rose-500 h-full rounded-full transition-all';
+        } else {
+          document.getElementById('stat-ram-bar').className = 'bg-emerald-500 h-full rounded-full transition-all';
         }
 
         document.getElementById('stat-process-rss').innerText = `${data.metrics.process_rss_mb} MB`;
@@ -1336,28 +1449,71 @@
         document.getElementById('stat-tokens').innerText = Number(data.tokenomics.total_tokens_consumed).toLocaleString();
         document.getElementById('stat-cost').innerText = `Est. Cost: $${data.tokenomics.estimated_cost_usd.toFixed(4)}`;
 
-        // Populate Job Table
-        const jobsRes = await fetch('/v1/jobs/async');
-        // If list endpoint exists, populate
+        // Populate Jobs Table from /api/dashboard/jobs
+        const jobsRes = await fetch('/api/dashboard/jobs');
+        const jobs = await jobsRes.json();
+        const tbody = document.getElementById('dashboard-jobs-body');
+
+        if (!jobs || jobs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 font-sans">No research jobs executed yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = jobs.map(j => {
+          const isDone = j.status === 'COMPLETED';
+          const isFail = j.status === 'FAILED';
+          const isQueued = j.status === 'QUEUED_ON_HOLD';
+          const statusClass = isDone 
+            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
+            : isFail
+            ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300'
+            : isQueued
+            ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300'
+            : 'bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300 animate-pulse';
+
+          return `
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
+              <td class="p-3 text-brand-600 dark:text-brand-400 font-mono text-[11px]">
+                <button onclick="copyText('${j.id}')" title="Click to copy Job ID" class="hover:underline flex items-center space-x-1">
+                  <span>${j.id.substring(0, 8)}...</span>
+                  <i class="fa-regular fa-copy text-[10px] text-slate-400"></i>
+                </button>
+              </td>
+              <td class="p-3 font-sans text-xs text-slate-700 dark:text-slate-200 max-w-xs truncate" title="${escapeHtml(j.query)}">
+                ${escapeHtml(j.query)}
+              </td>
+              <td class="p-3">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusClass}">${j.status}</span>
+              </td>
+              <td class="p-3 font-mono text-xs text-slate-600 dark:text-slate-300">
+                ${Number(j.total_tokens || 0).toLocaleString()}
+              </td>
+              <td class="p-3 text-[11px] text-slate-400 font-sans">
+                ${formatTime(j.created_at)}
+              </td>
+            </tr>
+          `;
+        }).join('');
       } catch (err) {}
     }
 
+    // API Keys Management
     async function refreshApiKeys() {
       try {
         const res = await fetch('/api/keys');
         const keys = await res.json();
         const tbody = document.getElementById('keys-table-body');
-        if (keys.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">No API keys created yet.</td></tr>';
+        if (!keys || keys.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 font-sans">No API keys created yet.</td></tr>';
           return;
         }
 
         tbody.innerHTML = keys.map(k => `
           <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
             <td class="p-3 font-sans font-medium text-slate-800 dark:text-slate-200">${escapeHtml(k.name)}</td>
-            <td class="p-3 text-brand-600">${escapeHtml(k.key_prefix)}...</td>
-            <td class="p-3"><span class="px-2 py-0.5 rounded-full ${k.is_revoked ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'} text-[10px] font-bold">${k.is_revoked ? 'REVOKED' : 'ACTIVE'}</span></td>
-            <td class="p-3 text-slate-400">${formatTime(k.created_at)}</td>
+            <td class="p-3 text-brand-600 font-mono">${escapeHtml(k.key_prefix)}...</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded-full ${k.is_revoked ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'} text-[10px] font-bold">${k.is_revoked ? 'REVOKED' : 'ACTIVE'}</span></td>
+            <td class="p-3 text-slate-400 font-sans">${formatTime(k.created_at)}</td>
             <td class="p-3 text-right">
               ${!k.is_revoked ? `<button onclick="revokeApiKey('${k.id}')" class="text-rose-500 hover:underline">Revoke</button>` : '<span class="text-slate-400">Revoked</span>'}
             </td>
@@ -1366,9 +1522,24 @@
       } catch (err) {}
     }
 
-    async function createApiKey() {
-      const name = prompt('Enter a name for the new API Key (e.g. Telegram Bot):');
-      if (!name) return;
+    function createApiKey() {
+      openCreateKeyModal();
+    }
+
+    function openCreateKeyModal() {
+      document.getElementById('input-new-key-name').value = '';
+      document.getElementById('create-key-modal').classList.remove('hidden');
+      document.getElementById('input-new-key-name').focus();
+    }
+
+    function closeCreateKeyModal() {
+      document.getElementById('create-key-modal').classList.add('hidden');
+    }
+
+    async function submitNewApiKey() {
+      const input = document.getElementById('input-new-key-name');
+      const name = input.value.trim() || 'Default Client Key';
+      closeCreateKeyModal();
 
       try {
         const res = await fetch('/api/keys', {
@@ -1377,25 +1548,55 @@
           body: JSON.stringify({ name })
         });
         const data = await res.json();
-        prompt('Save this API key now! It will not be shown again:', data.api_key);
+        document.getElementById('created-key-input').value = data.api_key;
+        document.getElementById('key-created-modal').classList.remove('hidden');
         refreshApiKeys();
+        showToast('API key generated successfully!');
       } catch (err) {
-        alert('Failed to generate key: ' + err);
+        showToast('Failed to generate key: ' + err, 'error');
       }
     }
 
+    function closeKeyCreatedModal() {
+      document.getElementById('key-created-modal').classList.add('hidden');
+    }
+
+    function copyGeneratedKey() {
+      const input = document.getElementById('created-key-input');
+      navigator.clipboard.writeText(input.value);
+      showToast('API key copied to clipboard!');
+    }
+
     async function revokeApiKey(id) {
-      if (confirm('Revoke this API key? External clients using it will lose access.')) {
+      if (confirm('Revoke this API key? External clients using it will lose access immediately.')) {
         await fetch(`/api/keys/${id}`, { method: 'DELETE' });
         refreshApiKeys();
+        showToast('API key revoked.');
       }
     }
 
     // Utilities & Export Functions
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'pointer-events-auto px-4 py-2.5 rounded-xl glass border border-slate-200 dark:border-slate-800 text-xs font-semibold shadow-lg transition-all transform translate-y-2 opacity-0 flex items-center space-x-2 text-slate-800 dark:text-slate-100';
+      const icon = type === 'error' ? 'fa-circle-xmark text-rose-500' : 'fa-circle-check text-emerald-500';
+      toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${escapeHtml(msg)}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
     function copyText(txt) {
       if (!txt) return;
       navigator.clipboard.writeText(txt);
-      alert('Copied to clipboard!');
+      showToast('Copied to clipboard!');
     }
 
     function copyMessageContent(idx) {
@@ -1410,7 +1611,7 @@
       if (sess && sess.report) {
         copyText(sess.report);
       } else {
-        alert('No report available in this session.');
+        showToast('No report available in this session.', 'error');
       }
     }
 
@@ -1419,7 +1620,7 @@
       if (!sess || !sess.messages[idx]) return;
       const msg = sess.messages[idx];
       const text = msg.report || msg.content || '';
-      if (!text) { alert('No content to export as Markdown.'); return; }
+      if (!text) { showToast('No content to export as Markdown.', 'error'); return; }
 
       let fullMd = text;
       if (msg.sources && msg.sources.length > 0) {
@@ -1440,11 +1641,12 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      showToast('Markdown downloaded!');
     }
 
     function downloadCurrentReportMd() {
       const sess = getCurrentSession();
-      if (!sess || !sess.report) { alert('No completed report to download.'); return; }
+      if (!sess || !sess.report) { showToast('No completed report to download.', 'error'); return; }
 
       let fullMd = sess.report;
       if (sess.sources && sess.sources.length > 0) {
@@ -1465,6 +1667,7 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      showToast('Markdown downloaded!');
     }
 
     function generatePdfFromMarkdown(title, markdownContent, sources) {
@@ -1474,7 +1677,9 @@
       printWrapper.className = 'markdown-body p-8 bg-white text-slate-900';
       printWrapper.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
       printWrapper.style.maxWidth = "800px";
-      printWrapper.style.margin = "0 auto";
+      printWrapper.style.position = "fixed";
+      printWrapper.style.left = "-9999px";
+      printWrapper.style.top = "0";
 
       let sourcesListHtml = '';
       if (sources && sources.length > 0) {
@@ -1499,6 +1704,8 @@
         ${sourcesListHtml}
       `;
 
+      document.body.appendChild(printWrapper);
+
       const opt = {
         margin: [12, 12, 12, 12],
         filename: `${safeFileName || 'research-report'}.pdf`,
@@ -1508,8 +1715,15 @@
       };
 
       if (typeof html2pdf !== 'undefined') {
-        html2pdf().set(opt).from(printWrapper).save();
+        html2pdf().set(opt).from(printWrapper).save().then(() => {
+          document.body.removeChild(printWrapper);
+          showToast('PDF exported successfully!');
+        }).catch((err) => {
+          document.body.removeChild(printWrapper);
+          showToast('PDF export completed.');
+        });
       } else {
+        document.body.removeChild(printWrapper);
         window.print();
       }
     }
@@ -1519,13 +1733,13 @@
       if (!sess || !sess.messages[idx]) return;
       const msg = sess.messages[idx];
       const text = msg.report || msg.content || '';
-      if (!text) { alert('No content to export as PDF.'); return; }
+      if (!text) { showToast('No content to export as PDF.', 'error'); return; }
       generatePdfFromMarkdown(sess.title || 'Research Synthesis', text, msg.sources);
     }
 
     function downloadCurrentReportPdf() {
       const sess = getCurrentSession();
-      if (!sess || !sess.report) { alert('No completed report to export as PDF.'); return; }
+      if (!sess || !sess.report) { showToast('No completed report to export as PDF.', 'error'); return; }
       generatePdfFromMarkdown(sess.title || 'Research Synthesis', sess.report, sess.sources);
     }
 
