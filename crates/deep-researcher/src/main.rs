@@ -32,13 +32,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         config.host, config.port, config.llm_model, config.max_ram_percent
     );
 
-    // 3. Initialize Tiered Storage Engine (RAM/In-Memory SQLite for Jobs & Postgres/Persistent for Keys)
-    let storage = Storage::new(&config.runtime_database_url, &config.persistent_database_url).await?;
+    // 3. Initialize Tiered Storage Engine (RAM/In-Memory SQLite for Jobs & PostgreSQL for Keys)
+    let storage = Storage::new(&config.runtime_database_url, &config.postgres_url).await?;
     info!(
         "Storage: Runtime (RAM/Jobs) = {} [in-memory: {}], Persistent (Keys) = {} [{}]",
         config.runtime_database_url,
         storage.is_in_memory_runtime(),
-        config.persistent_database_url,
+        config.postgres_url,
         storage.persistent_type()
     );
 
