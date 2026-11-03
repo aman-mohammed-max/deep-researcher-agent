@@ -23,60 +23,72 @@
   <!-- html2pdf.js for PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- Google Fonts: Plus Jakarta Sans, Inter, JetBrains Mono -->
+  <!-- Google Fonts: Inter, Plus Jakarta Sans, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <script>
+    // Medusa UI Design System Configuration (docs.medusajs.com/ui)
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
             display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
             mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
           },
           colors: {
+            // Medusa UI Color Tokens
+            'ui-bg-base': 'var(--ui-bg-base)',
+            'ui-bg-base-hover': 'var(--ui-bg-base-hover)',
+            'ui-bg-base-pressed': 'var(--ui-bg-base-pressed)',
+            'ui-bg-subtle': 'var(--ui-bg-subtle)',
+            'ui-bg-subtle-hover': 'var(--ui-bg-subtle-hover)',
+            'ui-bg-component': 'var(--ui-bg-component)',
+            'ui-bg-component-hover': 'var(--ui-bg-component-hover)',
+            'ui-bg-field': 'var(--ui-bg-field)',
+            'ui-bg-field-hover': 'var(--ui-bg-field-hover)',
+            'ui-bg-highlight': 'var(--ui-bg-highlight)',
+            'ui-bg-disabled': 'var(--ui-bg-disabled)',
+
+            'ui-fg-base': 'var(--ui-fg-base)',
+            'ui-fg-subtle': 'var(--ui-fg-subtle)',
+            'ui-fg-muted': 'var(--ui-fg-muted)',
+            'ui-fg-disabled': 'var(--ui-fg-disabled)',
+            'ui-fg-on-inverted': 'var(--ui-fg-on-inverted)',
+            'ui-fg-interactive': 'var(--ui-fg-interactive)',
+            'ui-fg-interactive-hover': 'var(--ui-fg-interactive-hover)',
+            'ui-fg-error': 'var(--ui-fg-error)',
+
+            'ui-border-base': 'var(--ui-border-base)',
+            'ui-border-strong': 'var(--ui-border-strong)',
+            'ui-border-interactive': 'var(--ui-border-interactive)',
+            'ui-border-error': 'var(--ui-border-error)',
+
+            // Brand Emerald / NVIDIA green accents
             brand: {
               50: '#ecfdf5',
               100: '#d1fae5',
               200: '#a7f3d0',
               300: '#6ee7b7',
               400: '#34d399',
-              500: '#10b981', // Emerald/NVIDIA green accent
+              500: '#10b981',
               600: '#059669',
               700: '#047857',
               800: '#065f46',
               900: '#064e3b',
               950: '#022c22'
-            },
-            accent: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              200: '#c7d2fe',
-              300: '#a5b4fc',
-              400: '#818cf8',
-              500: '#6366f1', // Indigo Cyber
-              600: '#4f46e5',
-              700: '#4338ca',
-              800: '#3730a3',
-              900: '#312e81'
-            },
-            surface: {
-              dark: '#080C14',
-              darker: '#05070B',
-              card: '#0D131F',
-              border: 'rgba(255, 255, 255, 0.08)',
-              glass: 'rgba(13, 19, 31, 0.75)',
-              hover: 'rgba(255, 255, 255, 0.04)'
             }
           },
           boxShadow: {
-            'glow-emerald': '0 0 20px -5px rgba(16, 185, 129, 0.35)',
-            'glow-indigo': '0 0 20px -5px rgba(99, 102, 241, 0.35)',
-            'canvas': '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+            'elevation-card-rest': '0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 0 1px 0 rgba(0, 0, 0, 0.4)',
+            'elevation-card-hover': '0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 0 1px 0 rgba(0, 0, 0, 0.4)',
+            'elevation-modal': '0 16px 32px -4px rgba(0, 0, 0, 0.5), 0 0 1px 0 rgba(0, 0, 0, 0.4)',
+            'elevation-flyout': '0 8px 16px 0 rgba(0, 0, 0, 0.4), 0 0 1px 0 rgba(0, 0, 0, 0.3)',
+            'elevation-tooltip': '0 2px 4px 0 rgba(0, 0, 0, 0.3), 0 0 1px 0 rgba(0, 0, 0, 0.4)',
+            'glow-emerald': '0 0 18px -4px rgba(16, 185, 129, 0.35)',
           }
         }
       }
@@ -84,337 +96,465 @@
   </script>
 
   <style>
-    /* Custom Scrollbars */
+    /* Medusa UI CSS Custom Properties (https://docs.medusajs.com/ui) */
+    :root {
+      --ui-bg-base: #ffffff;
+      --ui-bg-base-hover: #fafafa;
+      --ui-bg-base-pressed: #f4f4f5;
+      --ui-bg-subtle: #f4f4f5;
+      --ui-bg-subtle-hover: #e4e4e7;
+      --ui-bg-component: #ffffff;
+      --ui-bg-component-hover: #f4f4f5;
+      --ui-bg-field: #f4f4f5;
+      --ui-bg-field-hover: #e4e4e7;
+      --ui-bg-highlight: #e4e4e7;
+      --ui-bg-disabled: #f4f4f5;
+
+      --ui-fg-base: #18181b;
+      --ui-fg-subtle: #71717a;
+      --ui-fg-muted: #a1a1aa;
+      --ui-fg-disabled: #d4d4d8;
+      --ui-fg-on-inverted: #ffffff;
+      --ui-fg-interactive: #059669;
+      --ui-fg-interactive-hover: #047857;
+      --ui-fg-error: #e11d48;
+
+      --ui-border-base: #e4e4e7;
+      --ui-border-strong: #d4d4d8;
+      --ui-border-interactive: #10b981;
+      --ui-border-error: #e11d48;
+    }
+
+    .dark {
+      --ui-bg-base: #09090b;            /* Obsidian deep background */
+      --ui-bg-base-hover: #121215;
+      --ui-bg-base-pressed: #18181b;
+      --ui-bg-subtle: #121215;          /* Subtle surface */
+      --ui-bg-subtle-hover: #18181b;
+      --ui-bg-component: #18181b;       /* Component surface */
+      --ui-bg-component-hover: #27272a; /* Component hover */
+      --ui-bg-field: #121215;           /* Form input background */
+      --ui-bg-field-hover: #18181b;
+      --ui-bg-highlight: #27272a;
+      --ui-bg-disabled: #18181b;
+
+      --ui-fg-base: #fafafa;            /* Primary high-contrast text */
+      --ui-fg-subtle: #a1a1aa;          /* Secondary text */
+      --ui-fg-muted: #71717a;           /* Muted / placeholder text */
+      --ui-fg-disabled: #52525b;
+      --ui-fg-on-inverted: #09090b;
+      --ui-fg-interactive: #10b981;     /* Emerald accent */
+      --ui-fg-interactive-hover: #34d399;
+      --ui-fg-error: #f43f5e;
+
+      --ui-border-base: #27272a;        /* 1px crisp border */
+      --ui-border-strong: #3f3f46;      /* High emphasis border */
+      --ui-border-interactive: #10b981;
+      --ui-border-error: #f43f5e;
+    }
+
+    /* Medusa Scrollbars */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.45); }
-    .dark ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.45); }
-    .dark ::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.75); }
+    ::-webkit-scrollbar-thumb { background: rgba(113, 113, 122, 0.3); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(113, 113, 122, 0.5); }
+    .dark ::-webkit-scrollbar-thumb { background: rgba(113, 113, 122, 0.35); }
+    .dark ::-webkit-scrollbar-thumb:hover { background: rgba(161, 161, 170, 0.5); }
 
-    /* Frosted Glass Utilities */
-    .glass-panel {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(226, 232, 240, 0.8);
+    /* Medusa UI Reusable Utility Classes */
+    .medusa-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      border-radius: 0.5rem;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background-color: #059669;
+      color: #ffffff;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+      transition: background-color 0.15s ease, transform 0.1s ease;
+      cursor: pointer;
     }
-    .dark .glass-panel {
-      background: rgba(13, 19, 31, 0.78);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+    .medusa-btn-primary:hover {
+      background-color: #10b981;
     }
-
-    .glass-input {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(203, 213, 225, 0.8);
+    .medusa-btn-primary:active {
+      transform: scale(0.99);
     }
-    .dark .glass-input {
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.09);
-    }
-
-    /* Claude Canvas Shadow & Elevation */
-    .artifact-canvas {
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    .medusa-btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
-    /* Animations */
-    @keyframes pulse-ring {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.15); opacity: 0.4; }
-      100% { transform: scale(0.95); opacity: 0.8; }
+    .medusa-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      border-radius: 0.5rem;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background-color: var(--ui-bg-component);
+      color: var(--ui-fg-base);
+      border: 1px solid var(--ui-border-base);
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+      cursor: pointer;
     }
-    .pulse-ring-slow { animation: pulse-ring 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    .medusa-btn-secondary:hover {
+      background-color: var(--ui-bg-component-hover);
+      border-color: var(--ui-border-strong);
+    }
+    .medusa-btn-secondary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-    @keyframes gradient-shift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .medusa-btn-transparent {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      border-radius: 0.5rem;
+      padding: 0.375rem 0.625rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background-color: transparent;
+      color: var(--ui-fg-subtle);
+      transition: color 0.15s ease, background-color 0.15s ease;
+      cursor: pointer;
     }
-    .animate-gradient {
-      background-size: 200% 200%;
-      animation: gradient-shift 8s ease infinite;
+    .medusa-btn-transparent:hover {
+      color: var(--ui-fg-base);
+      background-color: var(--ui-bg-subtle-hover);
+    }
+
+    .medusa-btn-danger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      border-radius: 0.5rem;
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background-color: rgba(244, 63, 94, 0.1);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      transition: background-color 0.15s ease;
+      cursor: pointer;
+    }
+    .medusa-btn-danger:hover {
+      background-color: rgba(244, 63, 94, 0.2);
+    }
+
+    .medusa-card {
+      background-color: var(--ui-bg-subtle);
+      border: 1px solid var(--ui-border-base);
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 0 1px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .medusa-input {
+      background-color: var(--ui-bg-field);
+      border: 1px solid var(--ui-border-base);
+      border-radius: 0.5rem;
+      color: var(--ui-fg-base);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .medusa-input::placeholder {
+      color: var(--ui-fg-muted);
+    }
+    .medusa-input:focus {
+      border-color: var(--ui-border-interactive);
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35);
+    }
+
+    .medusa-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      border-radius: 0.375rem;
+      padding: 0.125rem 0.375rem;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      line-height: 1;
+      font-family: 'JetBrains Mono', monospace;
+      border: 1px solid var(--ui-border-base);
+      background-color: var(--ui-bg-component);
+      color: var(--ui-fg-subtle);
+    }
+    .medusa-badge-green {
+      background-color: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.25);
+      color: #34d399;
+    }
+    .medusa-badge-blue {
+      background-color: rgba(14, 165, 233, 0.1);
+      border-color: rgba(14, 165, 233, 0.25);
+      color: #38bdf8;
+    }
+    .medusa-badge-purple {
+      background-color: rgba(139, 92, 246, 0.1);
+      border-color: rgba(139, 92, 246, 0.25);
+      color: #a78bfa;
+    }
+    .medusa-badge-amber {
+      background-color: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.25);
+      color: #fbbf24;
+    }
+    .medusa-badge-red {
+      background-color: rgba(244, 63, 94, 0.1);
+      border-color: rgba(244, 63, 94, 0.25);
+      color: #fb7185;
     }
 
     /* Markdown Typography & Artifact Document Styling */
     .artifact-body {
-      color: inherit;
-      font-size: 0.95rem;
+      color: var(--ui-fg-base);
+      font-size: 0.925rem;
       line-height: 1.75;
       word-break: break-word;
     }
     .artifact-body h1 {
-      font-size: 1.65rem;
-      font-weight: 800;
+      font-size: 1.55rem;
+      font-weight: 700;
       letter-spacing: -0.025em;
       margin-top: 1.75rem;
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.75rem;
       padding-bottom: 0.5rem;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-      color: #0f172a;
-    }
-    .dark .artifact-body h1 {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      color: #f8fafc;
+      border-bottom: 1px solid var(--ui-border-base);
+      color: var(--ui-fg-base);
     }
     .artifact-body h2 {
-      font-size: 1.35rem;
-      font-weight: 700;
+      font-size: 1.25rem;
+      font-weight: 600;
       letter-spacing: -0.015em;
       margin-top: 1.5rem;
-      margin-bottom: 0.65rem;
-      color: #059669;
-    }
-    .dark .artifact-body h2 {
-      color: #34d399;
+      margin-bottom: 0.5rem;
+      color: var(--ui-fg-interactive);
     }
     .artifact-body h3 {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 600;
       margin-top: 1.25rem;
-      margin-bottom: 0.5rem;
-      color: #1e293b;
-    }
-    .dark .artifact-body h3 {
-      color: #e2e8f0;
+      margin-bottom: 0.375rem;
+      color: var(--ui-fg-base);
     }
     .artifact-body p {
-      margin-top: 0.65rem;
-      margin-bottom: 0.85rem;
-      color: #334155;
-    }
-    .dark .artifact-body p {
-      color: #cbd5e1;
+      margin-top: 0.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--ui-fg-subtle);
     }
     .artifact-body ul, .artifact-body ol {
-      padding-left: 1.6rem;
-      margin: 0.65rem 0;
+      padding-left: 1.5rem;
+      margin: 0.625rem 0;
     }
     .artifact-body ul { list-style-type: disc; }
     .artifact-body ol { list-style-type: decimal; }
     .artifact-body li {
-      margin: 0.35rem 0;
-      color: #334155;
-    }
-    .dark .artifact-body li {
-      color: #cbd5e1;
+      margin: 0.25rem 0;
+      color: var(--ui-fg-subtle);
     }
     .artifact-body blockquote {
-      border-left: 3px solid #10b981;
+      border-left: 3px solid var(--ui-fg-interactive);
       background: rgba(16, 185, 129, 0.05);
       border-radius: 0 0.5rem 0.5rem 0;
       padding: 0.75rem 1rem;
       margin: 1rem 0;
       font-style: normal;
-      color: #475569;
-    }
-    .dark .artifact-body blockquote {
-      background: rgba(16, 185, 129, 0.08);
-      color: #94a3b8;
+      color: var(--ui-fg-subtle);
     }
     .artifact-body table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
       margin: 1.25rem 0;
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       border-radius: 0.5rem;
       overflow: hidden;
-      border: 1px solid rgba(226, 232, 240, 0.8);
-    }
-    .dark .artifact-body table {
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--ui-border-base);
     }
     .artifact-body th {
-      background-color: rgba(241, 245, 249, 0.8);
-      padding: 0.65rem 0.85rem;
+      background-color: var(--ui-bg-component);
+      padding: 0.625rem 0.875rem;
       font-weight: 600;
       text-align: left;
-      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-    }
-    .dark .artifact-body th {
-      background-color: rgba(30, 41, 59, 0.6);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid var(--ui-border-base);
+      color: var(--ui-fg-base);
     }
     .artifact-body td {
-      padding: 0.6rem 0.85rem;
-      border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-    }
-    .dark .artifact-body td {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 0.5rem 0.875rem;
+      border-bottom: 1px solid var(--ui-border-base);
+      color: var(--ui-fg-subtle);
     }
     .artifact-body tr:last-child td {
       border-bottom: none;
     }
     .artifact-body code {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.84em;
-      padding: 0.15rem 0.4rem;
-      border-radius: 0.35rem;
-      background-color: rgba(16, 185, 129, 0.1);
-      color: #047857;
-    }
-    .dark .artifact-body code {
-      background-color: rgba(16, 185, 129, 0.15);
-      color: #6ee7b7;
+      font-size: 0.8125em;
+      padding: 0.15rem 0.375rem;
+      border-radius: 0.25rem;
+      background-color: var(--ui-bg-component);
+      border: 1px solid var(--ui-border-base);
+      color: var(--ui-fg-interactive);
     }
     .artifact-body pre {
-      background-color: #0f172a !important;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 0.75rem;
-      padding: 1rem;
+      background-color: #0c0c0e !important;
+      border: 1px solid var(--ui-border-base);
+      border-radius: 0.5rem;
+      padding: 0.875rem 1rem;
       overflow-x: auto;
-      margin: 1.25rem 0;
-      font-size: 0.85rem;
+      margin: 1rem 0;
+      font-size: 0.8125rem;
     }
     .artifact-body pre code {
       background-color: transparent !important;
-      color: #e2e8f0 !important;
+      border: none !important;
+      color: #e4e4e7 !important;
       padding: 0;
       font-size: inherit;
     }
     .artifact-body hr {
       border: none;
-      border-top: 1px solid rgba(148, 163, 184, 0.2);
-      margin: 2rem 0;
-    }
-    .dark .artifact-body hr {
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid var(--ui-border-base);
+      margin: 1.75rem 0;
     }
     .artifact-body a {
-      color: #059669;
+      color: var(--ui-fg-interactive);
       text-decoration: underline;
       text-underline-offset: 3px;
     }
-    .dark .artifact-body a {
-      color: #34d399;
-    }
     .artifact-body a:hover {
-      color: #10b981;
+      color: var(--ui-fg-interactive-hover);
     }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-surface-dark text-slate-800 dark:text-slate-100 h-screen flex flex-col overflow-hidden font-sans antialiased transition-colors duration-200">
+<body class="bg-ui-bg-base text-ui-fg-base h-screen flex flex-col overflow-hidden font-sans antialiased transition-colors duration-200">
 
   <!-- ========================================================================= -->
-  <!-- 1. TOP APP BAR                                                            -->
+  <!-- 1. TOP APP BAR (MEDUSA UI HEADER)                                         -->
   <!-- ========================================================================= -->
-  <header class="h-14 shrink-0 glass-panel px-4 flex items-center justify-between z-40 border-b border-slate-200 dark:border-white/5 select-none">
+  <header class="h-14 shrink-0 bg-ui-bg-base border-b border-ui-border-base px-4 flex items-center justify-between z-40 select-none">
     
     <!-- Left Area: Rail Toggle + Brand Logo + Mode Selector -->
     <div class="flex items-center space-x-3">
       <!-- Toggle Sessions Rail Button (Studio Only) -->
-      <button onclick="toggleSessionsRail()" id="btn-toggle-sessions" class="studio-control p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Toggle Sessions Drawer">
+      <button onclick="toggleSessionsRail()" id="btn-toggle-sessions" class="studio-control medusa-btn-transparent !p-2" title="Toggle Sessions Drawer">
         <i class="fa-solid fa-bars-staggered text-sm"></i>
       </button>
 
-      <!-- Brand Identity with NVIDIA Green + Sleek Research Emblem -->
+      <!-- Brand Identity with NVIDIA Green + Research Emblem -->
       <div class="flex items-center space-x-2.5">
-        <div class="w-8 h-8 rounded-xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center p-1 shadow-glow-emerald">
-          <img src="/favicon.svg" alt="Deep Researcher" class="w-6 h-6">
+        <div class="w-8 h-8 rounded-lg bg-ui-bg-component border border-emerald-500/30 flex items-center justify-center p-1 shadow-glow-emerald">
+          <img src="/favicon.svg" alt="Deep Researcher" class="w-5 h-5">
         </div>
         <div class="flex flex-col">
           <div class="flex items-center space-x-2">
-            <span class="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white">
+            <span class="font-bold text-sm tracking-tight text-ui-fg-base">
               Deep Researcher
             </span>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+            <span class="medusa-badge medusa-badge-green text-[10px]">
               BETA
             </span>
           </div>
-          <span class="text-[10px] text-slate-400 font-mono tracking-wider hidden sm:inline">
+          <span class="text-[10px] text-ui-fg-muted font-mono tracking-wider hidden sm:inline">
             Powered by NVIDIA NIM & NVIDIA Lab
           </span>
         </div>
       </div>
 
-      <!-- Navigation Tabs (Studio, Observability, API Keys) -->
-      <nav class="hidden md:flex items-center space-x-1 ml-5 p-1 rounded-xl bg-slate-200/60 dark:bg-white/5 text-xs font-semibold">
-        <button onclick="switchView('playground')" id="nav-playground" class="px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold">
-          <i class="fa-solid fa-compass"></i>
+      <!-- Medusa Segmented Tabs (Studio, Observability, API Keys) -->
+      <nav class="hidden md:flex items-center space-x-1 ml-5 p-1 rounded-lg bg-ui-bg-subtle border border-ui-border-base text-xs font-medium">
+        <button onclick="switchView('playground')" id="nav-playground" class="px-3 py-1 rounded-md transition-colors flex items-center space-x-1.5 bg-ui-bg-base text-ui-fg-base border border-ui-border-base shadow-elevation-card-rest font-medium">
+          <i class="fa-solid fa-compass text-xs"></i>
           <span>Studio</span>
         </button>
-        <button onclick="switchView('dashboard')" id="nav-dashboard" class="px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-          <i class="fa-solid fa-gauge-high"></i>
+        <button onclick="switchView('dashboard')" id="nav-dashboard" class="px-3 py-1 rounded-md transition-colors flex items-center space-x-1.5 text-ui-fg-subtle hover:text-ui-fg-base font-medium">
+          <i class="fa-solid fa-gauge-high text-xs"></i>
           <span>Observability</span>
         </button>
-        <button onclick="switchView('keys')" id="nav-keys" class="px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-          <i class="fa-solid fa-key"></i>
+        <button onclick="switchView('keys')" id="nav-keys" class="px-3 py-1 rounded-md transition-colors flex items-center space-x-1.5 text-ui-fg-subtle hover:text-ui-fg-base font-medium">
+          <i class="fa-solid fa-key text-xs"></i>
           <span>API Keys</span>
         </button>
       </nav>
     </div>
 
     <!-- Right Controls -->
-    <div class="flex items-center space-x-2.5">
+    <div class="flex items-center space-x-2">
       
-      <!-- LLM Model Selector (Medusa UI Style Custom Popover Select) -->
+      <!-- LLM Model Selector (Medusa UI Popover Select) -->
       <div id="container-select-model" class="studio-control relative hidden lg:block">
-        <button id="btn-model-trigger" onclick="toggleModelDropdown(event)" class="flex items-center space-x-2 px-3 py-1.5 glass-input rounded-xl text-xs font-semibold hover:border-emerald-500/40 text-slate-700 dark:text-slate-200 transition">
+        <button id="btn-model-trigger" onclick="toggleModelDropdown(event)" class="medusa-btn-secondary flex items-center space-x-2">
           <i class="fa-solid fa-microchip text-emerald-400 text-xs"></i>
           <span id="selected-model-label">Nemotron 3.5 Fast</span>
-          <span id="selected-model-badge" class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Fast</span>
-          <i id="model-dropdown-chevron" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200"></i>
+          <span id="selected-model-badge" class="medusa-badge medusa-badge-green !text-[10px]">Fast</span>
+          <i id="model-dropdown-chevron" class="fa-solid fa-chevron-down text-[10px] text-ui-fg-muted transition-transform duration-200"></i>
         </button>
         <!-- Medusa UI Popover Menu -->
-        <div id="model-dropdown-menu" class="hidden absolute right-0 top-full mt-2 w-80 glass-panel rounded-2xl shadow-2xl p-2 z-50 border border-slate-200 dark:border-white/10 space-y-1 text-left">
-          <div class="px-2 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">Select Reasoning Model</div>
+        <div id="model-dropdown-menu" class="hidden absolute right-0 top-full mt-1.5 w-80 bg-ui-bg-base border border-ui-border-base rounded-xl shadow-elevation-flyout p-1.5 z-50 space-y-1 text-left">
+          <div class="px-2.5 py-1 text-[10px] font-mono font-medium uppercase tracking-wider text-ui-fg-muted">Select Reasoning Model</div>
           
-          <button onclick="selectCustomModel('nvidia/nemotron-3.5-lightning-30b-a3b', 'Nemotron 3.5 Fast', 'Fast')" class="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center justify-between group">
+          <button onclick="selectCustomModel('nvidia/nemotron-3.5-lightning-30b-a3b', 'Nemotron 3.5 Fast', 'Fast')" class="w-full text-left p-2 rounded-lg hover:bg-ui-bg-subtle-hover transition flex items-center justify-between group">
             <div>
-              <div class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+              <div class="text-xs font-medium text-ui-fg-base flex items-center space-x-1.5">
                 <span>NVIDIA Nemotron 3.5</span>
-                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Fast (30B)</span>
+                <span class="medusa-badge medusa-badge-green text-[9px]">Fast (30B)</span>
               </div>
-              <div class="text-[11px] text-slate-400 mt-0.5">High-speed agentic decomposition & search</div>
+              <div class="text-[11px] text-ui-fg-muted mt-0.5">High-speed agentic decomposition & search</div>
             </div>
             <i id="check-model-nemotron-fast" class="fa-solid fa-check text-xs text-emerald-400"></i>
           </button>
 
-          <button onclick="selectCustomModel('nvidia/nemotron-3-ultra-550b-a55b', 'Nemotron Ultra 550B', 'Deep')" class="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center justify-between group">
+          <button onclick="selectCustomModel('nvidia/nemotron-3-ultra-550b-a55b', 'Nemotron Ultra 550B', 'Deep')" class="w-full text-left p-2 rounded-lg hover:bg-ui-bg-subtle-hover transition flex items-center justify-between group">
             <div>
-              <div class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+              <div class="text-xs font-medium text-ui-fg-base flex items-center space-x-1.5">
                 <span>NVIDIA Nemotron Ultra</span>
-                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Deep (550B)</span>
+                <span class="medusa-badge medusa-badge-purple text-[9px]">Deep (550B)</span>
               </div>
-              <div class="text-[11px] text-slate-400 mt-0.5">Flagship frontier multi-hop synthesis</div>
+              <div class="text-[11px] text-ui-fg-muted mt-0.5">Flagship frontier multi-hop synthesis</div>
             </div>
             <i id="check-model-nemotron-ultra" class="fa-solid fa-check text-xs text-emerald-400 hidden"></i>
           </button>
 
-          <button onclick="selectCustomModel('deepseek-chat', 'DeepSeek V3/R1', 'Open')" class="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center justify-between group">
+          <button onclick="selectCustomModel('deepseek-chat', 'DeepSeek V3/R1', 'Open')" class="w-full text-left p-2 rounded-lg hover:bg-ui-bg-subtle-hover transition flex items-center justify-between group">
             <div>
-              <div class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+              <div class="text-xs font-medium text-ui-fg-base flex items-center space-x-1.5">
                 <span>DeepSeek Chat / R1</span>
-                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Reasoning</span>
+                <span class="medusa-badge medusa-badge-blue text-[9px]">Reasoning</span>
               </div>
-              <div class="text-[11px] text-slate-400 mt-0.5">Mathematical proof & logic chains</div>
+              <div class="text-[11px] text-ui-fg-muted mt-0.5">Mathematical proof & logic chains</div>
             </div>
             <i id="check-model-deepseek" class="fa-solid fa-check text-xs text-emerald-400 hidden"></i>
           </button>
 
-          <button onclick="selectCustomModel('gpt-4o', 'OpenAI GPT-4o', 'Frontier')" class="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center justify-between group">
+          <button onclick="selectCustomModel('gpt-4o', 'OpenAI GPT-4o', 'Frontier')" class="w-full text-left p-2 rounded-lg hover:bg-ui-bg-subtle-hover transition flex items-center justify-between group">
             <div>
-              <div class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+              <div class="text-xs font-medium text-ui-fg-base flex items-center space-x-1.5">
                 <span>OpenAI GPT-4o</span>
-                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-violet-500/10 text-violet-400 border border-violet-500/20">Frontier</span>
+                <span class="medusa-badge medusa-badge-purple text-[9px]">Frontier</span>
               </div>
-              <div class="text-[11px] text-slate-400 mt-0.5">Cross-domain multimodal synthesis</div>
+              <div class="text-[11px] text-ui-fg-muted mt-0.5">Cross-domain multimodal synthesis</div>
             </div>
             <i id="check-model-gpt-4o" class="fa-solid fa-check text-xs text-emerald-400 hidden"></i>
           </button>
 
-          <button onclick="selectCustomModel('llama-3.3-70b-versatile', 'Groq Llama 3.3 70B', 'Groq')" class="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center justify-between group">
+          <button onclick="selectCustomModel('llama-3.3-70b-versatile', 'Groq Llama 3.3 70B', 'Groq')" class="w-full text-left p-2 rounded-lg hover:bg-ui-bg-subtle-hover transition flex items-center justify-between group">
             <div>
-              <div class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+              <div class="text-xs font-medium text-ui-fg-base flex items-center space-x-1.5">
                 <span>Groq Llama 3.3 70B</span>
-                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">LPUs</span>
+                <span class="medusa-badge medusa-badge-amber text-[9px]">LPUs</span>
               </div>
-              <div class="text-[11px] text-slate-400 mt-0.5">Sub-second LPUs low-latency inference</div>
+              <div class="text-[11px] text-ui-fg-muted mt-0.5">Sub-second LPUs low-latency inference</div>
             </div>
             <i id="check-model-llama" class="fa-solid fa-check text-xs text-emerald-400 hidden"></i>
           </button>
@@ -422,37 +562,37 @@
       </div>
 
       <!-- Data Sources Drawer Button (Studio Only) -->
-      <button onclick="openDataSourcesModal()" id="btn-data-sources" class="studio-control px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 flex items-center space-x-2 transition">
-        <i class="fa-solid fa-network-wired text-brand-500"></i>
+      <button onclick="openDataSourcesModal()" id="btn-data-sources" class="studio-control medusa-btn-secondary" title="Configure Data Sources">
+        <i class="fa-solid fa-network-wired text-emerald-500"></i>
         <span class="hidden sm:inline">Data Sources</span>
-        <span id="sources-count-badge" class="px-1.5 py-0.2 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 font-mono text-[10px] font-bold">3</span>
+        <span id="sources-count-badge" class="medusa-badge medusa-badge-green !text-[10px]">3</span>
       </button>
 
       <!-- Artifact Canvas Split View Toggle (Studio Only) -->
-      <button id="btn-toggle-research" onclick="toggleResearchPanel()" class="studio-control px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:border-brand-500 flex items-center space-x-2 transition relative" title="Toggle Artifact Canvas (Claude Style)">
+      <button id="btn-toggle-research" onclick="toggleResearchPanel()" class="studio-control medusa-btn-secondary relative" title="Toggle Artifact Canvas">
         <span id="research-spinner" class="hidden">
-          <i class="fa-solid fa-circle-notch animate-spin text-brand-500"></i>
+          <i class="fa-solid fa-circle-notch animate-spin text-emerald-500"></i>
         </span>
         <span id="research-static-icon">
-          <i class="fa-solid fa-layer-group text-accent-400"></i>
+          <i class="fa-solid fa-layer-group text-ui-fg-subtle"></i>
         </span>
-        <span class="hidden md:inline font-bold">Artifact Canvas</span>
+        <span class="hidden md:inline font-medium">Artifact Canvas</span>
       </button>
 
       <!-- New Session Button (Studio Only) -->
-      <button onclick="createNewSession()" id="btn-new-session" class="studio-control p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Start New Session (Ctrl+K)">
+      <button onclick="createNewSession()" id="btn-new-session" class="studio-control medusa-btn-transparent !p-2" title="Start New Session (Ctrl+K)">
         <i class="fa-solid fa-plus text-sm"></i>
       </button>
 
       <!-- Settings & Security Button (Available Everywhere) -->
-      <button onclick="openSettingsModal()" id="btn-settings" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 flex items-center space-x-2 transition" title="Security & Dashboard Settings">
-        <i class="fa-solid fa-gear text-slate-400"></i>
+      <button onclick="openSettingsModal()" id="btn-settings" class="medusa-btn-secondary" title="Security & Dashboard Settings">
+        <i class="fa-solid fa-gear text-ui-fg-muted"></i>
         <span class="hidden sm:inline">Settings</span>
         <span id="settings-status-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
       </button>
 
       <!-- Theme Toggle (Dark / Light) -->
-      <button onclick="toggleDarkMode()" class="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Toggle Light/Dark Theme">
+      <button onclick="toggleDarkMode()" class="medusa-btn-transparent !p-2" title="Toggle Light/Dark Theme">
         <i id="theme-icon" class="fa-solid fa-sun text-sm"></i>
       </button>
     </div>
@@ -466,15 +606,15 @@
     <!-- --------------------------------------------------------------------- -->
     <!-- A. SESSIONS RAIL (LEFT COLLAPSIBLE DRAWER)                             -->
     <!-- --------------------------------------------------------------------- -->
-    <aside id="sessions-rail" class="w-72 shrink-0 border-r border-slate-200 dark:border-white/5 bg-white/80 dark:bg-surface-card/60 flex flex-col transition-all duration-300 z-30 select-none">
+    <aside id="sessions-rail" class="w-72 shrink-0 border-r border-ui-border-base bg-ui-bg-subtle flex flex-col transition-all duration-300 z-30 select-none">
       
       <!-- Rail Header -->
-      <div class="p-3.5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
+      <div class="p-3.5 border-b border-ui-border-base flex items-center justify-between">
         <div class="flex items-center space-x-2">
-          <i class="fa-solid fa-folder-tree text-xs text-brand-500"></i>
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Sessions</span>
+          <i class="fa-solid fa-folder-tree text-xs text-emerald-500"></i>
+          <span class="text-xs font-semibold uppercase tracking-wider text-ui-fg-subtle">Sessions</span>
         </div>
-        <button onclick="createNewSession()" class="px-2 py-1 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 text-xs font-bold hover:bg-brand-500/20 transition flex items-center space-x-1">
+        <button onclick="createNewSession()" class="medusa-btn-primary !px-2 !py-0.5 text-xs">
           <i class="fa-solid fa-plus text-[10px]"></i>
           <span>New</span>
         </button>
@@ -483,36 +623,36 @@
       <!-- Search Filter -->
       <div class="p-3">
         <div class="relative">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-ui-fg-muted"></i>
           <input 
             type="text" 
             id="sessions-search" 
             placeholder="Search research history..." 
             oninput="filterSessions(this.value)" 
-            class="w-full glass-input pl-8 pr-3 py-1.5 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100 placeholder-slate-400"
+            class="w-full medusa-input pl-8 pr-3 py-1.5"
           >
         </div>
       </div>
 
       <!-- Sessions List -->
-      <div id="sessions-list" class="flex-1 overflow-y-auto px-2 space-y-1.5 py-1">
+      <div id="sessions-list" class="flex-1 overflow-y-auto px-2 space-y-1 py-1">
         <!-- Rendered dynamically -->
       </div>
 
       <!-- Rail Footer -->
-      <div class="p-3 border-t border-slate-200 dark:border-white/5 flex justify-between items-center text-[11px] text-slate-400">
+      <div class="p-3 border-t border-ui-border-base flex justify-between items-center text-[11px] text-ui-fg-muted">
         <span id="session-count-text" class="font-mono">0 sessions</span>
-        <button onclick="clearAllSessions()" class="hover:text-rose-400 transition font-medium">Clear History</button>
+        <button onclick="clearAllSessions()" class="hover:text-rose-400 transition font-medium cursor-pointer">Clear History</button>
       </div>
     </aside>
 
     <!-- --------------------------------------------------------------------- -->
     <!-- B. CENTER STREAM: RESEARCH STREAM & PROMPT COMPOSER                   -->
     <!-- --------------------------------------------------------------------- -->
-    <main class="flex-1 flex flex-col min-w-[320px] bg-slate-50 dark:bg-surface-dark relative overflow-hidden">
+    <main class="flex-1 flex flex-col min-w-[320px] bg-ui-bg-base relative overflow-hidden">
       
       <!-- Backpressure & Concurrency Safety Alert Banner -->
-      <div id="queue-banner" class="hidden shrink-0 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 text-xs flex items-center space-x-3 text-amber-700 dark:text-amber-300">
+      <div id="queue-banner" class="hidden shrink-0 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 text-xs flex items-center space-x-3 text-amber-400">
         <i class="fa-solid fa-shield-halved text-amber-500 text-sm animate-pulse"></i>
         <div class="flex-1 font-medium">
           <span class="font-bold">Render 512MB RAM Guard Active:</span>
@@ -526,70 +666,69 @@
         <!-- Welcome Hero State (Empty Session) -->
         <div id="hero-welcome" class="max-w-3xl mx-auto py-10 text-center space-y-6">
           
-          <!-- Hero Icon with Glowing Halo -->
-          <div class="relative w-20 h-20 mx-auto">
-            <div class="absolute inset-0 rounded-3xl bg-brand-500/20 blur-xl"></div>
-            <div class="relative w-20 h-20 rounded-3xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center p-3 shadow-glow-emerald">
-              <img src="/favicon.svg" alt="Deep Researcher" class="w-14 h-14">
+          <!-- Hero Icon with Medusa Styling -->
+          <div class="relative w-16 h-16 mx-auto">
+            <div class="relative w-16 h-16 rounded-2xl bg-ui-bg-subtle border border-ui-border-base flex items-center justify-center p-3 shadow-elevation-card-rest">
+              <img src="/favicon.svg" alt="Deep Researcher" class="w-10 h-10">
             </div>
           </div>
 
           <div class="space-y-2">
-            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display">
+            <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-ui-fg-base font-display">
               Autonomous Deep Research
             </h1>
-            <p class="text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
-              Explore multi-turn agentic decomposition, parallel search retrieval, cross-source fact validation, and publication-ready synthesis.
+            <p class="text-xs md:text-sm text-ui-fg-subtle max-w-xl mx-auto leading-relaxed">
+              Multi-turn agentic query decomposition, parallel retrieval across verified sources, and publication-ready synthesis.
             </p>
           </div>
 
-          <!-- Suggested Research Prompts (Including Verified Benchmark Inquiries) -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-left pt-3">
+          <!-- Suggested Research Prompts (Medusa UI Card Grid) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left pt-2">
             
             <!-- Benchmark 1: PQC Migration -->
-            <button onclick="fillAndSubmitPrompt('Post-Quantum Cryptography Migration Challenges for Global Financial Systems: algorithmic size expansion FIPS 203/204, TLS 1.3 MTU packet fragmentation, HFT latency jitter, HSM NVRAM bottlenecks, and Mosca theorem risk window.')" class="p-4 rounded-2xl glass-panel hover:border-brand-500/50 hover:shadow-glow-emerald transition duration-200 group text-left">
-              <div class="flex items-center space-x-2 text-brand-600 dark:text-brand-400 text-xs font-bold mb-1.5">
-                <i class="fa-solid fa-shield-halved"></i>
+            <button onclick="fillAndSubmitPrompt('Post-Quantum Cryptography Migration Challenges for Global Financial Systems: algorithmic size expansion FIPS 203/204, TLS 1.3 MTU packet fragmentation, HFT latency jitter, HSM NVRAM bottlenecks, and Mosca theorem risk window.')" class="p-4 rounded-xl medusa-card hover:border-ui-border-strong hover:bg-ui-bg-subtle-hover transition duration-150 group text-left cursor-pointer">
+              <div class="flex items-center space-x-2 text-ui-fg-base text-xs font-semibold mb-1.5">
+                <i class="fa-solid fa-shield-halved text-emerald-400"></i>
                 <span>Post-Quantum Cryptography</span>
-                <span class="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-500">Benchmark #1</span>
+                <span class="ml-auto medusa-badge medusa-badge-green text-[9px]">Benchmark #1</span>
               </div>
-              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+              <div class="text-xs text-ui-fg-subtle line-clamp-2 leading-relaxed">
                 "PQC Migration in Global Financial Systems: FIPS 203/204 MTU fragmentation and HSM bottlenecks"
               </div>
             </button>
 
             <!-- Benchmark 2: High-Temperature Fusion -->
-            <button onclick="fillAndSubmitPrompt('High-Temperature Superconductors & Commercial Magnetically Confined Fusion: REBCO tape critical current limits, quench detection in high-field tokamaks, stellarator non-planar coils, and engineering economics vs fission.')" class="p-4 rounded-2xl glass-panel hover:border-accent-400/50 hover:shadow-glow-indigo transition duration-200 group text-left">
-              <div class="flex items-center space-x-2 text-accent-500 dark:text-accent-400 text-xs font-bold mb-1.5">
-                <i class="fa-solid fa-atom"></i>
+            <button onclick="fillAndSubmitPrompt('High-Temperature Superconductors & Commercial Magnetically Confined Fusion: REBCO tape critical current limits, quench detection in high-field tokamaks, stellarator non-planar coils, and engineering economics vs fission.')" class="p-4 rounded-xl medusa-card hover:border-ui-border-strong hover:bg-ui-bg-subtle-hover transition duration-150 group text-left cursor-pointer">
+              <div class="flex items-center space-x-2 text-ui-fg-base text-xs font-semibold mb-1.5">
+                <i class="fa-solid fa-atom text-sky-400"></i>
                 <span>Superconductors & Fusion</span>
-                <span class="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-accent-500/10 text-accent-400">Benchmark #2</span>
+                <span class="ml-auto medusa-badge medusa-badge-blue text-[9px]">Benchmark #2</span>
               </div>
-              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+              <div class="text-xs text-ui-fg-subtle line-clamp-2 leading-relaxed">
                 "High-Temperature Superconductors & Commercial Fusion: REBCO tapes, quench protection & tokamaks"
               </div>
             </button>
 
             <!-- Benchmark 3: Distributed MoE vs UMA -->
-            <button onclick="fillAndSubmitPrompt('Distributed Mixture-of-Experts Inference vs. Unified Memory Architectures: Expert parallelism communication overhead, all-to-all NVLink saturation, Grace Blackwell GB200 UMA, and latency-throughput Pareto frontiers.')" class="p-4 rounded-2xl glass-panel hover:border-teal-400/50 transition duration-200 group text-left">
-              <div class="flex items-center space-x-2 text-teal-600 dark:text-teal-400 text-xs font-bold mb-1.5">
-                <i class="fa-solid fa-server"></i>
+            <button onclick="fillAndSubmitPrompt('Distributed Mixture-of-Experts Inference vs. Unified Memory Architectures: Expert parallelism communication overhead, all-to-all NVLink saturation, Grace Blackwell GB200 UMA, and latency-throughput Pareto frontiers.')" class="p-4 rounded-xl medusa-card hover:border-ui-border-strong hover:bg-ui-bg-subtle-hover transition duration-150 group text-left cursor-pointer">
+              <div class="flex items-center space-x-2 text-ui-fg-base text-xs font-semibold mb-1.5">
+                <i class="fa-solid fa-server text-teal-400"></i>
                 <span>Distributed MoE vs. UMA</span>
-                <span class="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-400">Benchmark #3</span>
+                <span class="ml-auto medusa-badge medusa-badge-green text-[9px]">Benchmark #3</span>
               </div>
-              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+              <div class="text-xs text-ui-fg-subtle line-clamp-2 leading-relaxed">
                 "Distributed MoE vs Unified Memory: All-to-all NVLink saturation & GB200 Pareto frontiers"
               </div>
             </button>
 
             <!-- Practical Query: Financial 10-K & Valuation -->
-            <button onclick="fillAndSubmitPrompt('Comprehensive financial valuation of Nvidia (NVDA) analyzing 10-K datacenter revenue growth, Blackwell ramp, hyperscaler capex trends, and competitive risks.')" class="p-4 rounded-2xl glass-panel hover:border-violet-400/50 transition duration-200 group text-left">
-              <div class="flex items-center space-x-2 text-violet-600 dark:text-violet-400 text-xs font-bold mb-1.5">
-                <i class="fa-solid fa-chart-line"></i>
+            <button onclick="fillAndSubmitPrompt('Comprehensive financial valuation of Nvidia (NVDA) analyzing 10-K datacenter revenue growth, Blackwell ramp, hyperscaler capex trends, and competitive risks.')" class="p-4 rounded-xl medusa-card hover:border-ui-border-strong hover:bg-ui-bg-subtle-hover transition duration-150 group text-left cursor-pointer">
+              <div class="flex items-center space-x-2 text-ui-fg-base text-xs font-semibold mb-1.5">
+                <i class="fa-solid fa-chart-line text-violet-400"></i>
                 <span>Enterprise 10-K & Valuation</span>
-                <span class="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-400">Finance</span>
+                <span class="ml-auto medusa-badge medusa-badge-purple text-[9px]">Finance</span>
               </div>
-              <div class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+              <div class="text-xs text-ui-fg-subtle line-clamp-2 leading-relaxed">
                 "Comprehensive financial valuation of Nvidia (NVDA): 10-K capex trends & Blackwell ramp"
               </div>
             </button>
@@ -603,11 +742,11 @@
       </div>
 
       <!-- ------------------------------------------------------------------- -->
-      <!-- C. PROMPT COMPOSER BAR (PERPLEXITY / CLAUDE STYLE DOCKED BAR)        -->
+      <!-- C. PROMPT COMPOSER BAR (MEDUSA DOCKED PROMPT BAR)                   -->
       <!-- ------------------------------------------------------------------- -->
-      <div class="p-4 border-t border-slate-200 dark:border-white/5 bg-white/70 dark:bg-surface-darker/80 backdrop-blur-md">
+      <div class="p-4 border-t border-ui-border-base bg-ui-bg-base/90 backdrop-blur-md">
         <div class="max-w-4xl mx-auto">
-          <div class="glass-input rounded-2xl shadow-xl p-3 focus-within:ring-2 focus-within:ring-brand-500/40 transition duration-200">
+          <div class="medusa-card p-3 focus-within:border-ui-border-interactive focus-within:ring-1 focus-within:ring-emerald-500/40 transition duration-150">
             
             <!-- Expanding Textarea -->
             <textarea 
@@ -615,35 +754,34 @@
               rows="2" 
               placeholder="Ask a deep research question or paste complex inquiry... (Enter to submit, Shift+Enter for newline)" 
               onkeydown="handleInputKeydown(event)"
-              class="w-full bg-transparent resize-none focus:outline-none text-sm placeholder-slate-400 text-slate-800 dark:text-slate-100 font-sans leading-relaxed"
+              class="w-full bg-transparent resize-none focus:outline-none text-sm placeholder:text-ui-fg-muted text-ui-fg-base font-sans leading-relaxed"
             ></textarea>
 
             <!-- Bottom Control Strip -->
-            <div class="flex items-center justify-between pt-2.5 mt-1 border-t border-slate-100 dark:border-white/5 flex-wrap gap-2">
+            <div class="flex items-center justify-between pt-2.5 mt-1 border-t border-ui-border-base flex-wrap gap-2">
               
               <!-- Left Pills: Depth Mode & Data Sources -->
               <div class="flex items-center space-x-2 text-xs">
-                
                 <!-- Research Mode Indicator -->
-                <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold border border-brand-500/20">
+                <div class="medusa-badge medusa-badge-green">
                   <i class="fa-solid fa-brain text-[10px]"></i>
                   <span>Deep Research Mode</span>
                 </div>
 
                 <!-- Sources Pill -->
-                <button onclick="openDataSourcesModal()" class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-white/10 transition">
-                  <i class="fa-solid fa-globe text-[10px] text-brand-500"></i>
+                <button onclick="openDataSourcesModal()" class="hidden sm:inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-ui-bg-component border border-ui-border-base text-ui-fg-subtle hover:text-ui-fg-base hover:bg-ui-bg-component-hover font-medium transition text-xs">
+                  <i class="fa-solid fa-globe text-[10px] text-emerald-500"></i>
                   <span>Web + Reddit + Skills</span>
                 </button>
               </div>
 
               <!-- Right Actions: Send / Stop Button -->
               <div class="flex items-center space-x-2">
-                <span class="text-[11px] text-slate-400 font-mono hidden md:inline">Ctrl+Enter to run</span>
+                <span class="text-[11px] text-ui-fg-muted font-mono hidden md:inline">Ctrl+Enter to run</span>
                 <button 
                   id="btn-send" 
                   onclick="handleSendOrStop()" 
-                  class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white flex items-center justify-center transition shadow-glow-emerald cursor-pointer"
+                  class="w-8 h-8 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center transition shadow-elevation-card-rest cursor-pointer"
                   title="Run Research Inquiry"
                 >
                   <i id="btn-send-icon" class="fa-solid fa-arrow-up text-xs"></i>
@@ -659,49 +797,49 @@
     </main>
 
     <!-- --------------------------------------------------------------------- -->
-    <!-- D. ARTIFACT CANVAS STUDIO (RIGHT PANEL - CLAUDE ARTIFACT PARITY)      -->
+    <!-- D. ARTIFACT CANVAS STUDIO (RIGHT PANEL - MEDUSA UI CANVAS)            -->
     <!-- --------------------------------------------------------------------- -->
-    <aside id="research-panel" class="w-0 overflow-hidden border-l border-slate-200 dark:border-white/5 bg-white/95 dark:bg-surface-card/95 flex flex-col transition-all duration-300 z-30 select-text">
+    <aside id="research-panel" class="w-0 overflow-hidden border-l border-ui-border-base bg-ui-bg-base flex flex-col transition-all duration-300 z-30 select-text">
       
       <!-- Artifact Header Toolbar -->
-      <div class="h-14 shrink-0 px-4 border-b border-slate-200 dark:border-white/5 flex items-center justify-between select-none">
+      <div class="h-14 shrink-0 px-4 border-b border-ui-border-base flex items-center justify-between select-none bg-ui-bg-base">
         
         <!-- Segmented Tab Controls (Artifact Document, Plan Graph, Thoughts, Sources) -->
-        <div class="flex items-center space-x-1 p-1 rounded-xl bg-slate-100 dark:bg-white/5 text-xs font-semibold">
-          <button onclick="switchResearchTab('report')" id="rtab-report" class="px-3 py-1 rounded-lg bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold transition">
+        <div class="flex items-center space-x-1 p-1 rounded-lg bg-ui-bg-subtle border border-ui-border-base text-xs font-medium">
+          <button onclick="switchResearchTab('report')" id="rtab-report" class="px-3 py-1 rounded-md bg-ui-bg-base text-ui-fg-base border border-ui-border-base shadow-elevation-card-rest font-medium transition">
             <i class="fa-solid fa-file-contract mr-1 text-[11px]"></i>
             <span>Artifact</span>
           </button>
-          <button onclick="switchResearchTab('tasks')" id="rtab-tasks" class="px-3 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+          <button onclick="switchResearchTab('tasks')" id="rtab-tasks" class="px-3 py-1 rounded-md text-ui-fg-subtle hover:text-ui-fg-base transition font-medium">
             <i class="fa-solid fa-diagram-project mr-1 text-[11px]"></i>
             <span>Plan</span>
           </button>
-          <button onclick="switchResearchTab('thinking')" id="rtab-thinking" class="px-3 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+          <button onclick="switchResearchTab('thinking')" id="rtab-thinking" class="px-3 py-1 rounded-md text-ui-fg-subtle hover:text-ui-fg-base transition font-medium">
             <i class="fa-solid fa-terminal mr-1 text-[11px]"></i>
             <span>Traces</span>
           </button>
-          <button onclick="switchResearchTab('sources')" id="rtab-sources" class="px-3 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+          <button onclick="switchResearchTab('sources')" id="rtab-sources" class="px-3 py-1 rounded-md text-ui-fg-subtle hover:text-ui-fg-base transition font-medium">
             <i class="fa-solid fa-quote-right mr-1 text-[11px]"></i>
             <span>Sources</span>
           </button>
         </div>
 
         <!-- Canvas Actions (Download .md, Export PDF, Copy, Fullscreen, Close) -->
-        <div class="flex items-center space-x-1.5">
-          <button onclick="downloadCurrentReportMd()" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Download Markdown (.md)">
+        <div class="flex items-center space-x-1">
+          <button onclick="downloadCurrentReportMd()" class="medusa-btn-transparent !p-1.5" title="Download Markdown (.md)">
             <i class="fa-regular fa-file-lines text-xs"></i>
           </button>
-          <button onclick="downloadCurrentReportPdf()" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Export Formatted PDF">
+          <button onclick="downloadCurrentReportPdf()" class="medusa-btn-transparent !p-1.5 hover:!text-rose-400" title="Export Formatted PDF">
             <i class="fa-regular fa-file-pdf text-xs"></i>
           </button>
-          <button onclick="copyCurrentReport()" class="p-1.5 rounded-lg text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Copy Document Markdown">
+          <button onclick="copyCurrentReport()" class="medusa-btn-transparent !p-1.5 hover:!text-emerald-400" title="Copy Document Markdown">
             <i class="fa-regular fa-copy text-xs"></i>
           </button>
-          <div class="w-px h-4 bg-slate-200 dark:bg-white/10 mx-1"></div>
-          <button onclick="toggleResearchPanelExpand()" id="btn-canvas-expand" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Toggle Fullscreen Width">
+          <div class="w-px h-4 bg-ui-border-base mx-1"></div>
+          <button onclick="toggleResearchPanelExpand()" id="btn-canvas-expand" class="medusa-btn-transparent !p-1.5" title="Toggle Fullscreen Width">
             <i class="fa-solid fa-up-right-and-down-left-from-center text-xs"></i>
           </button>
-          <button onclick="toggleResearchPanel()" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Close Artifact Canvas">
+          <button onclick="toggleResearchPanel()" class="medusa-btn-transparent !p-1.5" title="Close Artifact Canvas">
             <i class="fa-solid fa-xmark text-sm"></i>
           </button>
         </div>
@@ -712,12 +850,12 @@
       <div id="rview-report" class="flex-1 overflow-y-auto p-6 md:p-8 space-y-5">
         
         <!-- Artifact Meta Header -->
-        <div class="pb-4 border-b border-slate-200 dark:border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs select-none">
+        <div class="pb-4 border-b border-ui-border-base flex flex-wrap items-center justify-between gap-3 text-xs select-none">
           <div class="flex items-center space-x-2">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span class="font-mono text-slate-400 uppercase tracking-wider text-[11px]">Autonomous Artifact</span>
+            <span class="font-mono text-ui-fg-muted uppercase tracking-wider text-[11px]">Autonomous Artifact</span>
           </div>
-          <div class="flex items-center space-x-3 text-slate-400 font-mono text-[11px]">
+          <div class="flex items-center space-x-3 text-ui-fg-muted font-mono text-[11px]">
             <span id="artifact-word-count">0 words</span>
             <span>•</span>
             <span id="artifact-reading-time">1 min read</span>
@@ -728,8 +866,8 @@
 
         <!-- Synthesized Document Body (Clean Typography) -->
         <div id="panel-report-content" class="artifact-body max-w-none leading-relaxed">
-          <div class="text-slate-400 italic py-10 text-center">
-            <i class="fa-solid fa-file-circle-question text-3xl mb-3 text-slate-300 dark:text-slate-600 block"></i>
+          <div class="text-ui-fg-muted italic py-10 text-center">
+            <i class="fa-solid fa-file-circle-question text-3xl mb-3 text-ui-fg-muted block"></i>
             No synthesis generated yet in this session. Run an inquiry to inspect the document canvas.
           </div>
         </div>
@@ -738,51 +876,51 @@
       <!-- TAB 2: TASKS & DECOMPOSITION PLAN -->
       <div id="rview-tasks" class="hidden flex-1 overflow-y-auto p-6 space-y-5">
         <div>
-          <div class="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider">Automated Query Decomposition</div>
-          <h3 id="plan-title-display" class="font-extrabold text-base text-slate-900 dark:text-white mt-1">
+          <div class="text-[11px] font-mono font-medium text-ui-fg-muted uppercase tracking-wider">Automated Query Decomposition</div>
+          <h3 id="plan-title-display" class="font-bold text-base text-ui-fg-base mt-1">
             No active plan formulated.
           </h3>
         </div>
 
         <!-- Progress Gauge -->
-        <div class="p-4 rounded-2xl glass-panel space-y-2">
+        <div class="p-4 rounded-xl medusa-card space-y-2">
           <div class="flex justify-between text-xs font-semibold">
-            <span class="text-slate-500">Batch Concurrency & Execution</span>
-            <span id="plan-progress-pct" class="font-mono font-bold text-brand-500">0%</span>
+            <span class="text-ui-fg-subtle">Batch Concurrency & Execution</span>
+            <span id="plan-progress-pct" class="font-mono font-bold text-emerald-400">0%</span>
           </div>
-          <div class="w-full bg-slate-200 dark:bg-white/5 h-2 rounded-full overflow-hidden">
-            <div id="plan-progress-bar" class="bg-gradient-to-r from-brand-500 to-teal-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+          <div class="w-full bg-ui-bg-component h-2 rounded-full overflow-hidden">
+            <div id="plan-progress-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
           </div>
         </div>
 
         <!-- Decomposed Sub-Query Tasks -->
         <div class="space-y-2.5 pt-1">
-          <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sub-Query Tasks</div>
+          <div class="text-xs font-semibold text-ui-fg-subtle uppercase tracking-wider">Sub-Query Tasks</div>
           <div id="tasks-list" class="space-y-2">
-            <div class="text-xs text-slate-400 italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>
+            <div class="text-xs text-ui-fg-muted italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>
           </div>
         </div>
       </div>
 
       <!-- TAB 3: AGENT MONOLOGUE & TRACES -->
       <div id="rview-thinking" class="hidden flex-1 overflow-y-auto p-6 space-y-4 font-mono text-xs">
-        <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-white/5">
-          <span class="font-bold text-slate-400 uppercase tracking-wider text-[11px]">Worker Execution Traces</span>
-          <span id="thinking-step-count" class="text-slate-500 text-[11px]">0 steps logged</span>
+        <div class="flex items-center justify-between pb-2 border-b border-ui-border-base">
+          <span class="font-medium text-ui-fg-muted uppercase tracking-wider text-[11px]">Worker Execution Traces</span>
+          <span id="thinking-step-count" class="text-ui-fg-muted text-[11px]">0 steps logged</span>
         </div>
-        <div id="thinking-stream-list" class="space-y-2 text-slate-700 dark:text-slate-300">
-          <div class="text-xs text-slate-400 italic font-sans">No research thinking active.</div>
+        <div id="thinking-stream-list" class="space-y-2 text-ui-fg-subtle">
+          <div class="text-xs text-ui-fg-muted italic font-sans">No research thinking active.</div>
         </div>
       </div>
 
       <!-- TAB 4: VERIFIED SOURCES & CITATIONS -->
       <div id="rview-sources" class="hidden flex-1 overflow-y-auto p-6 space-y-4">
-        <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-white/5">
-          <span class="font-bold text-slate-400 uppercase tracking-wider text-[11px]">Primary Citations</span>
-          <span id="sources-badge-total" class="font-mono text-xs text-brand-500 font-bold">0 captured</span>
+        <div class="flex items-center justify-between pb-2 border-b border-ui-border-base">
+          <span class="font-medium text-ui-fg-muted uppercase tracking-wider text-[11px]">Primary Citations</span>
+          <span id="sources-badge-total" class="font-mono text-xs text-emerald-400 font-bold">0 captured</span>
         </div>
         <div id="panel-sources-list" class="space-y-2.5">
-          <div class="text-xs text-slate-400 italic">Sources collected by concurrent workers will be listed here.</div>
+          <div class="text-xs text-ui-fg-muted italic">Sources collected by concurrent workers will be listed here.</div>
         </div>
       </div>
 
@@ -791,22 +929,22 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 3. OBSERVABILITY DASHBOARD VIEW                                           -->
+  <!-- 3. OBSERVABILITY DASHBOARD VIEW (MEDUSA UI DASHBOARD)                     -->
   <!-- ========================================================================= -->
   <div id="view-dashboard" class="hidden flex-1 overflow-y-auto p-6 md:p-8 max-w-6xl w-full mx-auto space-y-6">
     
     <!-- Dashboard Header -->
     <div class="flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display">
-          System Observability & Blame
+        <h2 class="text-xl md:text-2xl font-bold tracking-tight text-ui-fg-base font-display">
+          System Observability & Metrics
         </h2>
-        <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+        <p class="text-xs md:text-sm text-ui-fg-muted mt-0.5">
           Real-time metrics: Process RSS, Render 512MB RAM Guard, token consumption, and concurrency backpressure.
         </p>
       </div>
-      <button onclick="refreshDashboard()" class="px-3.5 py-2 rounded-xl glass-panel text-xs font-semibold hover:border-brand-500 flex items-center space-x-2 transition">
-        <i class="fa-solid fa-arrows-rotate text-brand-500"></i>
+      <button onclick="refreshDashboard()" class="medusa-btn-secondary">
+        <i class="fa-solid fa-arrows-rotate text-emerald-400"></i>
         <span>Refresh Metrics</span>
       </button>
     </div>
@@ -815,80 +953,80 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       
       <!-- Card 1: System RAM Usage -->
-      <div class="glass-panel rounded-2xl p-4 md:p-5 space-y-3">
-        <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+      <div class="medusa-card p-4 md:p-5 space-y-3">
+        <div class="flex items-center justify-between text-xs text-ui-fg-muted font-medium">
           <span>HOST SYSTEM RAM</span>
           <i class="fa-solid fa-memory text-emerald-500"></i>
         </div>
-        <div id="stat-system-ram" class="text-3xl font-extrabold font-mono text-slate-900 dark:text-white">--%</div>
-        <div class="w-full bg-slate-200 dark:bg-white/5 h-2 rounded-full overflow-hidden">
-          <div id="stat-ram-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+        <div id="stat-system-ram" class="text-2xl md:text-3xl font-bold font-mono text-ui-fg-base">--%</div>
+        <div class="w-full bg-ui-bg-component h-1.5 rounded-full overflow-hidden">
+          <div id="stat-ram-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
         </div>
-        <div class="text-[11px] text-slate-400">Total host machine memory load</div>
+        <div class="text-[11px] text-ui-fg-muted">Total host machine memory load</div>
       </div>
 
       <!-- Card 2: Process RSS (Agent Footprint) -->
-      <div class="glass-panel rounded-2xl p-4 md:p-5 space-y-3">
-        <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+      <div class="medusa-card p-4 md:p-5 space-y-3">
+        <div class="flex items-center justify-between text-xs text-ui-fg-muted font-medium">
           <span>PROCESS RSS FOOTPRINT</span>
-          <i class="fa-solid fa-bolt text-brand-500"></i>
+          <i class="fa-solid fa-bolt text-emerald-400"></i>
         </div>
-        <div id="stat-process-rss" class="text-3xl font-extrabold font-mono text-brand-500">-- MB</div>
-        <div class="w-full bg-slate-200 dark:bg-white/5 h-2 rounded-full overflow-hidden">
-          <div id="stat-rss-bar" class="bg-brand-500 h-full rounded-full transition-all duration-300" style="width: 6%"></div>
+        <div id="stat-process-rss" class="text-2xl md:text-3xl font-bold font-mono text-emerald-400">-- MB</div>
+        <div class="w-full bg-ui-bg-component h-1.5 rounded-full overflow-hidden">
+          <div id="stat-rss-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 6%"></div>
         </div>
-        <div class="text-[11px] text-slate-400">Render Free Limit: 512 MB (Immune)</div>
+        <div class="text-[11px] text-ui-fg-muted">Render Free Limit: 512 MB (Immune)</div>
       </div>
 
       <!-- Card 3: Active & Queued Jobs -->
-      <div class="glass-panel rounded-2xl p-4 md:p-5 space-y-3">
-        <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+      <div class="medusa-card p-4 md:p-5 space-y-3">
+        <div class="flex items-center justify-between text-xs text-ui-fg-muted font-medium">
           <span>CONCURRENCY JOBS</span>
-          <i class="fa-solid fa-list-check text-accent-400"></i>
+          <i class="fa-solid fa-list-check text-sky-400"></i>
         </div>
-        <div id="stat-jobs-count" class="text-3xl font-extrabold font-mono text-slate-900 dark:text-white">0 / 0</div>
-        <div class="flex items-center space-x-1.5 text-xs text-emerald-500 font-semibold">
+        <div id="stat-jobs-count" class="text-2xl md:text-3xl font-bold font-mono text-ui-fg-base">0 / 0</div>
+        <div class="flex items-center space-x-1.5 text-xs text-emerald-400 font-medium">
           <i class="fa-solid fa-circle-check text-[10px]"></i>
           <span>OOM Guard Active</span>
         </div>
-        <div class="text-[11px] text-slate-400">Active vs. Queued Backpressure</div>
+        <div class="text-[11px] text-ui-fg-muted">Active vs. Queued Backpressure</div>
       </div>
 
       <!-- Card 4: Token Consumption & Cost -->
-      <div class="glass-panel rounded-2xl p-4 md:p-5 space-y-3">
-        <div class="flex items-center justify-between text-xs text-slate-400 font-semibold">
+      <div class="medusa-card p-4 md:p-5 space-y-3">
+        <div class="flex items-center justify-between text-xs text-ui-fg-muted font-medium">
           <span>TOKENOMICS</span>
-          <i class="fa-solid fa-coins text-amber-500"></i>
+          <i class="fa-solid fa-coins text-amber-400"></i>
         </div>
-        <div id="stat-tokens" class="text-3xl font-extrabold font-mono text-indigo-400">0</div>
-        <div id="stat-cost" class="text-xs font-mono text-slate-400">Est. Cost: $0.00</div>
-        <div class="text-[11px] text-slate-400">NVIDIA NIM / LLM API Tokens</div>
+        <div id="stat-tokens" class="text-2xl md:text-3xl font-bold font-mono text-violet-400">0</div>
+        <div id="stat-cost" class="text-xs font-mono text-ui-fg-muted">Est. Cost: $0.00</div>
+        <div class="text-[11px] text-ui-fg-muted">NVIDIA NIM / LLM API Tokens</div>
       </div>
 
     </div>
 
-    <!-- Recent Jobs Ledger Table -->
-    <div class="glass-panel rounded-2xl overflow-hidden">
-      <div class="p-4 md:p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
+    <!-- Recent Jobs Ledger Table (Medusa UI Table) -->
+    <div class="medusa-card overflow-hidden">
+      <div class="p-4 md:p-5 border-b border-ui-border-base flex items-center justify-between bg-ui-bg-subtle">
         <div>
-          <h3 class="font-bold text-sm text-slate-900 dark:text-white">Execution Ledger & Job History</h3>
-          <p class="text-xs text-slate-400">Audit trail of completed research tasks, latency, and tokens.</p>
+          <h3 class="font-semibold text-sm text-ui-fg-base">Execution Ledger & Job History</h3>
+          <p class="text-xs text-ui-fg-muted">Audit trail of completed research tasks, latency, and tokens.</p>
         </div>
-        <span class="text-xs font-mono text-slate-400">SQLite Logged</span>
+        <span class="medusa-badge">SQLite Logged</span>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs">
-          <thead class="bg-slate-100 dark:bg-white/5 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-white/5">
+          <thead class="bg-ui-bg-component/50 text-ui-fg-muted uppercase tracking-wider font-medium text-[11px] border-b border-ui-border-base">
             <tr>
-              <th class="p-3.5 pl-5">Job ID</th>
-              <th class="p-3.5">Research Inquiry</th>
-              <th class="p-3.5">Status</th>
-              <th class="p-3.5">Tokens</th>
-              <th class="p-3.5 pr-5">Timestamp</th>
+              <th class="p-3 pl-5">Job ID</th>
+              <th class="p-3">Research Inquiry</th>
+              <th class="p-3">Status</th>
+              <th class="p-3">Tokens</th>
+              <th class="p-3 pr-5">Timestamp</th>
             </tr>
           </thead>
-          <tbody id="dashboard-jobs-body" class="divide-y divide-slate-100 dark:divide-white/5 font-mono">
-            <tr><td colspan="5" class="p-5 text-center text-slate-400 font-sans">No research jobs executed yet.</td></tr>
+          <tbody id="dashboard-jobs-body" class="divide-y divide-ui-border-base font-mono">
+            <tr><td colspan="5" class="p-5 text-center text-ui-fg-muted font-sans">No research jobs executed yet.</td></tr>
           </tbody>
         </table>
       </div>
@@ -897,110 +1035,110 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 4. API KEYS VIEW                                                          -->
+  <!-- 4. API KEYS VIEW (MEDUSA UI VIEW)                                         -->
   <!-- ========================================================================= -->
   <div id="view-keys" class="hidden flex-1 overflow-y-auto p-6 md:p-8 max-w-6xl w-full mx-auto space-y-6">
     <div class="flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display">
+        <h2 class="text-xl md:text-2xl font-bold tracking-tight text-ui-fg-base font-display">
           API Key Authentication Manager
         </h2>
-        <p class="text-xs md:text-sm text-slate-500 mt-0.5">
+        <p class="text-xs md:text-sm text-ui-fg-muted mt-0.5">
           Generate bearer tokens for external microservices, Telegram bots, or downstream enterprise workflows.
         </p>
       </div>
-      <button onclick="createApiKey()" class="px-4 py-2 bg-gradient-to-r from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white rounded-xl text-xs font-bold shadow-glow-emerald transition flex items-center space-x-2">
+      <button onclick="createApiKey()" class="medusa-btn-primary">
         <i class="fa-solid fa-plus text-[10px]"></i>
         <span>Generate New Key</span>
       </button>
     </div>
 
     <!-- Keys Ledger Table -->
-    <div class="glass-panel rounded-2xl overflow-hidden">
+    <div class="medusa-card overflow-hidden">
       <table class="w-full text-left text-xs">
-        <thead class="bg-slate-100 dark:bg-white/5 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200 dark:border-white/5">
+        <thead class="bg-ui-bg-component/50 text-ui-fg-muted uppercase tracking-wider font-medium text-[11px] border-b border-ui-border-base">
           <tr>
-            <th class="p-3.5 pl-5">Client / Name</th>
-            <th class="p-3.5">Key Prefix</th>
-            <th class="p-3.5">Status</th>
-            <th class="p-3.5">Created At</th>
-            <th class="p-3.5 pr-5 text-right">Actions</th>
+            <th class="p-3 pl-5">Client / Name</th>
+            <th class="p-3">Key Prefix</th>
+            <th class="p-3">Status</th>
+            <th class="p-3">Created At</th>
+            <th class="p-3 pr-5 text-right">Actions</th>
           </tr>
         </thead>
-        <tbody id="keys-table-body" class="divide-y divide-slate-100 dark:divide-white/5 font-mono">
-          <tr><td colspan="5" class="p-5 text-center text-slate-400 font-sans">Loading API keys...</td></tr>
+        <tbody id="keys-table-body" class="divide-y divide-ui-border-base font-mono">
+          <tr><td colspan="5" class="p-5 text-center text-ui-fg-muted font-sans">Loading API keys...</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Key Testing & Debugging Tool (Medusa UI Style) -->
-    <div class="glass-panel rounded-2xl p-5 border border-slate-200 dark:border-white/10 space-y-3">
+    <!-- Key Testing & Debugging Tool -->
+    <div class="medusa-card p-5 space-y-3">
       <div class="flex items-center space-x-2">
         <i class="fa-solid fa-stethoscope text-emerald-400 text-xs"></i>
-        <h3 class="text-xs font-bold text-slate-900 dark:text-white">API Key Debugger & Verification</h3>
+        <h3 class="text-xs font-semibold text-ui-fg-base">API Key Debugger & Verification</h3>
       </div>
-      <p class="text-[11px] text-slate-400">Test if a client key is active and correctly authorized against the routing middleware:</p>
+      <p class="text-[11px] text-ui-fg-muted">Test if a client key is active and correctly authorized against the routing middleware:</p>
       
       <div class="flex items-center space-x-2">
-        <input type="text" id="input-debug-key" placeholder="Paste dr_... key to test" class="flex-1 glass-input px-3 py-2 rounded-xl text-xs font-mono outline-none focus:ring-1 focus:ring-emerald-500 text-slate-800 dark:text-slate-100">
-        <button onclick="testKeyDebugger()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-glow-emerald">
+        <input type="text" id="input-debug-key" placeholder="Paste dr_... key to test" class="flex-1 medusa-input font-mono">
+        <button onclick="testKeyDebugger()" class="medusa-btn-primary">
           <i class="fa-solid fa-bolt text-[10px]"></i>
           <span>Verify Key</span>
         </button>
       </div>
 
-      <div id="debug-key-result" class="hidden p-3 rounded-xl text-xs font-mono border"></div>
+      <div id="debug-key-result" class="hidden p-3 rounded-lg text-xs font-mono border"></div>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 5. MODALS & POPUPS                                                        -->
+  <!-- 5. MODALS & POPUPS (MEDUSA FOCUS MODAL & DIALOG)                          -->
   <!-- ========================================================================= -->
 
   <!-- Data Sources Modal -->
-  <div id="sources-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-5 animate-scale-up">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-white/10">
+  <div id="sources-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-ui-bg-base border border-ui-border-base rounded-2xl p-6 shadow-elevation-modal space-y-5 animate-scale-up text-ui-fg-base">
+      <div class="flex items-center justify-between pb-3 border-b border-ui-border-base">
         <div class="flex items-center space-x-2.5">
-          <i class="fa-solid fa-sliders text-brand-500"></i>
-          <h3 class="font-extrabold text-sm text-slate-900 dark:text-white">Configure Active Sources</h3>
+          <i class="fa-solid fa-sliders text-emerald-400"></i>
+          <h3 class="font-bold text-sm text-ui-fg-base">Configure Active Sources</h3>
         </div>
-        <button onclick="closeDataSourcesModal()" class="text-slate-400 hover:text-slate-200 transition">
+        <button onclick="closeDataSourcesModal()" class="medusa-btn-transparent !p-1">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
       <div class="space-y-3 text-xs">
         <!-- Source 1: Web -->
-        <label class="flex items-start space-x-3 p-3.5 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 cursor-pointer hover:border-brand-500/50 transition">
-          <input type="checkbox" id="ds-web" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500 accent-emerald-500">
+        <label class="flex items-start space-x-3 p-3.5 rounded-xl border border-ui-border-base bg-ui-bg-subtle cursor-pointer hover:bg-ui-bg-subtle-hover transition">
+          <input type="checkbox" id="ds-web" checked class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 accent-emerald-500">
           <div>
-            <div class="font-bold text-slate-900 dark:text-white">Web Search (Tavily & DuckDuckGo)</div>
-            <div class="text-slate-400 mt-0.5 leading-relaxed">High-fidelity web discovery with technical docs, research papers, and live news.</div>
+            <div class="font-semibold text-ui-fg-base">Web Search (Tavily & DuckDuckGo)</div>
+            <div class="text-ui-fg-muted mt-0.5 leading-relaxed">High-fidelity web discovery with technical docs, research papers, and live news.</div>
           </div>
         </label>
 
         <!-- Source 2: Reddit -->
-        <label class="flex items-start space-x-3 p-3.5 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 cursor-pointer hover:border-brand-500/50 transition">
-          <input type="checkbox" id="ds-reddit" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500 accent-emerald-500">
+        <label class="flex items-start space-x-3 p-3.5 rounded-xl border border-ui-border-base bg-ui-bg-subtle cursor-pointer hover:bg-ui-bg-subtle-hover transition">
+          <input type="checkbox" id="ds-reddit" checked class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 accent-emerald-500">
           <div>
-            <div class="font-bold text-slate-900 dark:text-white">Reddit & Public Discourse</div>
-            <div class="text-slate-400 mt-0.5 leading-relaxed">Zero-auth sentiment mining for authentic feedback, local discussions, and peer reviews.</div>
+            <div class="font-semibold text-ui-fg-base">Reddit & Public Discourse</div>
+            <div class="text-ui-fg-muted mt-0.5 leading-relaxed">Zero-auth sentiment mining for authentic feedback, local discussions, and peer reviews.</div>
           </div>
         </label>
 
         <!-- Source 3: Autonomous Skills & MCP -->
-        <label class="flex items-start space-x-3 p-3.5 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/5 cursor-pointer hover:border-brand-500/50 transition">
-          <input type="checkbox" id="ds-skills" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500 accent-emerald-500">
+        <label class="flex items-start space-x-3 p-3.5 rounded-xl border border-ui-border-base bg-ui-bg-subtle cursor-pointer hover:bg-ui-bg-subtle-hover transition">
+          <input type="checkbox" id="ds-skills" checked class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 accent-emerald-500">
           <div>
-            <div class="font-bold text-slate-900 dark:text-white">Autonomous MCP & Custom Skills</div>
-            <div class="text-slate-400 mt-0.5 leading-relaxed">Dynamic marketplace tools including financial scrapers and academic calculators.</div>
+            <div class="font-semibold text-ui-fg-base">Autonomous MCP & Custom Skills</div>
+            <div class="text-ui-fg-muted mt-0.5 leading-relaxed">Dynamic marketplace tools including financial scrapers and academic calculators.</div>
           </div>
         </label>
       </div>
 
-      <div class="flex justify-end pt-2">
-        <button onclick="saveDataSourcesSettings()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition shadow-glow-emerald">
+      <div class="flex justify-end pt-2 border-t border-ui-border-base">
+        <button onclick="saveDataSourcesSettings()" class="medusa-btn-primary">
           Save Preferences
         </button>
       </div>
@@ -1008,77 +1146,77 @@
   </div>
 
   <!-- Create API Key Modal -->
-  <div id="create-key-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-white/10">
-        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Generate Client API Key</h3>
-        <button onclick="closeCreateKeyModal()" class="text-slate-400 hover:text-slate-200">
+  <div id="create-key-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-ui-bg-base border border-ui-border-base rounded-2xl p-6 shadow-elevation-modal space-y-4 text-ui-fg-base">
+      <div class="flex items-center justify-between pb-2 border-b border-ui-border-base">
+        <h3 class="font-semibold text-sm text-ui-fg-base">Generate Client API Key</h3>
+        <button onclick="closeCreateKeyModal()" class="medusa-btn-transparent !p-1">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       <div>
-        <label class="block text-xs font-semibold text-slate-400 mb-1.5">Client Identifier / Purpose</label>
-        <input type="text" id="input-new-key-name" placeholder="e.g. Telegram Bot, Analytics Service" class="w-full glass-input p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
+        <label class="block text-xs font-medium text-ui-fg-subtle mb-1.5">Client Identifier / Purpose</label>
+        <input type="text" id="input-new-key-name" placeholder="e.g. Telegram Bot, Analytics Service" class="w-full medusa-input">
       </div>
-      <div class="flex justify-end space-x-2 pt-2">
-        <button onclick="closeCreateKeyModal()" class="px-3.5 py-1.5 text-xs text-slate-400 hover:text-white">Cancel</button>
-        <button onclick="submitNewApiKey()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold shadow-glow-emerald transition">Generate Key</button>
+      <div class="flex justify-end space-x-2 pt-2 border-t border-ui-border-base">
+        <button onclick="closeCreateKeyModal()" class="medusa-btn-secondary">Cancel</button>
+        <button onclick="submitNewApiKey()" class="medusa-btn-primary">Generate Key</button>
       </div>
     </div>
   </div>
 
   <!-- Key Created Modal -->
-  <div id="key-created-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4">
-      <div class="flex items-center space-x-2.5 text-emerald-500">
+  <div id="key-created-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-ui-bg-base border border-ui-border-base rounded-2xl p-6 shadow-elevation-modal space-y-4 text-ui-fg-base">
+      <div class="flex items-center space-x-2.5 text-emerald-400">
         <i class="fa-solid fa-circle-check text-xl"></i>
-        <h3 class="font-bold text-sm text-slate-900 dark:text-white">Token Generated Successfully</h3>
+        <h3 class="font-semibold text-sm text-ui-fg-base">Token Generated Successfully</h3>
       </div>
-      <p class="text-xs text-slate-400 leading-relaxed">
+      <p class="text-xs text-ui-fg-muted leading-relaxed">
         Please copy and securely record your bearer key now. For zero-leakage security, this full token is never displayed again.
       </p>
-      <div class="flex items-center space-x-2 p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-        <input type="text" id="created-key-input" readonly class="flex-1 bg-transparent font-mono text-xs text-brand-500 outline-none select-all">
-        <button onclick="copyGeneratedKey()" class="px-3 py-1 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1">
+      <div class="flex items-center space-x-2 p-2.5 rounded-lg bg-ui-bg-subtle border border-ui-border-base">
+        <input type="text" id="created-key-input" readonly class="flex-1 bg-transparent font-mono text-xs text-emerald-400 outline-none select-all">
+        <button onclick="copyGeneratedKey()" class="medusa-btn-primary !py-1 !px-2.5">
           <i class="fa-regular fa-copy"></i>
           <span>Copy</span>
         </button>
       </div>
-      <div class="flex justify-end pt-2">
-        <button onclick="closeKeyCreatedModal()" class="px-4 py-2 bg-slate-200 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/20 text-slate-800 dark:text-slate-100 rounded-xl text-xs font-bold transition">
+      <div class="flex justify-end pt-2 border-t border-ui-border-base">
+        <button onclick="closeKeyCreatedModal()" class="medusa-btn-secondary">
           Done
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Settings & Security Modal (Medusa UI Style) -->
-  <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-5 border border-slate-200 dark:border-white/10 animate-scale-up">
+  <!-- Settings & Security Modal (Medusa Focus Modal) -->
+  <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-ui-bg-base border border-ui-border-base rounded-2xl p-6 shadow-elevation-modal space-y-5 animate-scale-up text-ui-fg-base">
       
       <!-- Modal Header -->
-      <div class="flex items-center justify-between border-b border-slate-200 dark:border-white/5 pb-3.5">
+      <div class="flex items-center justify-between border-b border-ui-border-base pb-3.5">
         <div class="flex items-center space-x-3">
-          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+          <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
             <i class="fa-solid fa-sliders text-sm"></i>
           </div>
           <div>
-            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Settings & Security</h3>
-            <p class="text-[11px] text-slate-400">Manage workspace password, passkey, and access control</p>
+            <h3 class="font-semibold text-sm text-ui-fg-base">Settings & Security</h3>
+            <p class="text-[11px] text-ui-fg-muted">Manage workspace password, passkey, and access control</p>
           </div>
         </div>
-        <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition">
+        <button onclick="closeSettingsModal()" class="medusa-btn-transparent !p-1.5">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
       <!-- Segmented Sub-Tabs: Security / API Integration -->
-      <div class="flex items-center space-x-1 p-1 rounded-xl bg-slate-100 dark:bg-white/5 text-xs font-semibold">
-        <button onclick="switchSettingsTab('security')" id="stab-security" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold transition flex items-center justify-center space-x-1.5">
+      <div class="flex items-center space-x-1 p-1 rounded-lg bg-ui-bg-subtle border border-ui-border-base text-xs font-medium">
+        <button onclick="switchSettingsTab('security')" id="stab-security" class="flex-1 py-1.5 rounded-md bg-ui-bg-base text-ui-fg-base border border-ui-border-base shadow-elevation-card-rest font-medium transition flex items-center justify-center space-x-1.5">
           <i class="fa-solid fa-lock text-[11px]"></i>
           <span>Password & Passkey</span>
         </button>
-        <button onclick="switchSettingsTab('api')" id="stab-api" class="flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center justify-center space-x-1.5">
+        <button onclick="switchSettingsTab('api')" id="stab-api" class="flex-1 py-1.5 rounded-md text-ui-fg-subtle hover:text-ui-fg-base transition flex items-center justify-center space-x-1.5 font-medium">
           <i class="fa-solid fa-code text-[11px]"></i>
           <span>API Access Guide</span>
         </button>
@@ -1087,15 +1225,15 @@
       <!-- Tab Content: Security (Password Reset & Passkey) -->
       <div id="scontent-security" class="space-y-4">
         <!-- Protection Status Pill -->
-        <div class="p-3.5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center justify-between">
+        <div class="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex items-center justify-between">
           <div class="flex items-center space-x-2.5">
             <span id="settings-shield-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
             <div>
-              <div class="text-xs font-bold text-slate-900 dark:text-white">Workspace Shield Active</div>
-              <div id="security-shield-status" class="text-[11px] text-slate-400">Locked behind Master Password & Passkey</div>
+              <div class="text-xs font-semibold text-ui-fg-base">Workspace Shield Active</div>
+              <div id="security-shield-status" class="text-[11px] text-ui-fg-muted">Locked behind Master Password & Passkey</div>
             </div>
           </div>
-          <button onclick="logoutSession()" class="px-3 py-1.5 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 text-xs font-bold transition flex items-center space-x-1.5">
+          <button onclick="logoutSession()" class="medusa-btn-danger !text-xs !py-1">
             <i class="fa-solid fa-arrow-right-from-bracket text-[10px]"></i>
             <span>Log Out</span>
           </button>
@@ -1103,33 +1241,33 @@
 
         <!-- Reset Password Form -->
         <form onsubmit="handleResetPassword(event)" class="space-y-3 pt-1">
-          <div class="text-xs font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
-            <i class="fa-solid fa-key text-brand-500 text-[11px]"></i>
+          <div class="text-xs font-semibold text-ui-fg-base flex items-center space-x-1.5">
+            <i class="fa-solid fa-key text-emerald-400 text-[11px]"></i>
             <span>Update Access Password</span>
           </div>
           
           <div class="space-y-2">
             <div>
-              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Current Password or Passkey</label>
-              <input type="password" id="input-current-pw" placeholder="Enter current password..." class="w-full glass-input p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
+              <label class="block text-[11px] font-medium text-ui-fg-subtle mb-1">Current Password or Passkey</label>
+              <input type="password" id="input-current-pw" placeholder="Enter current password..." class="w-full medusa-input">
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1">New Password</label>
-                <input type="password" id="input-new-pw" placeholder="Min 4 characters..." class="w-full glass-input p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
+                <label class="block text-[11px] font-medium text-ui-fg-subtle mb-1">New Password</label>
+                <input type="password" id="input-new-pw" placeholder="Min 4 characters..." class="w-full medusa-input">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Optional Passkey (PIN / Token)</label>
-                <input type="password" id="input-new-passkey" placeholder="Optional quick passkey..." class="w-full glass-input p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
+                <label class="block text-[11px] font-medium text-ui-fg-subtle mb-1">Optional Passkey (PIN / Token)</label>
+                <input type="password" id="input-new-passkey" placeholder="Optional quick passkey..." class="w-full medusa-input">
               </div>
             </div>
           </div>
 
-          <div id="reset-pw-feedback" class="hidden p-2.5 rounded-xl text-xs text-center font-medium"></div>
+          <div id="reset-pw-feedback" class="hidden p-2.5 rounded-lg text-xs text-center font-medium"></div>
 
           <div class="flex justify-end pt-1">
-            <button type="submit" id="btn-save-password" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold shadow-glow-emerald transition flex items-center space-x-1.5">
+            <button type="submit" id="btn-save-password" class="medusa-btn-primary">
               <i class="fa-solid fa-check text-xs"></i>
               <span>Save Changes</span>
             </button>
@@ -1139,24 +1277,24 @@
 
       <!-- Tab Content: API Access -->
       <div id="scontent-api" class="hidden space-y-3.5">
-        <p class="text-xs text-slate-400 leading-relaxed">
+        <p class="text-xs text-ui-fg-muted leading-relaxed">
           Automated agents, scripts, and API clients authenticate using durable <b>API Keys</b> generated in the API Keys tab.
         </p>
 
-        <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800 font-mono text-xs text-slate-300 space-y-1.5 overflow-x-auto">
-          <div class="text-[10px] text-slate-500 uppercase tracking-wider">Example cURL Request:</div>
+        <div class="p-3 rounded-xl bg-ui-bg-subtle border border-ui-border-base font-mono text-xs text-ui-fg-subtle space-y-1.5 overflow-x-auto">
+          <div class="text-[10px] text-ui-fg-muted uppercase tracking-wider font-semibold">Example cURL Request:</div>
           <div class="text-emerald-400">curl -X POST https://your-domain/v1/jobs/async \</div>
           <div class="text-emerald-400 pl-4">-H "Authorization: Bearer YOUR_API_KEY" \</div>
           <div class="text-emerald-400 pl-4">-H "Content-Type: application/json" \</div>
           <div class="text-emerald-400 pl-4">-d '{"query": "Quantum AI algorithms"}'</div>
         </div>
 
-        <div class="flex items-center justify-between pt-2">
-          <button onclick="closeSettingsModal(); switchView('keys');" class="px-3.5 py-1.5 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 hover:bg-brand-500/20 text-xs font-bold transition flex items-center space-x-1.5">
+        <div class="flex items-center justify-between pt-2 border-t border-ui-border-base">
+          <button onclick="closeSettingsModal(); switchView('keys');" class="medusa-btn-secondary">
             <i class="fa-solid fa-key text-[10px]"></i>
             <span>Open API Keys Manager</span>
           </button>
-          <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition">Close</button>
+          <button onclick="closeSettingsModal()" class="medusa-btn-transparent">Close</button>
         </div>
       </div>
 
@@ -1164,47 +1302,44 @@
   </div>
 
   <!-- Password Access Gate Overlay (Modal for Locked/Protected Instance) -->
-  <div id="password-gate-overlay" class="hidden fixed inset-0 z-[100] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-md rounded-3xl p-8 shadow-2xl space-y-6 border border-emerald-500/20 text-center relative overflow-hidden">
-      <!-- Ambient Glow Behind Card -->
-      <div class="absolute -top-16 -left-16 w-36 h-36 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-16 -right-16 w-36 h-36 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
-
+  <div id="password-gate-overlay" class="hidden fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-ui-bg-base border border-ui-border-base rounded-2xl p-8 shadow-elevation-modal space-y-6 text-center relative overflow-hidden text-ui-fg-base">
+      
       <!-- Icon & Header -->
       <div class="space-y-3">
-        <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl mx-auto shadow-glow-emerald">
+        <div class="w-14 h-14 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl mx-auto shadow-glow-emerald">
           <i class="fa-solid fa-lock"></i>
         </div>
         <div>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 tracking-wide uppercase">
+          <span class="medusa-badge medusa-badge-green text-[10px] tracking-wide uppercase">
             Protected Instance
           </span>
-          <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mt-1.5">Deep Researcher Assistant</h2>
-          <p class="text-xs text-slate-400">Powered by NVIDIA NIM & NVIDIA Lab</p>
+          <h2 class="text-lg font-bold text-ui-fg-base mt-1.5">Deep Researcher Assistant</h2>
+          <p class="text-xs text-ui-fg-muted">Powered by NVIDIA NIM & NVIDIA Lab</p>
         </div>
       </div>
 
-      <p class="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
+      <p class="text-xs text-ui-fg-muted leading-relaxed max-w-xs mx-auto">
         This research assistant is password protected. Enter your password to unlock the workspace.
       </p>
 
       <!-- Input Form -->
       <form onsubmit="handlePasswordSubmit(event)" class="space-y-4 text-left">
         <div class="space-y-1.5">
-          <label id="gate-input-label" class="block text-xs font-semibold text-slate-300">Access Password</label>
+          <label id="gate-input-label" class="block text-xs font-medium text-ui-fg-subtle">Access Password</label>
           <div class="relative">
-            <input type="password" id="gate-password-input" placeholder="Enter password..." autocomplete="current-password" class="w-full glass-input px-4 py-3 rounded-2xl font-sans text-xs outline-none focus:ring-2 focus:ring-brand-500 pr-11 text-slate-800 dark:text-slate-100 placeholder:text-slate-500">
-            <button type="button" onclick="toggleGatePasswordVisibility()" class="absolute right-3.5 top-3 text-slate-400 hover:text-white text-xs">
+            <input type="password" id="gate-password-input" placeholder="Enter password..." autocomplete="current-password" class="w-full medusa-input pr-10">
+            <button type="button" onclick="toggleGatePasswordVisibility()" class="absolute right-3 top-2.5 text-ui-fg-muted hover:text-ui-fg-base text-xs">
               <i id="btn-toggle-gate-eye" class="fa-regular fa-eye"></i>
             </button>
           </div>
         </div>
 
         <!-- Error Message Banner -->
-        <div id="gate-error-banner" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs text-center font-medium"></div>
+        <div id="gate-error-banner" class="hidden p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs text-center font-medium"></div>
 
         <!-- Submit Button -->
-        <button type="submit" id="btn-gate-submit" class="w-full py-3 bg-brand-600 hover:bg-brand-500 active:scale-[0.99] text-white rounded-2xl text-xs font-bold shadow-glow-emerald flex items-center justify-center space-x-2 transition">
+        <button type="submit" id="btn-gate-submit" class="w-full medusa-btn-primary !py-2.5 !text-xs justify-center">
           <span id="btn-gate-text">Unlock Assistant</span>
           <i class="fa-solid fa-arrow-right text-xs"></i>
         </button>
@@ -1212,7 +1347,7 @@
 
       <!-- Alternate Mode Toggle -->
       <div class="pt-1">
-        <button type="button" onclick="toggleGateMode()" id="btn-gate-mode-toggle" class="text-[11px] text-slate-400 hover:text-brand-400 transition underline underline-offset-4">
+        <button type="button" onclick="toggleGateMode()" id="btn-gate-mode-toggle" class="text-[11px] text-ui-fg-muted hover:text-emerald-400 transition underline underline-offset-4 cursor-pointer">
           Have an API Key instead?
         </button>
       </div>
@@ -1223,7 +1358,7 @@
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
   <!-- ========================================================================= -->
-  <!-- 6. APPLICATION STATE & 1:1 INTERACTIVITY ENGINE                           -->
+  <!-- 6. APPLICATION STATE & INTERACTIVITY ENGINE                               -->
   <!-- ========================================================================= -->
   <script>
     // Configure Marked options
@@ -1300,56 +1435,11 @@
     }
 
     function openAuthModal() {
-      const modal = document.getElementById('auth-modal');
-      const input = document.getElementById('input-auth-token');
-      if (modal && input) {
-        input.value = getStoredApiKey();
-        modal.classList.remove('hidden');
-        testStoredAuthKey();
-      }
+      openSettingsModal();
     }
 
     function closeAuthModal() {
-      const modal = document.getElementById('auth-modal');
-      if (modal) modal.classList.add('hidden');
-    }
-
-    function toggleAuthVisibility() {
-      const input = document.getElementById('input-auth-token');
-      const icon = document.getElementById('btn-toggle-auth-eye');
-      if (input && icon) {
-        if (input.type === 'password') {
-          input.type = 'text';
-          icon.className = 'fa-regular fa-eye-slash';
-        } else {
-          input.type = 'password';
-          icon.className = 'fa-regular fa-eye';
-        }
-      }
-    }
-
-    function saveAuthKey() {
-      const input = document.getElementById('input-auth-token');
-      if (input) {
-        const val = input.value.trim();
-        if (val) {
-          localStorage.setItem('dr_api_key', val);
-          showToast('API Key saved successfully.', 'success');
-        } else {
-          localStorage.removeItem('dr_api_key');
-          showToast('API Key removed.', 'info');
-        }
-        closeAuthModal();
-        checkAuthStatus();
-      }
-    }
-
-    function clearAuthKey() {
-      localStorage.removeItem('dr_api_key');
-      const input = document.getElementById('input-auth-token');
-      if (input) input.value = '';
-      showToast('API Key cleared.', 'info');
-      checkAuthStatus();
+      closeSettingsModal();
     }
 
     let isGateApiKeyMode = false;
@@ -1483,10 +1573,10 @@
         const btn = document.getElementById(`stab-${t}`);
         const content = document.getElementById(`scontent-${t}`);
         if (t === tab) {
-          if (btn) btn.className = 'flex-1 py-1.5 rounded-lg bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold transition flex items-center justify-center space-x-1.5';
+          if (btn) btn.className = 'flex-1 py-1.5 rounded-md bg-ui-bg-base text-ui-fg-base border border-ui-border-base shadow-elevation-card-rest font-medium transition flex items-center justify-center space-x-1.5';
           if (content) content.classList.remove('hidden');
         } else {
-          if (btn) btn.className = 'flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center justify-center space-x-1.5';
+          if (btn) btn.className = 'flex-1 py-1.5 rounded-md text-ui-fg-subtle hover:text-ui-fg-base transition flex items-center justify-center space-x-1.5 font-medium';
           if (content) content.classList.add('hidden');
         }
       });
@@ -1500,7 +1590,7 @@
       const feedback = document.getElementById('reset-pw-feedback');
 
       if (newPw.length < 4) {
-        feedback.className = 'p-2.5 rounded-xl text-xs text-center font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20';
+        feedback.className = 'p-2.5 rounded-lg text-xs text-center font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20';
         feedback.textContent = 'New password must be at least 4 characters long.';
         feedback.classList.remove('hidden');
         return;
@@ -1514,7 +1604,7 @@
         });
         const data = await res.json();
         if (res.ok && data.success) {
-          feedback.className = 'p-2.5 rounded-xl text-xs text-center font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+          feedback.className = 'p-2.5 rounded-lg text-xs text-center font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
           feedback.textContent = 'Password updated successfully! Active session refreshed.';
           feedback.classList.remove('hidden');
           if (data.token) localStorage.setItem('dr_api_key', data.token);
@@ -1524,12 +1614,12 @@
           showToast('Access password updated.', 'success');
           checkAuthStatus();
         } else {
-          feedback.className = 'p-2.5 rounded-xl text-xs text-center font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20';
+          feedback.className = 'p-2.5 rounded-lg text-xs text-center font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20';
           feedback.textContent = data.error || data.message || 'Verification failed.';
           feedback.classList.remove('hidden');
         }
       } catch (err) {
-        feedback.className = 'p-2.5 rounded-xl text-xs text-center font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20';
+        feedback.className = 'p-2.5 rounded-lg text-xs text-center font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20';
         feedback.textContent = 'Connection error: ' + err;
         feedback.classList.remove('hidden');
       }
@@ -1557,11 +1647,11 @@
           if (input) setTimeout(() => input.focus(), 150);
         } else {
           if (overlay) overlay.classList.add('hidden');
-          if (sDot) sDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+          if (sDot) sDot.className = 'w-2 h-2 rounded-full bg-ui-fg-muted';
           if (sStatus) sStatus.textContent = 'Open access mode (no password configured)';
         }
       } catch (e) {
-        if (sDot) sDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+        if (sDot) sDot.className = 'w-2 h-2 rounded-full bg-ui-fg-muted';
       }
     }
 
@@ -1690,10 +1780,10 @@
         const btn = document.getElementById(`nav-${v}`);
         if (v === viewName) {
           el.classList.remove('hidden');
-          btn.className = 'px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold';
+          btn.className = 'px-3 py-1 rounded-md transition-colors flex items-center space-x-1.5 bg-ui-bg-base text-ui-fg-base border border-ui-border-base shadow-elevation-card-rest font-medium';
         } else {
           el.classList.add('hidden');
-          btn.className = 'px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+          btn.className = 'px-3 py-1 rounded-md transition-colors flex items-center space-x-1.5 text-ui-fg-subtle hover:text-ui-fg-base font-medium';
         }
       });
 
@@ -1798,23 +1888,23 @@
       countText.innerText = `${state.sessions.length} sessions`;
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 italic">No sessions found.</div>`;
+        container.innerHTML = `<div class="p-4 text-center text-xs text-ui-fg-muted italic">No sessions found.</div>`;
         return;
       }
 
       container.innerHTML = filtered.map(s => {
         const isActive = s.id === state.currentSessionId;
         const activeClass = isActive
-          ? 'bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white font-semibold border-brand-500/40'
-          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 border-transparent';
+          ? 'bg-ui-bg-component text-ui-fg-base font-medium border-ui-border-base shadow-elevation-card-rest'
+          : 'text-ui-fg-subtle hover:bg-ui-bg-component-hover hover:text-ui-fg-base border-transparent';
 
         return `
-          <div onclick="selectSession('${s.id}')" class="group flex items-center justify-between p-2.5 rounded-xl border cursor-pointer text-xs transition duration-150 ${activeClass}">
+          <div onclick="selectSession('${s.id}')" class="group flex items-center justify-between p-2 rounded-lg border cursor-pointer text-xs transition duration-150 ${activeClass}">
             <div class="flex items-center space-x-2.5 min-w-0 pr-1">
-              <i class="fa-regular fa-message text-[11px] ${isActive ? 'text-brand-500' : 'text-slate-400'}"></i>
+              <i class="fa-regular fa-message text-[11px] ${isActive ? 'text-emerald-400' : 'text-ui-fg-muted'}"></i>
               <span class="truncate">${escapeHtml(s.title || 'Untitled Research')}</span>
             </div>
-            <button onclick="deleteSession('${s.id}', event)" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-rose-500 rounded transition">
+            <button onclick="deleteSession('${s.id}', event)" class="opacity-0 group-hover:opacity-100 p-1 text-ui-fg-muted hover:text-rose-400 rounded transition">
               <i class="fa-regular fa-trash-can text-[10px]"></i>
             </button>
           </div>
@@ -1865,10 +1955,10 @@
       const mainEl = document.querySelector('main');
 
       if (state.isCanvasExpanded) {
-        panel.className = 'w-full flex-1 overflow-hidden border-l border-slate-200 dark:border-white/5 bg-white/95 dark:bg-surface-card/95 flex flex-col transition-all duration-300 z-30 select-text';
+        panel.className = 'w-full flex-1 overflow-hidden border-l border-ui-border-base bg-ui-bg-base flex flex-col transition-all duration-300 z-30 select-text';
         if (mainEl) mainEl.classList.add('hidden');
       } else {
-        panel.className = 'w-full md:w-[480px] lg:w-[560px] xl:w-[640px] overflow-hidden border-l border-slate-200 dark:border-white/5 bg-white/95 dark:bg-surface-card/95 flex flex-col transition-all duration-300 z-30 select-text';
+        panel.className = 'w-full md:w-[480px] lg:w-[560px] xl:w-[640px] overflow-hidden border-l border-ui-border-base bg-ui-bg-base flex flex-col transition-all duration-300 z-30 select-text';
         if (mainEl) mainEl.classList.remove('hidden');
       }
     }
@@ -1876,7 +1966,7 @@
     function closeResearchPanel() {
       state.isCanvasExpanded = false;
       const panel = document.getElementById('research-panel');
-      panel.className = 'w-0 overflow-hidden border-l border-slate-200 dark:border-white/5 bg-white/95 dark:bg-surface-card/95 flex flex-col transition-all duration-300 z-30 select-text';
+      panel.className = 'w-0 overflow-hidden border-l border-ui-border-base bg-ui-bg-base flex flex-col transition-all duration-300 z-30 select-text';
       const mainEl = document.querySelector('main');
       if (mainEl) mainEl.classList.remove('hidden');
       const btn = document.getElementById('btn-canvas-expand');
@@ -1910,10 +2000,10 @@
         const btn = document.getElementById(`rtab-${t}`);
         if (t === tab) {
           view.classList.remove('hidden');
-          btn.className = 'px-3 py-1 rounded-lg bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold transition';
+          btn.className = 'px-3 py-1 rounded-md bg-ui-bg-base text-ui-fg-base border border-ui-border-base shadow-elevation-card-rest font-medium transition';
         } else {
           view.classList.add('hidden');
-          btn.className = 'px-3 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
+          btn.className = 'px-3 py-1 rounded-md text-ui-fg-subtle hover:text-ui-fg-base transition font-medium';
         }
       });
     }
@@ -1947,33 +2037,33 @@
           const userCard = document.createElement('div');
           userCard.className = 'flex justify-end';
           userCard.innerHTML = `
-            <div class="max-w-2xl bg-gradient-to-tr from-brand-600 to-emerald-600 text-white rounded-2xl rounded-tr-xs px-4 py-3 shadow-md text-sm leading-relaxed font-medium">
+            <div class="max-w-2xl bg-ui-bg-component border border-ui-border-strong text-ui-fg-base rounded-xl px-4 py-3 shadow-elevation-card-rest text-xs sm:text-sm leading-relaxed font-normal">
               <div>${escapeHtml(msg.content)}</div>
-              <div class="text-[10px] text-brand-200 mt-1.5 text-right font-mono">${formatTime(msg.timestamp)}</div>
+              <div class="text-[10px] text-ui-fg-muted mt-1.5 text-right font-mono">${formatTime(msg.timestamp)}</div>
             </div>
           `;
           turns.appendChild(userCard);
         } else if (msg.role === 'assistant') {
           // Assistant Card
           const botCard = document.createElement('div');
-          botCard.className = 'glass-panel rounded-3xl p-5 md:p-7 shadow-canvas space-y-4';
+          botCard.className = 'medusa-card p-5 md:p-6 shadow-elevation-card-rest space-y-4';
 
           // 1. Thinking Process Stepper Accordion
           let thinkingHtml = '';
           if (msg.thinking && msg.thinking.length > 0) {
             thinkingHtml = `
-              <div class="border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden bg-slate-50/60 dark:bg-surface-darker/60">
-                <button onclick="toggleThinkingDisclosure('thinking-${idx}')" class="w-full px-4 py-3 flex items-center justify-between text-left text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-white/5 transition">
-                  <div class="flex items-center space-x-2.5">
+              <div class="border border-ui-border-base rounded-lg overflow-hidden bg-ui-bg-base">
+                <button onclick="toggleThinkingDisclosure('thinking-${idx}')" class="w-full px-3.5 py-2.5 flex items-center justify-between text-left text-xs font-medium text-ui-fg-base hover:bg-ui-bg-subtle-hover transition cursor-pointer">
+                  <div class="flex items-center space-x-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     <span>Reasoning Monologue (${msg.thinkingDuration || `${msg.thinking.length} steps logged`})</span>
                   </div>
-                  <i id="thinking-${idx}-icon" class="fa-solid fa-chevron-down text-xs transition-transform text-slate-400"></i>
+                  <i id="thinking-${idx}-icon" class="fa-solid fa-chevron-down text-xs transition-transform text-ui-fg-muted"></i>
                 </button>
-                <div id="thinking-${idx}" class="p-4 pt-1 border-t border-slate-200 dark:border-white/5 space-y-2 text-xs font-mono text-slate-600 dark:text-slate-400 max-h-60 overflow-y-auto">
+                <div id="thinking-${idx}" class="p-3.5 pt-1 border-t border-ui-border-base space-y-1.5 text-xs font-mono text-ui-fg-subtle max-h-60 overflow-y-auto">
                   ${msg.thinking.map(step => `
                     <div class="flex items-start space-x-2">
-                      <i class="fa-solid fa-angle-right text-brand-500 mt-0.5 text-[10px]"></i>
+                      <i class="fa-solid fa-angle-right text-emerald-400 mt-0.5 text-[10px]"></i>
                       <span class="leading-relaxed">${escapeHtml(step)}</span>
                     </div>
                   `).join('')}
@@ -2002,19 +2092,19 @@
           let sourcesHtml = '';
           if (msg.sources && msg.sources.length > 0) {
             sourcesHtml = `
-              <div class="pt-4 border-t border-slate-200 dark:border-white/5">
-                <div class="flex items-center space-x-2 text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider mb-2.5">
-                  <i class="fa-solid fa-link text-brand-500"></i>
+              <div class="pt-4 border-t border-ui-border-base">
+                <div class="flex items-center space-x-2 text-[11px] font-mono font-medium text-ui-fg-muted uppercase tracking-wider mb-2.5">
+                  <i class="fa-solid fa-link text-emerald-400"></i>
                   <span>Primary Verified Citations (${msg.sources.length})</span>
                 </div>
                 <div class="flex flex-wrap gap-2">
                   ${msg.sources.map(s => {
                     const domain = extractDomain(s.url);
                     return `
-                      <a href="${s.url}" target="_blank" class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-brand-500/10 hover:text-brand-500 text-xs transition border border-slate-200 dark:border-white/5 max-w-xs truncate" title="${escapeHtml(s.title || s.url)}">
+                      <a href="${s.url}" target="_blank" class="flex items-center space-x-2 px-2.5 py-1.5 rounded-lg bg-ui-bg-component hover:bg-ui-bg-component-hover text-xs text-ui-fg-subtle hover:text-ui-fg-base transition border border-ui-border-base max-w-xs truncate shadow-elevation-card-rest" title="${escapeHtml(s.title || s.url)}">
                         <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=32" alt="" class="w-3.5 h-3.5 rounded-xs shrink-0" onerror="this.style.display='none'">
                         <span class="font-medium truncate">${escapeHtml(s.title || domain)}</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-slate-400 shrink-0"></i>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-ui-fg-muted shrink-0"></i>
                       </a>
                     `;
                   }).join('')}
@@ -2025,26 +2115,26 @@
 
           // 4. Action Footer & "Open in Artifact Canvas" CTA
           const footerHtml = `
-            <div class="flex flex-wrap items-center justify-between pt-4 border-t border-slate-200 dark:border-white/5 text-xs text-slate-400 gap-2">
+            <div class="flex flex-wrap items-center justify-between pt-4 border-t border-ui-border-base text-xs text-ui-fg-muted gap-2">
               <div class="flex items-center space-x-2 font-mono text-[11px]">
                 <i class="fa-solid fa-clock text-[10px]"></i>
                 <span>${formatTime(msg.timestamp)}</span>
               </div>
-              <div class="flex items-center space-x-2">
+              <div class="flex items-center space-x-1.5">
                 <!-- Open in Canvas CTA -->
-                <button onclick="openMessageInArtifactCanvas(${idx})" class="px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold hover:bg-brand-500/20 transition flex items-center space-x-1.5">
+                <button onclick="openMessageInArtifactCanvas(${idx})" class="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium hover:bg-emerald-500/20 transition flex items-center space-x-1.5">
                   <i class="fa-solid fa-layer-group text-[10px]"></i>
                   <span>Inspect in Canvas</span>
                 </button>
-                <button onclick="downloadMessageMd(${idx})" class="hover:text-brand-500 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-white/5" title="Download Markdown (.md)">
+                <button onclick="downloadMessageMd(${idx})" class="medusa-btn-transparent !px-2 !py-1" title="Download Markdown (.md)">
                   <i class="fa-regular fa-file-lines"></i>
                   <span>.md</span>
                 </button>
-                <button onclick="downloadMessagePdf(${idx})" class="hover:text-rose-500 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-white/5" title="Export PDF">
+                <button onclick="downloadMessagePdf(${idx})" class="medusa-btn-transparent !px-2 !py-1 hover:!text-rose-400" title="Export PDF">
                   <i class="fa-regular fa-file-pdf"></i>
                   <span>PDF</span>
                 </button>
-                <button onclick="copyMessageContent(${idx})" class="hover:text-brand-500 transition flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 dark:hover:bg-white/5" title="Copy Markdown">
+                <button onclick="copyMessageContent(${idx})" class="medusa-btn-transparent !px-2 !py-1 hover:!text-emerald-400" title="Copy Markdown">
                   <i class="fa-regular fa-copy"></i>
                   <span>Copy</span>
                 </button>
@@ -2104,14 +2194,14 @@
           const isDone = sq.status === 'completed';
           if (isDone) completed++;
           const taskDiv = document.createElement('div');
-          taskDiv.className = 'p-3.5 rounded-2xl glass-panel space-y-1.5';
+          taskDiv.className = 'p-3.5 rounded-xl medusa-card space-y-1.5';
           taskDiv.innerHTML = `
             <div class="flex items-center justify-between text-xs">
-              <span class="font-bold text-slate-800 dark:text-slate-100 leading-snug">${escapeHtml(sq.query)}</span>
-              ${isDone ? '<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>' : '<i class="fa-solid fa-circle-notch animate-spin text-brand-500"></i>'}
+              <span class="font-medium text-ui-fg-base leading-snug">${escapeHtml(sq.query)}</span>
+              ${isDone ? '<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>' : '<i class="fa-solid fa-circle-notch animate-spin text-emerald-400"></i>'}
             </div>
-            <div class="flex items-center space-x-2 text-[11px] text-slate-400 font-mono">
-              <span class="px-2 py-0.5 rounded-md bg-slate-200 dark:bg-white/5 text-slate-600 dark:text-slate-300">${escapeHtml(sq.target_angle)}</span>
+            <div class="flex items-center space-x-2 text-[11px] text-ui-fg-muted font-mono">
+              <span class="medusa-badge">${escapeHtml(sq.target_angle)}</span>
             </div>
           `;
           tasksListEl.appendChild(taskDiv);
@@ -2122,7 +2212,7 @@
         progressPct.innerText = `${pct}%`;
       } else {
         titleEl.innerText = 'No active plan formulated.';
-        tasksListEl.innerHTML = '<div class="text-xs text-slate-400 italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>';
+        tasksListEl.innerHTML = '<div class="text-xs text-ui-fg-muted italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>';
         progressBar.style.width = '0%';
         progressPct.innerText = '0%';
       }
@@ -2134,13 +2224,13 @@
         thinkingCount.innerText = `${sess.thinkingSteps.length} steps logged`;
         thinkingList.innerHTML = sess.thinkingSteps.map(step => `
           <div class="flex items-start space-x-2.5 leading-relaxed">
-            <i class="fa-solid fa-angle-right text-brand-500 mt-1 text-[10px]"></i>
+            <i class="fa-solid fa-angle-right text-emerald-400 mt-1 text-[10px]"></i>
             <span>${escapeHtml(step)}</span>
           </div>
         `).join('');
       } else {
         thinkingCount.innerText = '0 steps logged';
-        thinkingList.innerHTML = '<div class="text-xs text-slate-400 italic font-sans">No research thinking active.</div>';
+        thinkingList.innerHTML = '<div class="text-xs text-ui-fg-muted italic font-sans">No research thinking active.</div>';
       }
 
       // 3. Artifact Document Canvas
@@ -2163,15 +2253,15 @@
       } else {
         reportContent.className = 'artifact-body max-w-none leading-relaxed';
         reportContent.innerHTML = `
-          <div class="text-slate-400 italic py-10 text-center">
-            <i class="fa-solid fa-file-circle-question text-3xl mb-3 text-slate-300 dark:text-slate-600 block"></i>
+          <div class="text-ui-fg-muted italic py-10 text-center">
+            <i class="fa-solid fa-file-circle-question text-3xl mb-3 text-ui-fg-muted block"></i>
             No synthesis generated yet in this session. Run an inquiry to inspect the document canvas.
           </div>
         `;
         wordCountEl.innerText = '0 words';
         readingTimeEl.innerText = '1 min read';
         statusPillEl.innerText = 'IDLE';
-        statusPillEl.className = 'text-slate-400 font-bold';
+        statusPillEl.className = 'text-ui-fg-muted font-bold';
       }
 
       // 4. Sources Panel
@@ -2182,32 +2272,32 @@
         sourcesList.innerHTML = sess.sources.map(s => {
           const domain = extractDomain(s.url);
           return `
-            <div class="p-3.5 rounded-2xl glass-panel space-y-1.5">
+            <div class="p-3.5 rounded-xl medusa-card space-y-1.5">
               <div class="flex items-center space-x-2">
                 <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=32" alt="" class="w-3.5 h-3.5 rounded-xs shrink-0" onerror="this.style.display='none'">
-                <a href="${s.url}" target="_blank" class="font-bold text-xs text-brand-600 dark:text-brand-400 hover:underline flex items-center space-x-1 truncate">
+                <a href="${s.url}" target="_blank" class="font-semibold text-xs text-emerald-400 hover:underline flex items-center space-x-1 truncate">
                   <span class="truncate">${escapeHtml(s.title || domain)}</span>
                   <i class="fa-solid fa-arrow-up-right-from-square text-[9px] shrink-0"></i>
                 </a>
               </div>
-              <div class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">${escapeHtml(s.snippet || s.url)}</div>
+              <div class="text-[11px] text-ui-fg-muted line-clamp-2 leading-relaxed">${escapeHtml(s.snippet || s.url)}</div>
             </div>
           `;
         }).join('');
       } else {
         sourcesTotal.innerText = '0 captured';
-        sourcesList.innerHTML = '<div class="text-xs text-slate-400 italic">Sources collected by concurrent workers will be listed here.</div>';
+        sourcesList.innerHTML = '<div class="text-xs text-ui-fg-muted italic">Sources collected by concurrent workers will be listed here.</div>';
       }
     }
 
     function clearResearchPanel() {
       document.getElementById('plan-title-display').innerText = 'No active plan formulated.';
-      document.getElementById('tasks-list').innerHTML = '<div class="text-xs text-slate-400 italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>';
+      document.getElementById('tasks-list').innerHTML = '<div class="text-xs text-ui-fg-muted italic">Submit an inquiry to observe automated query decomposition and parallel worker execution.</div>';
       document.getElementById('plan-progress-bar').style.width = '0%';
       document.getElementById('plan-progress-pct').innerText = '0%';
-      document.getElementById('thinking-stream-list').innerHTML = '<div class="text-xs text-slate-400 italic font-sans">No research thinking active.</div>';
-      document.getElementById('panel-report-content').innerHTML = '<div class="text-slate-400 italic py-10 text-center">No report completed in this session yet.</div>';
-      document.getElementById('panel-sources-list').innerHTML = '<div class="text-xs text-slate-400 italic">Sources collected by concurrent workers will be listed here.</div>';
+      document.getElementById('thinking-stream-list').innerHTML = '<div class="text-xs text-ui-fg-muted italic font-sans">No research thinking active.</div>';
+      document.getElementById('panel-report-content').innerHTML = '<div class="text-ui-fg-muted italic py-10 text-center">No report completed in this session yet.</div>';
+      document.getElementById('panel-sources-list').innerHTML = '<div class="text-xs text-ui-fg-muted italic">Sources collected by concurrent workers will be listed here.</div>';
     }
 
     // -------------------------------------------------------------------------
@@ -2286,7 +2376,7 @@
 
         if (res.status === 401) {
           showToast('Authentication required (401). Please configure your API key.', 'error');
-          openAuthModal();
+          openSettingsModal();
           finishStreaming(sess, botMessage, null);
           return;
         }
@@ -2405,13 +2495,13 @@
       const researchStaticIcon = document.getElementById('research-static-icon');
 
       if (streaming) {
-        sendBtn.className = 'w-9 h-9 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center transition shadow-lg cursor-pointer';
+        sendBtn.className = 'w-8 h-8 rounded-lg bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center transition shadow-elevation-card-rest cursor-pointer';
         sendIcon.className = 'fa-solid fa-stop text-xs';
         sendBtn.title = 'Stop Research';
         researchSpinner.classList.remove('hidden');
         researchStaticIcon.classList.add('hidden');
       } else {
-        sendBtn.className = 'w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white flex items-center justify-center transition shadow-glow-emerald cursor-pointer';
+        sendBtn.className = 'w-8 h-8 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center transition shadow-elevation-card-rest cursor-pointer';
         sendIcon.className = 'fa-solid fa-arrow-up text-xs';
         sendBtn.title = 'Run Research Inquiry';
         researchSpinner.classList.add('hidden');
@@ -2475,23 +2565,23 @@
         const tbody = document.getElementById('dashboard-jobs-body');
         if (jobs && jobs.length > 0) {
           tbody.innerHTML = jobs.map(j => {
-            let badgeColor = 'bg-slate-500/10 text-slate-400';
-            if (j.status === 'COMPLETED') badgeColor = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-            else if (j.status === 'RUNNING') badgeColor = 'bg-brand-500/10 text-brand-400 animate-pulse border border-brand-500/20';
-            else if (j.status === 'FAILED') badgeColor = 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
+            let badgeClass = 'medusa-badge';
+            if (j.status === 'COMPLETED') badgeClass = 'medusa-badge medusa-badge-green';
+            else if (j.status === 'RUNNING') badgeClass = 'medusa-badge medusa-badge-blue animate-pulse';
+            else if (j.status === 'FAILED') badgeClass = 'medusa-badge medusa-badge-red';
 
             return `
-              <tr class="hover:bg-slate-100/50 dark:hover:bg-white/5 transition">
-                <td class="p-3.5 pl-5 text-brand-500 font-bold">${j.id.substring(0, 8)}...</td>
-                <td class="p-3.5 font-sans truncate max-w-xs text-slate-800 dark:text-slate-200">${escapeHtml(j.query)}</td>
-                <td class="p-3.5"><span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${badgeColor}">${j.status}</span></td>
-                <td class="p-3.5">${(j.total_tokens || 0).toLocaleString()}</td>
-                <td class="p-3.5 pr-5 text-slate-400">${formatTime(j.created_at)}</td>
+              <tr class="hover:bg-ui-bg-component-hover/50 transition">
+                <td class="p-3 pl-5 text-emerald-400 font-bold">${j.id.substring(0, 8)}...</td>
+                <td class="p-3 font-sans truncate max-w-xs text-ui-fg-base">${escapeHtml(j.query)}</td>
+                <td class="p-3"><span class="${badgeClass}">${j.status}</span></td>
+                <td class="p-3">${(j.total_tokens || 0).toLocaleString()}</td>
+                <td class="p-3 pr-5 text-ui-fg-muted">${formatTime(j.created_at)}</td>
               </tr>
             `;
           }).join('');
         } else {
-          tbody.innerHTML = `<tr><td colspan="5" class="p-5 text-center text-slate-400 font-sans">No research jobs recorded yet.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" class="p-5 text-center text-ui-fg-muted font-sans">No research jobs recorded yet.</td></tr>`;
         }
       } catch (err) {
         console.error('Failed to load recent jobs:', err);
@@ -2511,18 +2601,18 @@
 
         if (keys && keys.length > 0) {
           tbody.innerHTML = keys.map(k => `
-            <tr class="hover:bg-slate-100/50 dark:hover:bg-white/5 transition">
-              <td class="p-3.5 pl-5 font-sans font-semibold text-slate-800 dark:text-slate-200">${escapeHtml(k.name)}</td>
-              <td class="p-3.5 text-brand-500 font-bold">${escapeHtml(k.key_prefix || k.prefix || '')}...</td>
-              <td class="p-3.5"><span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${k.is_revoked ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">${k.is_revoked ? 'REVOKED' : 'ACTIVE'}</span></td>
-              <td class="p-3.5 text-slate-400">${formatTime(k.created_at)}</td>
-              <td class="p-3.5 pr-5 text-right">
-                ${k.is_revoked ? '<span class="text-slate-500 text-[10px]">Revoked</span>' : `<button onclick="revokeApiKey('${k.id}')" class="text-slate-400 hover:text-rose-500 transition px-2 py-1 rounded" title="Revoke Key"><i class="fa-regular fa-trash-can"></i></button>`}
+            <tr class="hover:bg-ui-bg-component-hover/50 transition">
+              <td class="p-3 pl-5 font-sans font-medium text-ui-fg-base">${escapeHtml(k.name)}</td>
+              <td class="p-3 text-emerald-400 font-bold">${escapeHtml(k.key_prefix || k.prefix || '')}...</td>
+              <td class="p-3"><span class="medusa-badge ${k.is_revoked ? 'medusa-badge-red' : 'medusa-badge-green'}">${k.is_revoked ? 'REVOKED' : 'ACTIVE'}</span></td>
+              <td class="p-3 text-ui-fg-muted">${formatTime(k.created_at)}</td>
+              <td class="p-3 pr-5 text-right">
+                ${k.is_revoked ? '<span class="text-ui-fg-muted text-[10px]">Revoked</span>' : `<button onclick="revokeApiKey('${k.id}')" class="medusa-btn-transparent !p-1 hover:!text-rose-400" title="Revoke Key"><i class="fa-regular fa-trash-can"></i></button>`}
               </td>
             </tr>
           `).join('');
         } else {
-          tbody.innerHTML = `<tr><td colspan="5" class="p-5 text-center text-slate-400 font-sans">No active client keys generated.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" class="p-5 text-center text-ui-fg-muted font-sans">No active client keys generated.</td></tr>`;
         }
       } catch (err) {
         tbody.innerHTML = `<tr><td colspan="5" class="p-5 text-center text-rose-400 font-sans">Failed to load API keys.</td></tr>`;
@@ -2595,13 +2685,13 @@
       const key = input ? input.value.trim() : '';
 
       if (!key) {
-        resultEl.className = 'p-3 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20';
+        resultEl.className = 'p-3 rounded-lg text-xs font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20';
         resultEl.textContent = 'Please paste an API key to test.';
         resultEl.classList.remove('hidden');
         return;
       }
 
-      resultEl.className = 'p-3 rounded-xl text-xs font-mono bg-slate-100 dark:bg-white/5 text-slate-300 border border-slate-200 dark:border-white/10';
+      resultEl.className = 'p-3 rounded-lg text-xs font-mono bg-ui-bg-subtle text-ui-fg-subtle border border-ui-border-base';
       resultEl.textContent = 'Testing key against authentication middleware...';
       resultEl.classList.remove('hidden');
 
@@ -2612,14 +2702,14 @@
         const data = await res.json();
 
         if (data.authenticated) {
-          resultEl.className = 'p-3 rounded-xl text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+          resultEl.className = 'p-3 rounded-lg text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
           resultEl.innerHTML = `✓ Key Verified Active & Authorized<br>Prefix: ${data.key_prefix || key.substring(0, 7)}...<br>Permissions: Full Research Engine & API Access`;
         } else {
-          resultEl.className = 'p-3 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20';
+          resultEl.className = 'p-3 rounded-lg text-xs font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20';
           resultEl.innerHTML = `✗ Key Rejected: Invalid, revoked, or unrecognized credentials.`;
         }
       } catch (err) {
-        resultEl.className = 'p-3 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20';
+        resultEl.className = 'p-3 rounded-lg text-xs font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20';
         resultEl.textContent = 'Connection error: ' + err;
       }
     }
@@ -2635,7 +2725,7 @@
       if (type === 'error') icon = 'fa-solid fa-circle-exclamation text-rose-400';
       else if (type === 'warn') icon = 'fa-solid fa-triangle-exclamation text-amber-400';
 
-      toast.className = 'glass-panel px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-3 text-xs font-semibold text-slate-800 dark:text-slate-100 pointer-events-auto transform transition duration-300 translate-y-2 opacity-0';
+      toast.className = 'bg-ui-bg-base border border-ui-border-base px-4 py-3 rounded-xl shadow-elevation-modal flex items-center space-x-3 text-xs font-medium text-ui-fg-base pointer-events-auto transform transition duration-200 translate-y-2 opacity-0';
       toast.innerHTML = `<i class="${icon}"></i><span>${escapeHtml(msg)}</span>`;
       container.appendChild(toast);
 
@@ -2645,7 +2735,7 @@
 
       setTimeout(() => {
         toast.classList.add('translate-y-2', 'opacity-0');
-        setTimeout(() => toast.remove(), 300);
+        setTimeout(() => toast.remove(), 250);
       }, 3500);
     }
 
@@ -2743,7 +2833,7 @@
 
       const printWrapper = document.createElement('div');
       printWrapper.className = 'artifact-body p-8 bg-white text-slate-900';
-      printWrapper.style.fontFamily = "'Inter', 'Plus Jakarta Sans', sans-serif";
+      printWrapper.style.fontFamily = "'Inter', sans-serif";
       printWrapper.style.maxWidth = "800px";
       printWrapper.style.position = "fixed";
       printWrapper.style.left = "-9999px";
@@ -2752,9 +2842,9 @@
       let sourcesListHtml = '';
       if (sources && sources.length > 0) {
         sourcesListHtml = `
-          <div style="margin-top: 36px; border-top: 1px solid #cbd5e1; padding-top: 18px;">
-            <h3 style="font-size: 13px; font-weight: 800; color: #047857; margin-bottom: 8px; text-transform: uppercase;">Verified Sources & Citations</h3>
-            <ul style="font-size: 11px; color: #475569; padding-left: 20px;">
+          <div style="margin-top: 36px; border-top: 1px solid #e4e4e7; padding-top: 18px;">
+            <h3 style="font-size: 13px; font-weight: 700; color: #047857; margin-bottom: 8px; text-transform: uppercase;">Verified Sources & Citations</h3>
+            <ul style="font-size: 11px; color: #71717a; padding-left: 20px;">
               ${sources.map(s => `<li style="margin-bottom: 4px;"><a href="${s.url}" target="_blank" style="color: #059669; text-decoration: underline;">${escapeHtml(s.title || s.url)}</a></li>`).join('')}
             </ul>
           </div>
@@ -2763,8 +2853,8 @@
 
       printWrapper.innerHTML = `
         <div style="border-bottom: 2px solid #059669; padding-bottom: 14px; margin-bottom: 26px;">
-          <h1 style="color: #0f172a; font-size: 22px; font-weight: 800; margin: 0 0 6px 0;">${escapeHtml(title || 'Research Synthesis')}</h1>
-          <div style="font-size: 11px; color: #64748b; font-weight: 500;">
+          <h1 style="color: #18181b; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;">${escapeHtml(title || 'Research Synthesis')}</h1>
+          <div style="font-size: 11px; color: #71717a; font-weight: 500;">
             Autonomous Deep Research Synthesis • Generated on ${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
