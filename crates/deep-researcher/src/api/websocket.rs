@@ -1,8 +1,9 @@
 use axum::{
     extract::{
         ws::{Message, WebSocket, WebSocketUpgrade},
-        State,
+        Query, State,
     },
+    http::HeaderMap,
     response::IntoResponse,
 };
 use futures::{SinkExt, StreamExt};
@@ -10,7 +11,9 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tracing::{debug, error, info};
 
+use crate::api::auth::{self, AuthQueryParams};
 use crate::api::routes::AppState;
+use crate::error::AppError;
 
 #[derive(Debug, Deserialize)]
 pub struct WsIncomingMessage {
@@ -30,9 +33,12 @@ pub struct WsOutgoingMessage {
 
 pub async fn websocket_handler(
     ws: WebSocketUpgrade,
+    headers: HeaderMap,
+    Query(query): Query<AuthQueryParams>,
     State(state): State<AppState>,
-) -> impl IntoResponse {
-    ws.on_upgrade(|socket| handle_socket(socket, state))
+) -> Result<impl IntoResponse, AppError> {
+    auth::validate_request(&headers, query.api_key.as_deref(), &state.storage).await?;
+    Ok(ws.on_upgrade(|socket| handle_socket(socket, state)))
 }
 
 async fn handle_socket(socket: WebSocket, state: AppState) {

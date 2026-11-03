@@ -176,8 +176,11 @@ pub async fn submit_job_handler(
 /// GET /v1/jobs/async/:id
 pub async fn get_job_handler(
     State(state): State<AppState>,
+    headers: HeaderMap,
+    axum::extract::Query(query): axum::extract::Query<auth::AuthQueryParams>,
     Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
+    auth::validate_request(&headers, query.api_key.as_deref(), &state.storage).await?;
     let job = state.storage.get_job(&id).await?;
     match job {
         Some(j) => Ok(Json(serde_json::to_value(j)?)),
@@ -188,8 +191,11 @@ pub async fn get_job_handler(
 /// GET /v1/jobs/async/:id/events (SSE Stream)
 pub async fn job_events_stream_handler(
     State(state): State<AppState>,
+    headers: HeaderMap,
+    axum::extract::Query(query): axum::extract::Query<auth::AuthQueryParams>,
     Path(id): Path<String>,
-) -> Sse<impl Stream<Item = Result<Event, Infallible>>> {
+) -> Result<Sse<impl Stream<Item = Result<Event, Infallible>>>, AppError> {
+    auth::validate_request(&headers, query.api_key.as_deref(), &state.storage).await?;
     let storage = state.storage.clone();
 
     let stream = async_stream::stream! {
@@ -216,7 +222,7 @@ pub async fn job_events_stream_handler(
         }
     };
 
-    Sse::new(stream).keep_alive(axum::response::sse::KeepAlive::new().interval(Duration::from_secs(15)))
+    Ok(Sse::new(stream).keep_alive(axum::response::sse::KeepAlive::new().interval(Duration::from_secs(15))))
 }
 
 /// GET /api/dashboard/stats
@@ -291,8 +297,20 @@ pub async fn revoke_api_key_handler(
     Ok(Json(serde_json::json!({ "revoked": true, "id": id })))
 }
 
-/// GET /favicon.ico and GET /favicon.svg
-pub async fn favicon_handler() -> impl IntoResponse {
+/// GET /favicon.ico (Binary ICO)
+pub async fn favicon_ico_handler() -> impl IntoResponse {
+    let ico_bytes: &'static [u8] = include_bytes!("../../static/favicon.ico");
+    (
+        [
+            (header::CONTENT_TYPE, "image/x-icon"),
+            (header::CACHE_CONTROL, "public, max-age=86400"),
+        ],
+        ico_bytes,
+    )
+}
+
+/// GET /favicon.svg (Scalable Vector Icon)
+pub async fn favicon_svg_handler() -> impl IntoResponse {
     let svg_content = include_str!("../../static/favicon.svg");
     (
         [

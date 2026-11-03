@@ -5,18 +5,51 @@ use crate::error::AppError;
 use crate::storage::Storage;
 use axum::{
     extract::{Query, State},
-    http::HeaderMap,
+    http::{header, HeaderMap},
     response::IntoResponse,
     Json,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 pub struct AuthQueryParams {
     pub api_key: Option<String>,
 }
 
-/// Extract token from Authorization Bearer header, X-API-Key header, or ?api_key query parameter
+#[derive(Debug, Deserialize)]
+pub struct LoginPayload {
+    pub password: Option<String>,
+    pub username: Option<String>,
+    pub key: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LoginResponse {
+    pub success: bool,
+    pub authenticated: bool,
+    pub token: Option<String>,
+    pub expires_in: u64,
+    pub message: String,
+}
+
+/// Helper to parse cookie string by key
+pub fn extract_cookie_token(cookie_header: &str) -> Option<String> {
+    for part in cookie_header.split(';') {
+        let part = part.trim();
+        if let Some((k, v)) = part.split_once('=') {
+            let key = k.trim().to_lowercase();
+            if key == "auth_session" || key == "dr_token" || key == "token" || key == "idtoken" || key == "api_key" {
+                let v = v.trim();
+                if !v.is_empty() {
+                    return Some(v.to_string());
+                }
+            }
+        }
+    }
+    None
+}
+
+/// Extract token from Authorization Bearer header, X-API-Key header, Cookie, or ?api_key query parameter
 pub fn extract_token(headers: &HeaderMap, query_token: Option<&str>) -> Option<String> {
     // 1. Authorization: Bearer <token>
     if let Some(auth_val) = headers.get("authorization") {
@@ -43,7 +76,16 @@ pub fn extract_token(headers: &HeaderMap, query_token: Option<&str>) -> Option<S
         }
     }
 
-    // 3. Query parameter ?api_key=<token> (useful for browser SSE EventSource)
+    // 3. Cookie: auth_session=<token> or idToken=<token>
+    if let Some(cookie_val) = headers.get("cookie") {
+        if let Ok(cookie_str) = cookie_val.to_str() {
+            if let Some(tok) = extract_cookie_token(cookie_str) {
+                return Some(tok);
+            }
+        }
+    }
+
+    // 4. Query parameter ?api_key=<token> (useful for browser SSE EventSource and WebSockets)
     if let Some(q_tok) = query_token {
         let q_tok = q_tok.trim();
         if !q_tok.is_empty() {
@@ -54,15 +96,64 @@ pub fn extract_token(headers: &HeaderMap, query_token: Option<&str>) -> Option<S
     None
 }
 
-/// Check if authentication is strictly enforced
-pub fn is_auth_required() -> bool {
-    std::env::var("REQUIRE_AUTH")
-        .map(|v| v == "true" || v == "1")
-        .unwrap_or(false)
-        || std::env::var("ADMIN_API_KEY").map(|v| !v.trim().is_empty()).unwrap_or(false)
+/// Retrieve configured master password from environment variables if set
+pub fn get_configured_password() -> Option<String> {
+    for key in &[
+        "APP_PASSWORD",
+        "ADMIN_PASSWORD",
+        "AUTH_PASSWORD",
+        "DEEP_RESEARCHER_PASSWORD",
+        "PASSWORD",
+    ] {
+        if let Ok(val) = std::env::var(key) {
+            let val = val.trim();
+            if !val.is_empty() {
+                return Some(val.to_string());
+            }
+        }
+    }
+    None
 }
 
-/// Validate request authorization against persistent storage and environment masters
+/// Check if password-based authentication is explicitly configured
+pub fn is_password_protected() -> bool {
+    get_configured_password().is_some()
+}
+
+/// Constant-time SHA-256 comparison for passwords to eliminate timing attacks
+pub fn verify_password_constant_time(provided: &str, expected: &str) -> bool {
+    use sha2::{Digest, Sha256};
+    let h1 = Sha256::digest(provided.as_bytes());
+    let h2 = Sha256::digest(expected.as_bytes());
+    h1 == h2
+}
+
+/// Check if authentication is strictly enforced
+pub fn is_auth_required() -> bool {
+    let check_flag = |key: &str| {
+        std::env::var(key)
+            .map(|v| {
+                let v = v.trim().to_lowercase();
+                v == "true" || v == "1" || v == "yes" || v == "required"
+            })
+            .unwrap_or(false)
+    };
+
+    let check_token = |key: &str| {
+        std::env::var(key)
+            .map(|v| !v.trim().is_empty())
+            .unwrap_or(false)
+    };
+
+    is_password_protected()
+        || check_flag("REQUIRE_AUTH")
+        || check_flag("AUTH_REQUIRED")
+        || check_token("ADMIN_API_KEY")
+        || check_token("DEEP_RESEARCHER_API_KEY")
+        || check_token("AUTH_TOKEN")
+}
+
+/// Validate request authorization against persistent storage, session tokens, and passwords
 pub async fn validate_request(
     headers: &HeaderMap,
     query_token: Option<&str>,
@@ -74,32 +165,128 @@ pub async fn validate_request(
         let token = match token_opt {
             Some(t) => t,
             None => {
-                return Err(AppError::Auth(
-                    "Authentication required. Please supply a valid API key via Authorization: Bearer <token>, X-API-Key header, or ?api_key parameter.".to_string(),
-                ));
+                let msg = if is_password_protected() {
+                    "Password authentication required. Please enter password in the Web UI or provide credentials via Authorization header / Cookie."
+                } else {
+                    "Authentication required. Please supply a valid API key via Authorization: Bearer <token>, X-API-Key header, or ?api_key parameter."
+                };
+                return Err(AppError::Auth(msg.to_string()));
             }
         };
 
+        // 1. Direct password match check
+        if let Some(expected_pw) = get_configured_password() {
+            if verify_password_constant_time(&token, &expected_pw) {
+                return Ok(());
+            }
+        }
+
+        // 2. Storage / Session token / API key check
         let is_valid = storage
             .verify_api_key(&token)
             .await
             .map_err(|e| AppError::Storage(format!("Auth verification failed: {}", e)))?;
 
         if !is_valid {
-            return Err(AppError::Auth("Invalid, expired, or revoked API key.".to_string()));
+            return Err(AppError::Auth("Invalid, expired, or revoked credentials.".to_string()));
         }
     } else if let Some(token) = token_opt {
-        // Even in open mode, if a key is provided, verify it if user asks for verification
-        let is_valid = storage.verify_api_key(&token).await.unwrap_or(false);
-        if !is_valid {
-            tracing::warn!("Unrecognized API key provided in non-enforcing mode: '{}'", &token[0..token.len().min(7)]);
-        }
+        // Even in open mode, verify credentials if provided
+        let _ = storage.verify_api_key(&token).await;
     }
 
     Ok(())
 }
 
-/// GET /api/auth/status
+/// POST /api/auth/login and /v1/auth/login
+/// Authenticate via password or key and establish a web session cookie
+pub async fn login_handler(
+    State(storage): State<Storage>,
+    Json(payload): Json<LoginPayload>,
+) -> Result<impl IntoResponse, AppError> {
+    let candidate = payload.password.or(payload.key).unwrap_or_default();
+    let candidate = candidate.trim();
+
+    let is_pw_configured = is_password_protected();
+    let is_auth_req = is_auth_required();
+
+    let mut is_valid = false;
+
+    // Check configured password
+    if is_pw_configured {
+        if let Some(expected_pw) = get_configured_password() {
+            if verify_password_constant_time(candidate, &expected_pw) {
+                is_valid = true;
+            }
+        }
+    }
+
+    // Check API keys or master tokens in storage
+    if !is_valid && !candidate.is_empty() {
+        if let Ok(valid_key) = storage.verify_api_key(candidate).await {
+            if valid_key {
+                is_valid = true;
+            }
+        }
+    }
+
+    // If neither password nor auth is required, open access succeeds
+    if !is_pw_configured && !is_auth_req {
+        is_valid = true;
+    }
+
+    if !is_valid {
+        let msg = if is_pw_configured {
+            "Incorrect password. Please verify and try again."
+        } else {
+            "Invalid credentials. Please provide a valid API key or password."
+        };
+        return Err(AppError::Auth(msg.to_string()));
+    }
+
+    // Issue a session token recorded in persistent storage
+    let session_key = storage
+        .create_api_key(&format!(
+            "Session Login ({})",
+            chrono::Utc::now().format("%Y-%m-%d %H:%M")
+        ))
+        .await
+        .map_err(|e| AppError::Storage(format!("Failed to initialize session: {}", e)))?;
+
+    let cookie_val = format!(
+        "auth_session={}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400",
+        session_key
+    );
+
+    let res = Json(serde_json::json!({
+        "success": true,
+        "authenticated": true,
+        "token": session_key,
+        "expires_in": 86400,
+        "message": "Authenticated successfully"
+    }));
+
+    Ok((
+        [(header::SET_COOKIE, cookie_val)],
+        res,
+    ))
+}
+
+/// POST /api/auth/logout and /v1/auth/logout
+/// Invalidate session cookie
+pub async fn logout_handler() -> impl IntoResponse {
+    let cookie_val = "auth_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0";
+    (
+        [(header::SET_COOKIE, cookie_val)],
+        Json(serde_json::json!({
+            "success": true,
+            "authenticated": false,
+            "message": "Logged out successfully"
+        })),
+    )
+}
+
+/// GET /api/auth/status and /v1/auth/status
 /// Inspects active credentials and returns auth state for the web UI
 pub async fn auth_status_handler(
     State(storage): State<Storage>,
@@ -108,18 +295,35 @@ pub async fn auth_status_handler(
 ) -> impl IntoResponse {
     let token_opt = extract_token(&headers, query.api_key.as_deref());
     let require_auth = is_auth_required();
+    let pw_protected = is_password_protected();
 
     let (authenticated, key_prefix) = if let Some(ref token) = token_opt {
-        let valid = storage.verify_api_key(token).await.unwrap_or(false);
+        let is_pw_match = if let Some(expected_pw) = get_configured_password() {
+            verify_password_constant_time(token, &expected_pw)
+        } else {
+            false
+        };
+
+        let valid = is_pw_match || storage.verify_api_key(token).await.unwrap_or(false);
         let prefix = if token.len() >= 7 { &token[0..7] } else { token };
         (valid, Some(prefix.to_string()))
     } else {
         (!require_auth, None)
     };
 
+    let auth_mode = if pw_protected {
+        "password"
+    } else if require_auth {
+        "api_key"
+    } else {
+        "open"
+    };
+
     Json(serde_json::json!({
         "authenticated": authenticated,
         "require_auth": require_auth,
+        "password_protected": pw_protected,
+        "auth_mode": auth_mode,
         "key_prefix": key_prefix,
         "provided_token": token_opt.is_some()
     }))

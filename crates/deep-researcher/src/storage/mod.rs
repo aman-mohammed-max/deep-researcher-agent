@@ -353,15 +353,12 @@ impl Storage {
             return Ok(false);
         }
 
-        // 1. Master environment tokens
-        if let Ok(admin_key) = std::env::var("ADMIN_API_KEY") {
-            if !admin_key.is_empty() && key == admin_key.trim() {
-                return Ok(true);
-            }
-        }
-        if let Ok(auth_token) = std::env::var("AUTH_TOKEN") {
-            if !auth_token.is_empty() && key == auth_token.trim() {
-                return Ok(true);
+        // 1. Master environment tokens and passwords
+        for env_key in &["ADMIN_API_KEY", "DEEP_RESEARCHER_API_KEY", "AUTH_TOKEN", "APP_PASSWORD", "ADMIN_PASSWORD", "AUTH_PASSWORD", "PASSWORD"] {
+            if let Ok(master_val) = std::env::var(env_key) {
+                if !master_val.trim().is_empty() && key == master_val.trim() {
+                    return Ok(true);
+                }
             }
         }
 

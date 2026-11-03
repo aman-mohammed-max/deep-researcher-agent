@@ -22,9 +22,12 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Deep Researcher Agent',
-  description: 'AI-powered research assistant',
+  description: 'AI-powered research assistant powered by NVIDIA NIM & NVIDIA Lab',
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
   },
 }
 

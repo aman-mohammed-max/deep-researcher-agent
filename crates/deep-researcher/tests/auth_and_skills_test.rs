@@ -3,8 +3,11 @@
 
 use axum::http::HeaderMap;
 use axum::response::IntoResponse;
-use deep_researcher_agent::api::auth::{extract_token, is_auth_required, validate_request};
-use deep_researcher_agent::api::routes::favicon_handler;
+use deep_researcher_agent::api::auth::{
+    extract_token, is_auth_required, is_password_protected, validate_request,
+    verify_password_constant_time,
+};
+use deep_researcher_agent::api::routes::{favicon_ico_handler, favicon_svg_handler};
 use deep_researcher_agent::prompts::PromptEngine;
 use deep_researcher_agent::skills::MarketplaceRegistry;
 use deep_researcher_agent::storage::{hash_api_key, Storage};
@@ -148,8 +151,51 @@ async fn test_marketplace_curated_catalog() {
 }
 
 #[tokio::test]
-async fn test_favicon_endpoint() {
-    let response = favicon_handler().await.into_response();
-    let content_type = response.headers().get("content-type").unwrap();
-    assert_eq!(content_type, "image/svg+xml");
+async fn test_favicon_endpoints() {
+    // 1. Binary ICO endpoint
+    let res_ico = favicon_ico_handler().await.into_response();
+    let content_type_ico = res_ico.headers().get("content-type").unwrap();
+    assert_eq!(content_type_ico, "image/x-icon");
+
+    // 2. Scalable Vector SVG endpoint
+    let res_svg = favicon_svg_handler().await.into_response();
+    let content_type_svg = res_svg.headers().get("content-type").unwrap();
+    assert_eq!(content_type_svg, "image/svg+xml");
+}
+
+#[tokio::test]
+async fn test_password_protection_and_cookie_auth() {
+    let storage = Storage::new("sqlite::memory:", "sqlite::memory:")
+        .await
+        .expect("Failed to initialize storage");
+
+    // 1. Password constant-time comparison
+    assert!(verify_password_constant_time("alpha123", "alpha123"));
+    assert!(!verify_password_constant_time("wrong", "alpha123"));
+
+    // 2. Cookie extraction
+    let mut cookie_headers = HeaderMap::new();
+    cookie_headers.insert("cookie", "other=val; auth_session=dra_sess_abc; foo=bar".parse().unwrap());
+    let token = extract_token(&cookie_headers, None);
+    assert_eq!(token, Some("dra_sess_abc".to_string()));
+
+    // 3. Password protection mode activation
+    std::env::set_var("APP_PASSWORD", "secret_pass_888");
+    assert!(is_password_protected());
+    assert!(is_auth_required());
+
+    // 4. Request with valid password passes
+    let mut pw_headers = HeaderMap::new();
+    pw_headers.insert("authorization", "Bearer secret_pass_888".parse().unwrap());
+    let valid_pw_res = validate_request(&pw_headers, None, &storage).await;
+    assert!(valid_pw_res.is_ok());
+
+    // 5. Request with wrong password fails
+    let mut wrong_pw_headers = HeaderMap::new();
+    wrong_pw_headers.insert("authorization", "Bearer incorrect_pass".parse().unwrap());
+    let invalid_pw_res = validate_request(&wrong_pw_headers, None, &storage).await;
+    assert!(invalid_pw_res.is_err());
+
+    // Clean up env
+    std::env::remove_var("APP_PASSWORD");
 }
