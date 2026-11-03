@@ -36,11 +36,28 @@ impl<'a> IntentClassifier<'a> {
         // Extract JSON from response
         let cleaned = extract_json_block(&raw_response);
         let decision: IntentDecision = serde_json::from_str(&cleaned).unwrap_or_else(|_| {
-            IntentDecision {
-                intent: "research".to_string(),
-                meta_response: None,
-                research_depth: Some("deep".to_string()),
-                reasoning: Some("Defaulting to deep research".to_string()),
+            let q_lower = user_query.to_lowercase();
+            if q_lower.contains("skill")
+                || q_lower.contains("who are you")
+                || q_lower.contains("what can you do")
+                || q_lower.contains("capability")
+                || q_lower.contains("abilities")
+                || q_lower.contains("hello")
+                || q_lower.contains("hi")
+            {
+                IntentDecision {
+                    intent: "meta".to_string(),
+                    meta_response: None,
+                    research_depth: None,
+                    reasoning: Some("Meta capability/identity inquiry".to_string()),
+                }
+            } else {
+                IntentDecision {
+                    intent: "research".to_string(),
+                    meta_response: None,
+                    research_depth: Some("deep".to_string()),
+                    reasoning: Some("Defaulting to deep research".to_string()),
+                }
             }
         });
 
