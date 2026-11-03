@@ -1,39 +1,71 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
-    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0a0f1d"/>
-      <stop offset="100%" stop-color="#040711"/>
+    <linearGradient id="prism-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="100%" stop-color="#03060c"/>
     </linearGradient>
-    <linearGradient id="brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#76b900"/>
-      <stop offset="50%" stop-color="#10b981"/>
-      <stop offset="100%" stop-color="#06b6d4"/>
+    <linearGradient id="facet-north" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#059669"/>
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="2.5" result="blur" />
+    <linearGradient id="facet-east" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="facet-south" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="facet-west" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a3e635"/>
+      <stop offset="100%" stop-color="#65a30d"/>
+    </linearGradient>
+    <radialGradient id="halo-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#06b6d4" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="core-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.8" result="blur"/>
       <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
   </defs>
 
-  <!-- Background tile with smooth squircle -->
-  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#bg-grad)" stroke="#1e293b" stroke-width="1.5"/>
+  <!-- Squircle Base Frame -->
+  <rect x="2.5" y="2.5" width="59" height="59" rx="16" fill="url(#prism-bg)" stroke="#1e293b" stroke-width="1.25"/>
 
-  <!-- Radar / Multi-Agent Scanning Rings -->
-  <circle cx="32" cy="32" r="22" stroke="#10b981" stroke-opacity="0.2" stroke-width="1.5" stroke-dasharray="3 3"/>
-  <circle cx="32" cy="32" r="14" stroke="#76b900" stroke-opacity="0.35" stroke-width="1.5"/>
+  <!-- Radiant Optical Glow Field -->
+  <circle cx="32" cy="32" r="24" fill="url(#halo-glow)"/>
 
-  <!-- Central Autonomous Intelligence Nexus -->
-  <g filter="url(#glow)">
-    <!-- Central diamond node -->
-    <path d="M32 18 L42 32 L32 46 L22 32 Z" fill="url(#brand-grad)" fill-opacity="0.9"/>
-    
-    <!-- Core pulse spark -->
-    <circle cx="32" cy="32" r="4.5" fill="#ffffff"/>
+  <!-- Precision Telemetry Sub-Guides -->
+  <circle cx="32" cy="32" r="22" stroke="#334155" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="2 4"/>
+  <circle cx="32" cy="32" r="14" stroke="#10b981" stroke-opacity="0.25" stroke-width="1"/>
+
+  <!-- Cardinal Telemetry Ticks -->
+  <line x1="32" y1="6" x2="32" y2="10" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.8"/>
+  <line x1="58" y1="32" x2="54" y2="32" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.8"/>
+  <line x1="32" y1="58" x2="32" y2="54" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.8"/>
+  <line x1="6" y1="32" x2="10" y2="32" stroke="#a3e635" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.8"/>
+
+  <!-- Primary Four-Point Research Nexus Prism -->
+  <g filter="url(#core-glow)">
+    <!-- North Point -->
+    <path d="M32 32 L32 14 L37 32 Z" fill="url(#facet-north)"/>
+    <path d="M32 32 L27 32 L32 14 Z" fill="#059669" fill-opacity="0.85"/>
+
+    <!-- East Point -->
+    <path d="M32 32 L50 32 L32 37 Z" fill="url(#facet-east)"/>
+    <path d="M32 32 L32 27 L50 32 Z" fill="#0284c7" fill-opacity="0.85"/>
+
+    <!-- South Point -->
+    <path d="M32 32 L32 50 L27 32 Z" fill="url(#facet-south)"/>
+    <path d="M32 32 L37 32 L32 50 Z" fill="#047857" fill-opacity="0.85"/>
+
+    <!-- West Point -->
+    <path d="M32 32 L14 32 L32 27 Z" fill="url(#facet-west)"/>
+    <path d="M32 32 L32 37 L14 32 Z" fill="#65a30d" fill-opacity="0.85"/>
   </g>
 
-  <!-- Orbital Researcher Worker Nodes -->
-  <circle cx="32" cy="10" r="2.5" fill="#76b900"/>
-  <circle cx="54" cy="32" r="2.5" fill="#10b981"/>
-  <circle cx="32" cy="54" r="2.5" fill="#06b6d4"/>
-  <circle cx="10" cy="32" r="2.5" fill="#10b981"/>
+  <!-- Central Superposition Core Spark -->
+  <circle cx="32" cy="32" r="3.2" fill="#ffffff" filter="drop-shadow(0 0 4px #a7f3d0)"/>
 </svg>

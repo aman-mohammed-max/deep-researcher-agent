@@ -226,7 +226,12 @@ pub async fn job_events_stream_handler(
 }
 
 /// GET /api/dashboard/stats
-pub async fn dashboard_stats_handler(State(state): State<AppState>) -> impl IntoResponse {
+pub async fn dashboard_stats_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    axum::extract::Query(query): axum::extract::Query<auth::AuthQueryParams>,
+) -> Result<impl IntoResponse, AppError> {
+    auth::validate_request(&headers, query.api_key.as_deref(), &state.storage).await?;
     let metrics = state.resource_guard.get_metrics().await;
     let jobs = state.storage.list_jobs(50).await.unwrap_or_default();
 
@@ -243,7 +248,7 @@ pub async fn dashboard_stats_handler(State(state): State<AppState>) -> impl Into
         }
     }
 
-    Json(serde_json::json!({
+    Ok(Json(serde_json::json!({
         "metrics": metrics,
         "tokenomics": {
             "total_tokens_consumed": total_tokens,
@@ -256,22 +261,28 @@ pub async fn dashboard_stats_handler(State(state): State<AppState>) -> impl Into
             "active": metrics.active_jobs,
             "queued": metrics.queue_length
         }
-    }))
+    })))
 }
 
 /// GET /api/dashboard/jobs
-pub async fn dashboard_jobs_handler(State(state): State<AppState>) -> impl IntoResponse {
+pub async fn dashboard_jobs_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    axum::extract::Query(query): axum::extract::Query<auth::AuthQueryParams>,
+) -> Result<impl IntoResponse, AppError> {
+    auth::validate_request(&headers, query.api_key.as_deref(), &state.storage).await?;
     let jobs = state.storage.list_jobs(100).await.unwrap_or_default();
-    Json(jobs)
+    Ok(Json(jobs))
 }
 
 /// POST /api/keys
 pub async fn create_api_key_handler(
     State(state): State<AppState>,
     headers: HeaderMap,
+    axum::extract::Query(query): axum::extract::Query<auth::AuthQueryParams>,
     Json(payload): Json<CreateKeyRequest>,
 ) -> Result<impl IntoResponse, AppError> {
-    auth::validate_request(&headers, None, &state.storage).await?;
+    auth::validate_request(&headers, query.api_key.as_deref(), &state.storage).await?;
     let key = state.storage.create_api_key(&payload.name).await?;
     Ok((StatusCode::CREATED, Json(serde_json::json!({ "api_key": key, "name": payload.name }))))
 }
@@ -280,8 +291,9 @@ pub async fn create_api_key_handler(
 pub async fn list_api_keys_handler(
     State(state): State<AppState>,
     headers: HeaderMap,
+    axum::extract::Query(query): axum::extract::Query<auth::AuthQueryParams>,
 ) -> Result<impl IntoResponse, AppError> {
-    auth::validate_request(&headers, None, &state.storage).await?;
+    auth::validate_request(&headers, query.api_key.as_deref(), &state.storage).await?;
     let keys = state.storage.list_api_keys().await.unwrap_or_default();
     Ok(Json(keys))
 }
@@ -290,9 +302,10 @@ pub async fn list_api_keys_handler(
 pub async fn revoke_api_key_handler(
     State(state): State<AppState>,
     headers: HeaderMap,
+    axum::extract::Query(query): axum::extract::Query<auth::AuthQueryParams>,
     Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
-    auth::validate_request(&headers, None, &state.storage).await?;
+    auth::validate_request(&headers, query.api_key.as_deref(), &state.storage).await?;
     state.storage.revoke_api_key(&id).await?;
     Ok(Json(serde_json::json!({ "revoked": true, "id": id })))
 }

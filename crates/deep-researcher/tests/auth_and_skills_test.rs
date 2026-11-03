@@ -198,4 +198,16 @@ async fn test_password_protection_and_cookie_auth() {
 
     // Clean up env
     std::env::remove_var("APP_PASSWORD");
+
+    // 6. Dynamic database password and passkey test
+    storage.set_config("app_password_hash", &hash_api_key("dynamic_user_pw_2026")).await.unwrap();
+    let mut dyn_headers = HeaderMap::new();
+    dyn_headers.insert("authorization", "Bearer dynamic_user_pw_2026".parse().unwrap());
+    assert!(validate_request(&dyn_headers, None, &storage).await.is_ok());
+
+    // 7. Passkey support test
+    storage.set_config("passkey_hash", &hash_api_key("pk_fingerprint_secure_999")).await.unwrap();
+    let mut pk_headers = HeaderMap::new();
+    pk_headers.insert("x-api-key", "pk_fingerprint_secure_999".parse().unwrap());
+    assert!(validate_request(&pk_headers, None, &storage).await.is_ok());
 }

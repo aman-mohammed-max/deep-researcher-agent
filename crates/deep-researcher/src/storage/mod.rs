@@ -203,6 +203,36 @@ impl Storage {
             }
         }
 
+        // 3. Persistent Table: system_config (for dynamic password, passkey, and instance settings)
+        match &self.persistent_backend {
+            PersistentBackend::Postgres(pg_pool) => {
+                sqlx::query(
+                    r#"
+                    CREATE TABLE IF NOT EXISTS system_config (
+                        config_key VARCHAR(128) PRIMARY KEY,
+                        config_value TEXT NOT NULL,
+                        updated_at VARCHAR(64) NOT NULL
+                    );
+                    "#,
+                )
+                .execute(pg_pool)
+                .await?;
+            }
+            PersistentBackend::Sqlite(sqlite_pool) => {
+                sqlx::query(
+                    r#"
+                    CREATE TABLE IF NOT EXISTS system_config (
+                        config_key TEXT PRIMARY KEY,
+                        config_value TEXT NOT NULL,
+                        updated_at TEXT NOT NULL
+                    );
+                    "#,
+                )
+                .execute(sqlite_pool)
+                .await?;
+            }
+        }
+
         Ok(())
     }
 
@@ -421,6 +451,64 @@ impl Storage {
                     .bind(id)
                     .execute(sqlite_pool)
                     .await?;
+            }
+        }
+        Ok(())
+    }
+
+    pub async fn get_config(&self, key: &str) -> Result<Option<String>, sqlx::Error> {
+        match &self.persistent_backend {
+            PersistentBackend::Postgres(pg_pool) => {
+                let row = sqlx::query_scalar::<_, String>(
+                    "SELECT config_value FROM system_config WHERE config_key = $1",
+                )
+                .bind(key)
+                .fetch_optional(pg_pool)
+                .await?;
+                Ok(row)
+            }
+            PersistentBackend::Sqlite(sqlite_pool) => {
+                let row = sqlx::query_scalar::<_, String>(
+                    "SELECT config_value FROM system_config WHERE config_key = ?",
+                )
+                .bind(key)
+                .fetch_optional(sqlite_pool)
+                .await?;
+                Ok(row)
+            }
+        }
+    }
+
+    pub async fn set_config(&self, key: &str, value: &str) -> Result<(), sqlx::Error> {
+        let now = Utc::now().to_rfc3339();
+        match &self.persistent_backend {
+            PersistentBackend::Postgres(pg_pool) => {
+                sqlx::query(
+                    r#"
+                    INSERT INTO system_config (config_key, config_value, updated_at)
+                    VALUES ($1, $2, $3)
+                    ON CONFLICT (config_key) DO UPDATE SET config_value = $2, updated_at = $3
+                    "#,
+                )
+                .bind(key)
+                .bind(value)
+                .bind(&now)
+                .execute(pg_pool)
+                .await?;
+            }
+            PersistentBackend::Sqlite(sqlite_pool) => {
+                sqlx::query(
+                    r#"
+                    INSERT INTO system_config (config_key, config_value, updated_at)
+                    VALUES (?, ?, ?)
+                    ON CONFLICT (config_key) DO UPDATE SET config_value = excluded.config_value, updated_at = excluded.updated_at
+                    "#,
+                )
+                .bind(key)
+                .bind(value)
+                .bind(&now)
+                .execute(sqlite_pool)
+                .await?;
             }
         }
         Ok(())

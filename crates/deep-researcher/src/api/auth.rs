@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::error::AppError;
-use crate::storage::Storage;
+use crate::storage::{hash_api_key, Storage};
 use axum::{
     extract::{Query, State},
     http::{header, HeaderMap},
@@ -21,6 +21,14 @@ pub struct LoginPayload {
     pub password: Option<String>,
     pub username: Option<String>,
     pub key: Option<String>,
+    pub passkey: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ResetPasswordPayload {
+    pub current_password: Option<String>,
+    pub new_password: String,
+    pub passkey: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -115,9 +123,40 @@ pub fn get_configured_password() -> Option<String> {
     None
 }
 
-/// Check if password-based authentication is explicitly configured
+/// Retrieve configured passkey from environment variables if set
+pub fn get_configured_passkey() -> Option<String> {
+    for key in &["PASSKEY", "ADMIN_PASSKEY", "MASTER_PASSKEY", "DASHBOARD_PASSKEY"] {
+        if let Ok(val) = std::env::var(key) {
+            let val = val.trim();
+            if !val.is_empty() {
+                return Some(val.to_string());
+            }
+        }
+    }
+    None
+}
+
+/// Check if password-based authentication is explicitly configured in env
 pub fn is_password_protected() -> bool {
-    get_configured_password().is_some()
+    get_configured_password().is_some() || get_configured_passkey().is_some()
+}
+
+/// Check if password or passkey protection is active (including dynamic database configuration)
+pub async fn is_instance_protected(storage: &Storage) -> bool {
+    if is_password_protected() {
+        return true;
+    }
+    if let Ok(Some(hash)) = storage.get_config("app_password_hash").await {
+        if !hash.trim().is_empty() {
+            return true;
+        }
+    }
+    if let Ok(Some(hash)) = storage.get_config("passkey_hash").await {
+        if !hash.trim().is_empty() {
+            return true;
+        }
+    }
+    false
 }
 
 /// Constant-time SHA-256 comparison for passwords to eliminate timing attacks
@@ -153,6 +192,52 @@ pub fn is_auth_required() -> bool {
         || check_token("AUTH_TOKEN")
 }
 
+/// Validate credentials against environment password, passkey, dynamic database password hash, and API keys
+pub async fn verify_credential_candidate(candidate: &str, storage: &Storage) -> bool {
+    let candidate = candidate.trim();
+    if candidate.is_empty() {
+        return false;
+    }
+
+    // 1. Direct password match from env
+    if let Some(expected_pw) = get_configured_password() {
+        if verify_password_constant_time(candidate, &expected_pw) {
+            return true;
+        }
+    }
+
+    // 2. Direct passkey match from env
+    if let Some(expected_pk) = get_configured_passkey() {
+        if verify_password_constant_time(candidate, &expected_pk) {
+            return true;
+        }
+    }
+
+    // 3. Dynamic database password hash check
+    let cand_hash = hash_api_key(candidate);
+    if let Ok(Some(stored_hash)) = storage.get_config("app_password_hash").await {
+        if verify_password_constant_time(&cand_hash, &stored_hash) {
+            return true;
+        }
+    }
+
+    // 4. Dynamic database passkey hash check
+    if let Ok(Some(stored_pk_hash)) = storage.get_config("passkey_hash").await {
+        if verify_password_constant_time(&cand_hash, &stored_pk_hash) {
+            return true;
+        }
+    }
+
+    // 5. Persistent API keys & master tokens in storage
+    if let Ok(is_valid) = storage.verify_api_key(candidate).await {
+        if is_valid {
+            return true;
+        }
+    }
+
+    false
+}
+
 /// Validate request authorization against persistent storage, session tokens, and passwords
 pub async fn validate_request(
     headers: &HeaderMap,
@@ -160,13 +245,14 @@ pub async fn validate_request(
     storage: &Storage,
 ) -> Result<(), AppError> {
     let token_opt = extract_token(headers, query_token);
+    let protected = is_instance_protected(storage).await || is_auth_required();
 
-    if is_auth_required() {
+    if protected {
         let token = match token_opt {
             Some(t) => t,
             None => {
-                let msg = if is_password_protected() {
-                    "Password authentication required. Please enter password in the Web UI or provide credentials via Authorization header / Cookie."
+                let msg = if is_instance_protected(storage).await {
+                    "Authentication required. Please enter password or provide credentials via Authorization header / Cookie."
                 } else {
                     "Authentication required. Please supply a valid API key via Authorization: Bearer <token>, X-API-Key header, or ?api_key parameter."
                 };
@@ -174,20 +260,7 @@ pub async fn validate_request(
             }
         };
 
-        // 1. Direct password match check
-        if let Some(expected_pw) = get_configured_password() {
-            if verify_password_constant_time(&token, &expected_pw) {
-                return Ok(());
-            }
-        }
-
-        // 2. Storage / Session token / API key check
-        let is_valid = storage
-            .verify_api_key(&token)
-            .await
-            .map_err(|e| AppError::Storage(format!("Auth verification failed: {}", e)))?;
-
-        if !is_valid {
+        if !verify_credential_candidate(&token, storage).await {
             return Err(AppError::Auth("Invalid, expired, or revoked credentials.".to_string()));
         }
     } else if let Some(token) = token_opt {
@@ -199,45 +272,30 @@ pub async fn validate_request(
 }
 
 /// POST /api/auth/login and /v1/auth/login
-/// Authenticate via password or key and establish a web session cookie
+/// Authenticate via password, passkey, or key and establish a web session cookie
 pub async fn login_handler(
     State(storage): State<Storage>,
     Json(payload): Json<LoginPayload>,
 ) -> Result<impl IntoResponse, AppError> {
-    let candidate = payload.password.or(payload.key).unwrap_or_default();
+    let candidate = payload
+        .password
+        .or(payload.passkey)
+        .or(payload.key)
+        .unwrap_or_default();
     let candidate = candidate.trim();
 
-    let is_pw_configured = is_password_protected();
-    let is_auth_req = is_auth_required();
+    let protected = is_instance_protected(&storage).await || is_auth_required();
 
-    let mut is_valid = false;
-
-    // Check configured password
-    if is_pw_configured {
-        if let Some(expected_pw) = get_configured_password() {
-            if verify_password_constant_time(candidate, &expected_pw) {
-                is_valid = true;
-            }
-        }
-    }
-
-    // Check API keys or master tokens in storage
-    if !is_valid && !candidate.is_empty() {
-        if let Ok(valid_key) = storage.verify_api_key(candidate).await {
-            if valid_key {
-                is_valid = true;
-            }
-        }
-    }
-
-    // If neither password nor auth is required, open access succeeds
-    if !is_pw_configured && !is_auth_req {
-        is_valid = true;
-    }
+    let is_valid = if protected {
+        verify_credential_candidate(candidate, &storage).await
+    } else {
+        // Open mode allows direct login
+        true
+    };
 
     if !is_valid {
-        let msg = if is_pw_configured {
-            "Incorrect password. Please verify and try again."
+        let msg = if is_instance_protected(&storage).await {
+            "Incorrect password or passkey. Please verify and try again."
         } else {
             "Invalid credentials. Please provide a valid API key or password."
         };
@@ -272,6 +330,84 @@ pub async fn login_handler(
     ))
 }
 
+/// POST /api/auth/reset-password and /v1/auth/reset-password
+/// Reset or update the dashboard access password and optional passkey
+pub async fn reset_password_handler(
+    State(storage): State<Storage>,
+    headers: HeaderMap,
+    Json(payload): Json<ResetPasswordPayload>,
+) -> Result<impl IntoResponse, AppError> {
+    let new_pw = payload.new_password.trim();
+    if new_pw.len() < 4 {
+        return Err(AppError::Config(
+            "New password must be at least 4 characters long.".to_string(),
+        ));
+    }
+
+    let protected = is_instance_protected(&storage).await;
+    if protected {
+        // Check current password or existing session token
+        let mut verified = false;
+        if let Some(curr) = payload.current_password.as_deref() {
+            if verify_credential_candidate(curr, &storage).await {
+                verified = true;
+            }
+        }
+        if !verified {
+            if let Some(tok) = extract_token(&headers, None) {
+                if verify_credential_candidate(&tok, &storage).await {
+                    verified = true;
+                }
+            }
+        }
+
+        if !verified {
+            return Err(AppError::Auth(
+                "Current password or passkey verification failed. Access denied.".to_string(),
+            ));
+        }
+    }
+
+    // Persist new password hash
+    let new_hash = hash_api_key(new_pw);
+    storage
+        .set_config("app_password_hash", &new_hash)
+        .await
+        .map_err(|e| AppError::Storage(format!("Failed to store new password: {}", e)))?;
+
+    // Optional passkey update
+    if let Some(pk) = payload.passkey {
+        let pk = pk.trim();
+        if !pk.is_empty() {
+            let pk_hash = hash_api_key(pk);
+            let _ = storage.set_config("passkey_hash", &pk_hash).await;
+        }
+    }
+
+    // Issue refreshed session cookie
+    let session_key = storage
+        .create_api_key(&format!(
+            "Session Password Reset ({})",
+            chrono::Utc::now().format("%Y-%m-%d %H:%M")
+        ))
+        .await
+        .map_err(|e| AppError::Storage(format!("Failed to initialize session: {}", e)))?;
+
+    let cookie_val = format!(
+        "auth_session={}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400",
+        session_key
+    );
+
+    Ok((
+        [(header::SET_COOKIE, cookie_val)],
+        Json(serde_json::json!({
+            "success": true,
+            "message": "Access password updated successfully.",
+            "token": session_key
+        })),
+    ))
+}
+
 /// POST /api/auth/logout and /v1/auth/logout
 /// Invalidate session cookie
 pub async fn logout_handler() -> impl IntoResponse {
@@ -294,35 +430,30 @@ pub async fn auth_status_handler(
     Query(query): Query<AuthQueryParams>,
 ) -> impl IntoResponse {
     let token_opt = extract_token(&headers, query.api_key.as_deref());
-    let require_auth = is_auth_required();
-    let pw_protected = is_password_protected();
+    let protected = is_instance_protected(&storage).await || is_auth_required();
 
     let (authenticated, key_prefix) = if let Some(ref token) = token_opt {
-        let is_pw_match = if let Some(expected_pw) = get_configured_password() {
-            verify_password_constant_time(token, &expected_pw)
-        } else {
-            false
-        };
-
-        let valid = is_pw_match || storage.verify_api_key(token).await.unwrap_or(false);
+        let valid = verify_credential_candidate(token, &storage).await;
         let prefix = if token.len() >= 7 { &token[0..7] } else { token };
         (valid, Some(prefix.to_string()))
     } else {
-        (!require_auth, None)
+        (!protected, None)
     };
 
-    let auth_mode = if pw_protected {
-        "password"
-    } else if require_auth {
-        "api_key"
-    } else {
-        "open"
-    };
+    let has_passkey = get_configured_passkey().is_some()
+        || storage
+            .get_config("passkey_hash")
+            .await
+            .unwrap_or(None)
+            .is_some();
+
+    let auth_mode = if protected { "password" } else { "open" };
 
     Json(serde_json::json!({
         "authenticated": authenticated,
-        "require_auth": require_auth,
-        "password_protected": pw_protected,
+        "require_auth": protected,
+        "password_protected": protected,
+        "has_passkey": has_passkey,
         "auth_mode": auth_mode,
         "key_prefix": key_prefix,
         "provided_token": token_opt.is_some()

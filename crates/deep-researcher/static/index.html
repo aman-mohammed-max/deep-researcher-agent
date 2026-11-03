@@ -307,27 +307,27 @@
     
     <!-- Left Area: Rail Toggle + Brand Logo + Mode Selector -->
     <div class="flex items-center space-x-3">
-      <!-- Toggle Sessions Rail Button -->
-      <button onclick="toggleSessionsRail()" class="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Toggle Sessions Drawer">
+      <!-- Toggle Sessions Rail Button (Studio Only) -->
+      <button onclick="toggleSessionsRail()" id="btn-toggle-sessions" class="studio-control p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Toggle Sessions Drawer">
         <i class="fa-solid fa-bars-staggered text-sm"></i>
       </button>
 
-      <!-- Brand Identity with NVIDIA Green + Rust Parity Glow -->
+      <!-- Brand Identity with NVIDIA Green + Sleek Research Emblem -->
       <div class="flex items-center space-x-2.5">
-        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 via-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-glow-emerald">
-          <i class="fa-solid fa-atom text-sm"></i>
+        <div class="w-8 h-8 rounded-xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center p-1 shadow-glow-emerald">
+          <img src="/favicon.svg" alt="Deep Researcher" class="w-6 h-6">
         </div>
         <div class="flex flex-col">
           <div class="flex items-center space-x-2">
             <span class="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white">
               Deep Researcher
             </span>
-            <span class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
-              RUST 1:1
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+              BETA
             </span>
           </div>
           <span class="text-[10px] text-slate-400 font-mono tracking-wider hidden sm:inline">
-            Powered by NVIDIA NIM & NVIDIA Lab • 10× Fast Engine
+            Powered by NVIDIA NIM & NVIDIA Lab
           </span>
         </div>
       </div>
@@ -352,34 +352,84 @@
     <!-- Right Controls -->
     <div class="flex items-center space-x-2.5">
       
-      <!-- LLM Model Selector Pill -->
-      <div class="hidden lg:flex items-center space-x-2 px-2.5 py-1 glass-input rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200">
-        <i class="fa-solid fa-microchip text-brand-500 text-[11px]"></i>
-        <select id="select-model" onchange="handleModelChange(this.value)" class="bg-transparent focus:outline-none cursor-pointer font-medium text-xs pr-1">
-          <option value="nvidia/nemotron-3.5-lightning-30b-a3b">NVIDIA Nemotron 3.5 Lightning (Fast)</option>
-          <option value="nvidia/nemotron-3-ultra-550b-a55b">NVIDIA Nemotron Ultra 550B (Deep)</option>
-          <option value="deepseek-chat">DeepSeek Chat (V3/R1)</option>
-          <option value="gpt-4o">OpenAI GPT-4o</option>
-          <option value="llama-3.3-70b-versatile">Groq Llama 3.3 70B</option>
-        </select>
+      <!-- LLM Model Selector (Medusa UI Style Custom Popover Select) -->
+      <div id="container-select-model" class="studio-control relative hidden lg:block">
+        <button id="btn-model-trigger" onclick="toggleModelDropdown(event)" class="flex items-center space-x-2 px-3 py-1.5 glass-input rounded-xl text-xs font-semibold hover:border-emerald-500/40 text-slate-700 dark:text-slate-200 transition">
+          <i class="fa-solid fa-microchip text-emerald-400 text-xs"></i>
+          <span id="selected-model-label">Nemotron 3.5 Fast</span>
+          <span id="selected-model-badge" class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Fast</span>
+          <i id="model-dropdown-chevron" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200"></i>
+        </button>
+        <!-- Medusa UI Popover Menu -->
+        <div id="model-dropdown-menu" class="hidden absolute right-0 top-full mt-2 w-80 glass-panel rounded-2xl shadow-2xl p-2 z-50 border border-slate-200 dark:border-white/10 space-y-1 text-left">
+          <div class="px-2 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">Select Reasoning Model</div>
+          
+          <button onclick="selectCustomModel('nvidia/nemotron-3.5-lightning-30b-a3b', 'Nemotron 3.5 Fast', 'Fast')" class="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center justify-between group">
+            <div>
+              <div class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+                <span>NVIDIA Nemotron 3.5</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Fast (30B)</span>
+              </div>
+              <div class="text-[11px] text-slate-400 mt-0.5">High-speed agentic decomposition & search</div>
+            </div>
+            <i id="check-model-nemotron-fast" class="fa-solid fa-check text-xs text-emerald-400"></i>
+          </button>
+
+          <button onclick="selectCustomModel('nvidia/nemotron-3-ultra-550b-a55b', 'Nemotron Ultra 550B', 'Deep')" class="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center justify-between group">
+            <div>
+              <div class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+                <span>NVIDIA Nemotron Ultra</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Deep (550B)</span>
+              </div>
+              <div class="text-[11px] text-slate-400 mt-0.5">Flagship frontier multi-hop synthesis</div>
+            </div>
+            <i id="check-model-nemotron-ultra" class="fa-solid fa-check text-xs text-emerald-400 hidden"></i>
+          </button>
+
+          <button onclick="selectCustomModel('deepseek-chat', 'DeepSeek V3/R1', 'Open')" class="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center justify-between group">
+            <div>
+              <div class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+                <span>DeepSeek Chat / R1</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Reasoning</span>
+              </div>
+              <div class="text-[11px] text-slate-400 mt-0.5">Mathematical proof & logic chains</div>
+            </div>
+            <i id="check-model-deepseek" class="fa-solid fa-check text-xs text-emerald-400 hidden"></i>
+          </button>
+
+          <button onclick="selectCustomModel('gpt-4o', 'OpenAI GPT-4o', 'Frontier')" class="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center justify-between group">
+            <div>
+              <div class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+                <span>OpenAI GPT-4o</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-violet-500/10 text-violet-400 border border-violet-500/20">Frontier</span>
+              </div>
+              <div class="text-[11px] text-slate-400 mt-0.5">Cross-domain multimodal synthesis</div>
+            </div>
+            <i id="check-model-gpt-4o" class="fa-solid fa-check text-xs text-emerald-400 hidden"></i>
+          </button>
+
+          <button onclick="selectCustomModel('llama-3.3-70b-versatile', 'Groq Llama 3.3 70B', 'Groq')" class="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition flex items-center justify-between group">
+            <div>
+              <div class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+                <span>Groq Llama 3.3 70B</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">LPUs</span>
+              </div>
+              <div class="text-[11px] text-slate-400 mt-0.5">Sub-second LPUs low-latency inference</div>
+            </div>
+            <i id="check-model-llama" class="fa-solid fa-check text-xs text-emerald-400 hidden"></i>
+          </button>
+        </div>
       </div>
 
-      <!-- Data Sources Drawer Button -->
-      <button onclick="openDataSourcesModal()" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 flex items-center space-x-2 transition">
+      <!-- Data Sources Drawer Button (Studio Only) -->
+      <button onclick="openDataSourcesModal()" id="btn-data-sources" class="studio-control px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 flex items-center space-x-2 transition">
         <i class="fa-solid fa-network-wired text-brand-500"></i>
         <span class="hidden sm:inline">Data Sources</span>
         <span id="sources-count-badge" class="px-1.5 py-0.2 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 font-mono text-[10px] font-bold">3</span>
       </button>
 
-      <!-- Auth / API Key Button -->
-      <button onclick="openAuthModal()" id="btn-auth-status" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 flex items-center space-x-2 transition" title="Configure API Key & Token Credentials">
-        <i class="fa-solid fa-shield-halved text-brand-500"></i>
-        <span id="auth-status-text" class="hidden sm:inline">Auth</span>
-        <span id="auth-badge-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
-      </button>
-
-      <!-- Artifact Canvas Split View Toggle (Right Inspector) -->
-      <button id="btn-toggle-research" onclick="toggleResearchPanel()" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:border-brand-500 flex items-center space-x-2 transition relative" title="Toggle Artifact Canvas (Claude Style)">
+      <!-- Artifact Canvas Split View Toggle (Studio Only) -->
+      <button id="btn-toggle-research" onclick="toggleResearchPanel()" class="studio-control px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:border-brand-500 flex items-center space-x-2 transition relative" title="Toggle Artifact Canvas (Claude Style)">
         <span id="research-spinner" class="hidden">
           <i class="fa-solid fa-circle-notch animate-spin text-brand-500"></i>
         </span>
@@ -389,9 +439,16 @@
         <span class="hidden md:inline font-bold">Artifact Canvas</span>
       </button>
 
-      <!-- New Session Button -->
-      <button onclick="createNewSession()" class="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Start New Session (Ctrl+K)">
+      <!-- New Session Button (Studio Only) -->
+      <button onclick="createNewSession()" id="btn-new-session" class="studio-control p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition" title="Start New Session (Ctrl+K)">
         <i class="fa-solid fa-plus text-sm"></i>
+      </button>
+
+      <!-- Settings & Security Button (Available Everywhere) -->
+      <button onclick="openSettingsModal()" id="btn-settings" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-white/5 flex items-center space-x-2 transition" title="Security & Dashboard Settings">
+        <i class="fa-solid fa-gear text-slate-400"></i>
+        <span class="hidden sm:inline">Settings</span>
+        <span id="settings-status-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
       </button>
 
       <!-- Theme Toggle (Dark / Light) -->
@@ -452,7 +509,7 @@
     <!-- --------------------------------------------------------------------- -->
     <!-- B. CENTER STREAM: RESEARCH STREAM & PROMPT COMPOSER                   -->
     <!-- --------------------------------------------------------------------- -->
-    <main class="flex-1 flex flex-col min-w-0 bg-slate-50 dark:bg-surface-dark relative overflow-hidden">
+    <main class="flex-1 flex flex-col min-w-[320px] bg-slate-50 dark:bg-surface-dark relative overflow-hidden">
       
       <!-- Backpressure & Concurrency Safety Alert Banner -->
       <div id="queue-banner" class="hidden shrink-0 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 text-xs flex items-center space-x-3 text-amber-700 dark:text-amber-300">
@@ -472,8 +529,8 @@
           <!-- Hero Icon with Glowing Halo -->
           <div class="relative w-20 h-20 mx-auto">
             <div class="absolute inset-0 rounded-3xl bg-brand-500/20 blur-xl"></div>
-            <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-tr from-brand-600 via-emerald-500 to-teal-400 flex items-center justify-center text-white text-3xl shadow-glow-emerald">
-              <i class="fa-solid fa-bolt"></i>
+            <div class="relative w-20 h-20 rounded-3xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center p-3 shadow-glow-emerald">
+              <img src="/favicon.svg" alt="Deep Researcher" class="w-14 h-14">
             </div>
           </div>
 
@@ -562,7 +619,7 @@
             ></textarea>
 
             <!-- Bottom Control Strip -->
-            <div class="flex items-center justify-between pt-2.5 mt-1 border-t border-slate-100 dark:border-white/5">
+            <div class="flex items-center justify-between pt-2.5 mt-1 border-t border-slate-100 dark:border-white/5 flex-wrap gap-2">
               
               <!-- Left Pills: Depth Mode & Data Sources -->
               <div class="flex items-center space-x-2 text-xs">
@@ -875,6 +932,25 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Key Testing & Debugging Tool (Medusa UI Style) -->
+    <div class="glass-panel rounded-2xl p-5 border border-slate-200 dark:border-white/10 space-y-3">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-stethoscope text-emerald-400 text-xs"></i>
+        <h3 class="text-xs font-bold text-slate-900 dark:text-white">API Key Debugger & Verification</h3>
+      </div>
+      <p class="text-[11px] text-slate-400">Test if a client key is active and correctly authorized against the routing middleware:</p>
+      
+      <div class="flex items-center space-x-2">
+        <input type="text" id="input-debug-key" placeholder="Paste dr_... key to test" class="flex-1 glass-input px-3 py-2 rounded-xl text-xs font-mono outline-none focus:ring-1 focus:ring-emerald-500 text-slate-800 dark:text-slate-100">
+        <button onclick="testKeyDebugger()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-glow-emerald">
+          <i class="fa-solid fa-bolt text-[10px]"></i>
+          <span>Verify Key</span>
+        </button>
+      </div>
+
+      <div id="debug-key-result" class="hidden p-3 rounded-xl text-xs font-mono border"></div>
+    </div>
   </div>
 
   <!-- ========================================================================= -->
@@ -976,55 +1052,114 @@
     </div>
   </div>
 
-  <!-- Auth Configuration Modal -->
-  <div id="auth-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
-        <div class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-500">
-            <i class="fa-solid fa-shield-halved text-sm"></i>
+  <!-- Settings & Security Modal (Medusa UI Style) -->
+  <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-5 border border-slate-200 dark:border-white/10 animate-scale-up">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-white/5 pb-3.5">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <i class="fa-solid fa-sliders text-sm"></i>
           </div>
           <div>
-            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Authentication & Access Control</h3>
-            <p id="auth-modal-subtitle" class="text-[11px] text-slate-400">Password protection & Bearer tokens</p>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Settings & Security</h3>
+            <p class="text-[11px] text-slate-400">Manage workspace password, passkey, and access control</p>
           </div>
         </div>
-        <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-200">
+        <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <div class="space-y-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1.5">Session Token / API Key / Password</label>
-          <div class="flex items-center space-x-2">
-            <input type="password" id="input-auth-token" placeholder="Password or dr_..." class="flex-1 glass-input p-2.5 rounded-xl font-mono text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
-            <button onclick="toggleAuthVisibility()" class="px-3 py-2.5 glass-input rounded-xl text-slate-400 hover:text-white text-xs">
-              <i id="btn-toggle-auth-eye" class="fa-regular fa-eye"></i>
+      <!-- Segmented Sub-Tabs: Security / API Integration -->
+      <div class="flex items-center space-x-1 p-1 rounded-xl bg-slate-100 dark:bg-white/5 text-xs font-semibold">
+        <button onclick="switchSettingsTab('security')" id="stab-security" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold transition flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-lock text-[11px]"></i>
+          <span>Password & Passkey</span>
+        </button>
+        <button onclick="switchSettingsTab('api')" id="stab-api" class="flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center justify-center space-x-1.5">
+          <i class="fa-solid fa-code text-[11px]"></i>
+          <span>API Access Guide</span>
+        </button>
+      </div>
+
+      <!-- Tab Content: Security (Password Reset & Passkey) -->
+      <div id="scontent-security" class="space-y-4">
+        <!-- Protection Status Pill -->
+        <div class="p-3.5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <span id="settings-shield-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div>
+              <div class="text-xs font-bold text-slate-900 dark:text-white">Workspace Shield Active</div>
+              <div id="security-shield-status" class="text-[11px] text-slate-400">Locked behind Master Password & Passkey</div>
+            </div>
+          </div>
+          <button onclick="logoutSession()" class="px-3 py-1.5 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 text-xs font-bold transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-arrow-right-from-bracket text-[10px]"></i>
+            <span>Log Out</span>
+          </button>
+        </div>
+
+        <!-- Reset Password Form -->
+        <form onsubmit="handleResetPassword(event)" class="space-y-3 pt-1">
+          <div class="text-xs font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
+            <i class="fa-solid fa-key text-brand-500 text-[11px]"></i>
+            <span>Update Access Password</span>
+          </div>
+          
+          <div class="space-y-2">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Current Password or Passkey</label>
+              <input type="password" id="input-current-pw" placeholder="Enter current password..." class="w-full glass-input p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">New Password</label>
+                <input type="password" id="input-new-pw" placeholder="Min 4 characters..." class="w-full glass-input p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Optional Passkey (PIN / Token)</label>
+                <input type="password" id="input-new-passkey" placeholder="Optional quick passkey..." class="w-full glass-input p-2.5 rounded-xl text-xs outline-none focus:ring-1 focus:ring-brand-500 text-slate-800 dark:text-slate-100">
+              </div>
+            </div>
+          </div>
+
+          <div id="reset-pw-feedback" class="hidden p-2.5 rounded-xl text-xs text-center font-medium"></div>
+
+          <div class="flex justify-end pt-1">
+            <button type="submit" id="btn-save-password" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold shadow-glow-emerald transition flex items-center space-x-1.5">
+              <i class="fa-solid fa-check text-xs"></i>
+              <span>Save Changes</span>
             </button>
           </div>
-          <p class="text-[10px] text-slate-400 mt-1">Sent via <code class="font-mono text-brand-400">Authorization: Bearer &lt;key&gt;</code> and session cookie.</p>
+        </form>
+      </div>
+
+      <!-- Tab Content: API Access -->
+      <div id="scontent-api" class="hidden space-y-3.5">
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Automated agents, scripts, and API clients authenticate using durable <b>API Keys</b> generated in the API Keys tab.
+        </p>
+
+        <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800 font-mono text-xs text-slate-300 space-y-1.5 overflow-x-auto">
+          <div class="text-[10px] text-slate-500 uppercase tracking-wider">Example cURL Request:</div>
+          <div class="text-emerald-400">curl -X POST https://your-domain/v1/jobs/async \</div>
+          <div class="text-emerald-400 pl-4">-H "Authorization: Bearer YOUR_API_KEY" \</div>
+          <div class="text-emerald-400 pl-4">-H "Content-Type: application/json" \</div>
+          <div class="text-emerald-400 pl-4">-d '{"query": "Quantum AI algorithms"}'</div>
         </div>
 
-        <div id="auth-status-banner" class="p-3 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <span id="auth-test-dot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
-            <span id="auth-test-text" class="text-slate-300">Checking credentials...</span>
-          </div>
-          <button onclick="testStoredAuthKey()" class="text-[11px] font-bold text-brand-400 hover:underline">Verify Key</button>
+        <div class="flex items-center justify-between pt-2">
+          <button onclick="closeSettingsModal(); switchView('keys');" class="px-3.5 py-1.5 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 hover:bg-brand-500/20 text-xs font-bold transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-key text-[10px]"></i>
+            <span>Open API Keys Manager</span>
+          </button>
+          <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition">Close</button>
         </div>
       </div>
 
-      <div class="flex items-center justify-between pt-2">
-        <button onclick="logoutSession()" class="text-xs text-rose-400 hover:text-rose-300 flex items-center space-x-1.5">
-          <i class="fa-solid fa-lock text-[10px]"></i>
-          <span>Lock / Log Out</span>
-        </button>
-        <div class="flex space-x-2">
-          <button onclick="closeAuthModal()" class="px-3.5 py-1.5 text-xs text-slate-400 hover:text-white">Cancel</button>
-          <button onclick="saveAuthKey()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold shadow-glow-emerald transition">Save Key</button>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -1324,14 +1459,85 @@
         await fetch('/api/auth/logout', { method: 'POST' });
       } catch (e) {}
       localStorage.removeItem('dr_api_key');
-      closeAuthModal();
+      closeSettingsModal();
       showToast('Session locked. Logged out.', 'info');
       checkAuthStatus();
     }
 
+    // Settings & Security Modal Handlers
+    function openSettingsModal() {
+      const modal = document.getElementById('settings-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        switchSettingsTab('security');
+      }
+    }
+
+    function closeSettingsModal() {
+      const modal = document.getElementById('settings-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function switchSettingsTab(tab) {
+      ['security', 'api'].forEach(t => {
+        const btn = document.getElementById(`stab-${t}`);
+        const content = document.getElementById(`scontent-${t}`);
+        if (t === tab) {
+          if (btn) btn.className = 'flex-1 py-1.5 rounded-lg bg-white dark:bg-surface-card text-brand-600 dark:text-brand-400 shadow-xs font-bold transition flex items-center justify-center space-x-1.5';
+          if (content) content.classList.remove('hidden');
+        } else {
+          if (btn) btn.className = 'flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition flex items-center justify-center space-x-1.5';
+          if (content) content.classList.add('hidden');
+        }
+      });
+    }
+
+    async function handleResetPassword(e) {
+      if (e) e.preventDefault();
+      const curr = document.getElementById('input-current-pw').value;
+      const newPw = document.getElementById('input-new-pw').value.trim();
+      const passkey = document.getElementById('input-new-passkey').value.trim();
+      const feedback = document.getElementById('reset-pw-feedback');
+
+      if (newPw.length < 4) {
+        feedback.className = 'p-2.5 rounded-xl text-xs text-center font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20';
+        feedback.textContent = 'New password must be at least 4 characters long.';
+        feedback.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/reset-password', {
+          method: 'POST',
+          headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ current_password: curr, new_password: newPw, passkey: passkey || undefined })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          feedback.className = 'p-2.5 rounded-xl text-xs text-center font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+          feedback.textContent = 'Password updated successfully! Active session refreshed.';
+          feedback.classList.remove('hidden');
+          if (data.token) localStorage.setItem('dr_api_key', data.token);
+          document.getElementById('input-current-pw').value = '';
+          document.getElementById('input-new-pw').value = '';
+          document.getElementById('input-new-passkey').value = '';
+          showToast('Access password updated.', 'success');
+          checkAuthStatus();
+        } else {
+          feedback.className = 'p-2.5 rounded-xl text-xs text-center font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20';
+          feedback.textContent = data.error || data.message || 'Verification failed.';
+          feedback.classList.remove('hidden');
+        }
+      } catch (err) {
+        feedback.className = 'p-2.5 rounded-xl text-xs text-center font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20';
+        feedback.textContent = 'Connection error: ' + err;
+        feedback.classList.remove('hidden');
+      }
+    }
+
     async function checkAuthStatus() {
-      const dot = document.getElementById('auth-badge-dot');
-      const text = document.getElementById('auth-status-text');
+      const sDot = document.getElementById('settings-status-dot');
+      const sStatus = document.getElementById('security-shield-status');
       const overlay = document.getElementById('password-gate-overlay');
       const key = getStoredApiKey().trim();
 
@@ -1342,50 +1548,20 @@
 
         if (data.authenticated) {
           if (overlay) overlay.classList.add('hidden');
-          if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500 shadow-glow-emerald';
-          if (text) text.textContent = data.password_protected ? 'Unlocked' : (data.key_prefix ? `${data.key_prefix}...` : 'Auth OK');
+          if (sDot) sDot.className = 'w-2 h-2 rounded-full bg-emerald-500 shadow-glow-emerald';
+          if (sStatus) sStatus.textContent = data.has_passkey ? 'Protected via Master Password & Passkey' : 'Protected via Master Password';
         } else if (data.require_auth || data.password_protected) {
           if (overlay) overlay.classList.remove('hidden');
-          if (dot) dot.className = 'w-2 h-2 rounded-full bg-rose-500 animate-pulse';
-          if (text) text.textContent = data.password_protected ? 'Password Req.' : 'Key Needed';
+          if (sDot) sDot.className = 'w-2 h-2 rounded-full bg-rose-500 animate-pulse';
           const input = document.getElementById('gate-password-input');
           if (input) setTimeout(() => input.focus(), 150);
         } else {
           if (overlay) overlay.classList.add('hidden');
-          if (dot) dot.className = 'w-2 h-2 rounded-full bg-slate-400';
-          if (text) text.textContent = 'Open';
+          if (sDot) sDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+          if (sStatus) sStatus.textContent = 'Open access mode (no password configured)';
         }
       } catch (e) {
-        if (dot) dot.className = 'w-2 h-2 rounded-full bg-slate-400';
-      }
-    }
-
-    async function testStoredAuthKey() {
-      const dot = document.getElementById('auth-test-dot');
-      const text = document.getElementById('auth-test-text');
-      const input = document.getElementById('input-auth-token');
-      const candidateKey = input ? input.value.trim() : getStoredApiKey().trim();
-
-      if (text) text.textContent = 'Verifying key...';
-      if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
-
-      try {
-        const url = '/api/auth/status' + (candidateKey ? `?api_key=${encodeURIComponent(candidateKey)}` : '');
-        const res = await fetch(url, {
-          headers: candidateKey ? { 'Authorization': `Bearer ${candidateKey}`, 'X-API-Key': candidateKey } : {}
-        });
-        const data = await res.json();
-
-        if (data.authenticated) {
-          if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
-          if (text) text.textContent = data.provided_token ? `Verified: Valid key (${data.key_prefix}...)` : 'Verified: Open mode active';
-        } else {
-          if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
-          if (text) text.textContent = 'Invalid or expired key';
-        }
-      } catch (e) {
-        if (dot) dot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
-        if (text) text.textContent = 'Could not verify server';
+        if (sDot) sDot.className = 'w-2 h-2 rounded-full bg-slate-400';
       }
     }
 
@@ -1407,18 +1583,62 @@
       document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun text-sm' : 'fa-solid fa-moon text-sm';
     }
 
-    // Model Selector
-    function initModelSelector() {
-      const saved = localStorage.getItem('deep_researcher_model');
-      if (saved) {
-        const sel = document.getElementById('select-model');
-        if (sel) sel.value = saved;
+    // Medusa UI Custom Model Selector Handlers
+    function toggleModelDropdown(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('model-dropdown-menu');
+      const chevron = document.getElementById('model-dropdown-chevron');
+      if (menu) {
+        menu.classList.toggle('hidden');
+        if (chevron) chevron.classList.toggle('rotate-180');
       }
     }
 
-    function handleModelChange(model) {
-      localStorage.setItem('deep_researcher_model', model);
-      showToast(`Active model changed to: ${model}`, 'info');
+    function selectCustomModel(modelId, label, badge) {
+      state.selectedModel = modelId;
+      const labelEl = document.getElementById('selected-model-label');
+      const badgeEl = document.getElementById('selected-model-badge');
+      if (labelEl) labelEl.textContent = label;
+      if (badgeEl) badgeEl.textContent = badge;
+
+      // Update checkmarks
+      ['nemotron-fast', 'nemotron-ultra', 'deepseek', 'gpt-4o', 'llama'].forEach(k => {
+        const icon = document.getElementById(`check-model-${k}`);
+        if (icon) icon.classList.add('hidden');
+      });
+
+      if (modelId.includes('lightning')) document.getElementById('check-model-nemotron-fast')?.classList.remove('hidden');
+      else if (modelId.includes('ultra')) document.getElementById('check-model-nemotron-ultra')?.classList.remove('hidden');
+      else if (modelId.includes('deepseek')) document.getElementById('check-model-deepseek')?.classList.remove('hidden');
+      else if (modelId.includes('gpt')) document.getElementById('check-model-gpt-4o')?.classList.remove('hidden');
+      else if (modelId.includes('llama')) document.getElementById('check-model-llama')?.classList.remove('hidden');
+
+      localStorage.setItem('deep_researcher_model', modelId);
+      const menu = document.getElementById('model-dropdown-menu');
+      if (menu) menu.classList.add('hidden');
+      const chevron = document.getElementById('model-dropdown-chevron');
+      if (chevron) chevron.classList.remove('rotate-180');
+      showToast(`Model switched to ${label}`, 'success');
+    }
+
+    function initModelSelector() {
+      const saved = localStorage.getItem('deep_researcher_model') || 'nvidia/nemotron-3.5-lightning-30b-a3b';
+      if (saved.includes('ultra')) selectCustomModel(saved, 'Nemotron Ultra 550B', 'Deep');
+      else if (saved.includes('deepseek')) selectCustomModel(saved, 'DeepSeek V3/R1', 'Open');
+      else if (saved.includes('gpt')) selectCustomModel(saved, 'OpenAI GPT-4o', 'Frontier');
+      else if (saved.includes('llama')) selectCustomModel(saved, 'Groq Llama 3.3 70B', 'Groq');
+      else selectCustomModel(saved, 'Nemotron 3.5 Fast', 'Fast');
+
+      // Close dropdown on outside click
+      document.addEventListener('click', (e) => {
+        const container = document.getElementById('container-select-model');
+        const menu = document.getElementById('model-dropdown-menu');
+        if (container && !container.contains(e.target) && menu && !menu.classList.contains('hidden')) {
+          menu.classList.add('hidden');
+          const chevron = document.getElementById('model-dropdown-chevron');
+          if (chevron) chevron.classList.remove('rotate-180');
+        }
+      });
     }
 
     // Data Sources
@@ -1461,7 +1681,7 @@
       document.getElementById('sources-modal').classList.add('hidden');
     }
 
-    // Views Switcher
+    // Views Switcher (Hides/Shows Studio-Only Header Controls)
     function switchView(viewName) {
       state.activeView = viewName;
 
@@ -1476,6 +1696,14 @@
           btn.className = 'px-3 py-1 rounded-lg transition-all flex items-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
         }
       });
+
+      // Studio-only controls visibility in header
+      const studioControls = document.querySelectorAll('.studio-control');
+      if (viewName === 'playground') {
+        studioControls.forEach(el => el.classList.remove('hidden'));
+      } else {
+        studioControls.forEach(el => el.classList.add('hidden'));
+      }
 
       if (viewName === 'dashboard') {
         refreshDashboard();
@@ -1596,7 +1824,21 @@
 
     function toggleSessionsRail() {
       const rail = document.getElementById('sessions-rail');
-      rail.classList.toggle('-ml-72');
+      if (rail) rail.classList.toggle('-ml-72');
+    }
+
+    function closeSessionsRail() {
+      const rail = document.getElementById('sessions-rail');
+      if (rail && !rail.classList.contains('-ml-72')) {
+        rail.classList.add('-ml-72');
+      }
+    }
+
+    function openSessionsRail() {
+      const rail = document.getElementById('sessions-rail');
+      if (rail && rail.classList.contains('-ml-72')) {
+        rail.classList.remove('-ml-72');
+      }
     }
 
     // -------------------------------------------------------------------------
@@ -1614,30 +1856,49 @@
     function openResearchPanel() {
       const panel = document.getElementById('research-panel');
       panel.classList.remove('w-0');
+      
+      // Auto-collapse sessions drawer if window is narrow to protect center chat width
+      if (window.innerWidth < 1200) {
+        closeSessionsRail();
+      }
+
+      const mainEl = document.querySelector('main');
+
       if (state.isCanvasExpanded) {
-        panel.classList.add('w-full', 'md:w-3/4');
-        panel.classList.remove('w-full', 'md:w-[480px]', 'lg:w-[540px]');
+        panel.className = 'w-full flex-1 overflow-hidden border-l border-slate-200 dark:border-white/5 bg-white/95 dark:bg-surface-card/95 flex flex-col transition-all duration-300 z-30 select-text';
+        if (mainEl) mainEl.classList.add('hidden');
       } else {
-        panel.classList.add('w-full', 'md:w-[480px]', 'lg:w-[540px]');
-        panel.classList.remove('w-full', 'md:w-3/4');
+        panel.className = 'w-full md:w-[480px] lg:w-[560px] xl:w-[640px] overflow-hidden border-l border-slate-200 dark:border-white/5 bg-white/95 dark:bg-surface-card/95 flex flex-col transition-all duration-300 z-30 select-text';
+        if (mainEl) mainEl.classList.remove('hidden');
       }
     }
 
     function closeResearchPanel() {
+      state.isCanvasExpanded = false;
       const panel = document.getElementById('research-panel');
-      panel.classList.remove('w-full', 'md:w-[480px]', 'lg:w-[540px]', 'md:w-3/4');
-      panel.classList.add('w-0');
+      panel.className = 'w-0 overflow-hidden border-l border-slate-200 dark:border-white/5 bg-white/95 dark:bg-surface-card/95 flex flex-col transition-all duration-300 z-30 select-text';
+      const mainEl = document.querySelector('main');
+      if (mainEl) mainEl.classList.remove('hidden');
+      const btn = document.getElementById('btn-canvas-expand');
+      if (btn) {
+        btn.innerHTML = `<i class="fa-solid fa-up-right-and-down-left-from-center text-xs"></i>`;
+        btn.title = "Fullscreen Width";
+      }
     }
 
     function toggleResearchPanelExpand() {
       state.isCanvasExpanded = !state.isCanvasExpanded;
       const btn = document.getElementById('btn-canvas-expand');
       if (state.isCanvasExpanded) {
-        btn.innerHTML = `<i class="fa-solid fa-down-left-and-up-right-to-center text-xs"></i>`;
-        btn.title = "Standard Width";
+        if (btn) {
+          btn.innerHTML = `<i class="fa-solid fa-down-left-and-up-right-to-center text-xs"></i>`;
+          btn.title = "Standard Width (Exit Fullscreen)";
+        }
       } else {
-        btn.innerHTML = `<i class="fa-solid fa-up-right-and-down-left-from-center text-xs"></i>`;
-        btn.title = "Fullscreen Width";
+        if (btn) {
+          btn.innerHTML = `<i class="fa-solid fa-up-right-and-down-left-from-center text-xs"></i>`;
+          btn.title = "Fullscreen Width";
+        }
       }
       openResearchPanel();
     }
@@ -2325,6 +2586,41 @@
         refreshApiKeys();
       } catch (err) {
         showToast('Failed to revoke key: ' + err, 'error');
+      }
+    }
+
+    async function testKeyDebugger() {
+      const input = document.getElementById('input-debug-key');
+      const resultEl = document.getElementById('debug-key-result');
+      const key = input ? input.value.trim() : '';
+
+      if (!key) {
+        resultEl.className = 'p-3 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20';
+        resultEl.textContent = 'Please paste an API key to test.';
+        resultEl.classList.remove('hidden');
+        return;
+      }
+
+      resultEl.className = 'p-3 rounded-xl text-xs font-mono bg-slate-100 dark:bg-white/5 text-slate-300 border border-slate-200 dark:border-white/10';
+      resultEl.textContent = 'Testing key against authentication middleware...';
+      resultEl.classList.remove('hidden');
+
+      try {
+        const res = await fetch(`/api/auth/status?api_key=${encodeURIComponent(key)}`, {
+          headers: { 'Authorization': `Bearer ${key}`, 'X-API-Key': key }
+        });
+        const data = await res.json();
+
+        if (data.authenticated) {
+          resultEl.className = 'p-3 rounded-xl text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+          resultEl.innerHTML = `✓ Key Verified Active & Authorized<br>Prefix: ${data.key_prefix || key.substring(0, 7)}...<br>Permissions: Full Research Engine & API Access`;
+        } else {
+          resultEl.className = 'p-3 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20';
+          resultEl.innerHTML = `✗ Key Rejected: Invalid, revoked, or unrecognized credentials.`;
+        }
+      } catch (err) {
+        resultEl.className = 'p-3 rounded-xl text-xs font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20';
+        resultEl.textContent = 'Connection error: ' + err;
       }
     }
 

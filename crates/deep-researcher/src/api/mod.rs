@@ -41,6 +41,8 @@ pub fn create_router(state: AppState) -> Router {
         .route("/v1/auth/status", get(auth::auth_status_handler).with_state(storage_state.clone()))
         .route("/api/auth/login", post(auth::login_handler).with_state(storage_state.clone()))
         .route("/v1/auth/login", post(auth::login_handler).with_state(storage_state.clone()))
+        .route("/api/auth/reset-password", post(auth::reset_password_handler).with_state(storage_state.clone()))
+        .route("/v1/auth/reset-password", post(auth::reset_password_handler).with_state(storage_state.clone()))
         .route("/api/auth/logout", post(auth::logout_handler))
         .route("/v1/auth/logout", post(auth::logout_handler))
         .layer(cors)
