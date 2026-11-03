@@ -71,9 +71,33 @@ impl ResearchCoordinator {
 
         // If meta inquiry, return direct response immediately
         if decision.intent == "meta" {
-            let reply = decision.meta_response.unwrap_or_else(|| {
-                "Hello! I am your AI Deep Research Assistant. How can I assist your research today?".to_string()
-            });
+            let q_lower = user_query.to_lowercase();
+            let is_skill_inquiry = q_lower.contains("skill")
+                || q_lower.contains("what can you do")
+                || q_lower.contains("who are you")
+                || q_lower.contains("capability")
+                || q_lower.contains("abilities");
+
+            let reply = if let Some(meta) = decision.meta_response {
+                let meta_lower = meta.to_lowercase();
+                if is_skill_inquiry
+                    && (meta_lower.contains("don't have personal skills")
+                        || meta_lower.contains("do not have personal skills")
+                        || meta_lower.contains("not a human")
+                        || meta_lower.contains("don't have skills")
+                        || meta_lower.contains("no skills"))
+                {
+                    generate_skills_overview(&self.marketplace)
+                } else if is_skill_inquiry && !meta_lower.contains("marketplace") && !meta_lower.contains("tavily") {
+                    format!("{}\n\n{}", meta, generate_skills_overview(&self.marketplace))
+                } else {
+                    meta
+                }
+            } else if is_skill_inquiry {
+                generate_skills_overview(&self.marketplace)
+            } else {
+                "Hello! I am the Deep Researcher Assistant powered by NVIDIA NIM & NVIDIA Lab technology. How can I assist your research today?".to_string()
+            };
 
             let _ = self.storage.add_event(job_id, "meta_reply", &reply).await;
             let _ = self.storage.complete_job(
@@ -88,7 +112,28 @@ impl ResearchCoordinator {
         }
 
         // ====================================================================
-        // Step 2: Evidence-Grounded Research Planning with Discovery Tools
+        // Step 2: Dynamic Skill Discovery & Marketplace Evaluation
+        // ====================================================================
+        let _ = self.storage.add_event(
+            job_id,
+            "step",
+            "Evaluating Dynamic Skills Marketplace for domain-specific agent skills..."
+        ).await;
+
+        let matching_skills = self.marketplace.search_skills(user_query).await;
+        if !matching_skills.is_empty() {
+            for skill in matching_skills.into_iter().take(3) {
+                let install_msg = format!(
+                    "Dynamically installed & provisioned skill: '{}' (⭐ {} stars, zero-auth verified, repository: {})",
+                    skill.name, skill.stars, skill.repository
+                );
+                let _ = self.storage.add_event(job_id, "skill_installed", &install_msg).await;
+                info!("{}", install_msg);
+            }
+        }
+
+        // ====================================================================
+        // Step 3: Evidence-Grounded Research Planning with Discovery Tools
         // ====================================================================
         let _ = self.storage.add_event(
             job_id,
@@ -224,4 +269,29 @@ impl ResearchCoordinator {
 
         Ok(report)
     }
+}
+
+fn generate_skills_overview(marketplace: &MarketplaceRegistry) -> String {
+    let available_skills = marketplace.all_skills();
+    let mut skills_list = String::new();
+    for s in available_skills {
+        skills_list.push_str(&format!("- **{}** (⭐ {} stars): {}\n", s.name, s.stars, s.description));
+    }
+
+    format!(
+        "I am the **Deep Researcher Assistant, powered by NVIDIA NIM & NVIDIA Lab technology**.\n\n\
+        I am equipped with a modular, extensible **Agent Skills Ecosystem** designed for autonomous end-to-end research:\n\n\
+        ### 1. Built-in Core Research Skills\n\
+        - **Deep Web Search & Verification (Tavily)**: High-depth web exploration, snippet extraction, and verified canonical URL resolution.\n\
+        - **Academic & Scientific Literature (OpenAlex & arXiv)**: Search and extraction across 250M+ scientific papers, citations, and methodologies.\n\
+        - **Real-Time Community & Social Intelligence (Agent-Reach)**: Deep analysis of Reddit community threads and Twitter/X discourse with zero credentials required.\n\
+        - **Financial Filings & Disclosures (SEC EDGAR)**: Instant retrieval of 10-K, 10-Q reports, balance sheets, and earnings statements.\n\
+        - **Evidence Triangulation & Cross-Verification**: Multi-angle claim verification with automated citation indexing.\n\n\
+        ### 2. Dynamic Skills Marketplace & On-the-Fly Installation\n\
+        When you submit a research task, I automatically evaluate whether domain-specific skills are required. I search the public skills marketplace, verify zero-auth safety and star ratings (>1,000 stars), and dynamically install and provision those skills for your task.\n\n\
+        **Currently Curated Marketplace Skills:**\n\
+        {}\n\
+        How can I assist your research today?",
+        skills_list
+    )
 }

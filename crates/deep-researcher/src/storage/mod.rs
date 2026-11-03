@@ -3,12 +3,19 @@
 
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use sqlx::{
     postgres::PgPoolOptions,
     sqlite::SqlitePoolOptions,
     Pool, Postgres, Sqlite,
 };
 use tracing::info;
+
+pub fn hash_api_key(key: &str) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(key.trim().as_bytes());
+    format!("{:x}", hasher.finalize())
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 pub struct JobRecord {
@@ -160,6 +167,7 @@ impl Storage {
                     CREATE TABLE IF NOT EXISTS api_keys (
                         id VARCHAR(64) PRIMARY KEY,
                         key_prefix VARCHAR(32) NOT NULL,
+                        key_hash VARCHAR(128),
                         name VARCHAR(255) NOT NULL,
                         created_at VARCHAR(64) NOT NULL,
                         is_revoked BOOLEAN NOT NULL DEFAULT FALSE
@@ -168,6 +176,10 @@ impl Storage {
                 )
                 .execute(pg_pool)
                 .await?;
+
+                let _ = sqlx::query("ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS key_hash VARCHAR(128)")
+                    .execute(pg_pool)
+                    .await;
             }
             PersistentBackend::Sqlite(sqlite_pool) => {
                 sqlx::query(
@@ -175,6 +187,7 @@ impl Storage {
                     CREATE TABLE IF NOT EXISTS api_keys (
                         id TEXT PRIMARY KEY,
                         key_prefix TEXT NOT NULL,
+                        key_hash TEXT,
                         name TEXT NOT NULL,
                         created_at TEXT NOT NULL,
                         is_revoked BOOLEAN NOT NULL DEFAULT 0
@@ -183,6 +196,10 @@ impl Storage {
                 )
                 .execute(sqlite_pool)
                 .await?;
+
+                let _ = sqlx::query("ALTER TABLE api_keys ADD COLUMN key_hash TEXT")
+                    .execute(sqlite_pool)
+                    .await;
             }
         }
 
@@ -297,15 +314,17 @@ impl Storage {
         let id = uuid::Uuid::new_v4().to_string();
         let key = format!("dr_{}", uuid::Uuid::new_v4().to_string().replace('-', ""));
         let prefix = &key[0..7];
+        let key_hash = hash_api_key(&key);
         let now = Utc::now().to_rfc3339();
 
         match &self.persistent_backend {
             PersistentBackend::Postgres(pg_pool) => {
                 sqlx::query(
-                    "INSERT INTO api_keys (id, key_prefix, name, created_at, is_revoked) VALUES ($1, $2, $3, $4, FALSE)",
+                    "INSERT INTO api_keys (id, key_prefix, key_hash, name, created_at, is_revoked) VALUES ($1, $2, $3, $4, $5, FALSE)",
                 )
                 .bind(&id)
                 .bind(prefix)
+                .bind(&key_hash)
                 .bind(name)
                 .bind(&now)
                 .execute(pg_pool)
@@ -313,10 +332,11 @@ impl Storage {
             }
             PersistentBackend::Sqlite(sqlite_pool) => {
                 sqlx::query(
-                    "INSERT INTO api_keys (id, key_prefix, name, created_at, is_revoked) VALUES (?, ?, ?, ?, 0)",
+                    "INSERT INTO api_keys (id, key_prefix, key_hash, name, created_at, is_revoked) VALUES (?, ?, ?, ?, ?, 0)",
                 )
                 .bind(&id)
                 .bind(prefix)
+                .bind(&key_hash)
                 .bind(name)
                 .bind(&now)
                 .execute(sqlite_pool)
@@ -328,24 +348,41 @@ impl Storage {
     }
 
     pub async fn verify_api_key(&self, key: &str) -> Result<bool, sqlx::Error> {
-        if key.len() < 7 {
+        let key = key.trim();
+        if key.is_empty() {
             return Ok(false);
         }
-        let prefix = &key[0..7];
+
+        // 1. Master environment tokens
+        if let Ok(admin_key) = std::env::var("ADMIN_API_KEY") {
+            if !admin_key.is_empty() && key == admin_key.trim() {
+                return Ok(true);
+            }
+        }
+        if let Ok(auth_token) = std::env::var("AUTH_TOKEN") {
+            if !auth_token.is_empty() && key == auth_token.trim() {
+                return Ok(true);
+            }
+        }
+
+        let prefix = if key.len() >= 7 { &key[0..7] } else { key };
+        let key_hash = hash_api_key(key);
 
         let record = match &self.persistent_backend {
             PersistentBackend::Postgres(pg_pool) => {
                 sqlx::query_as::<_, ApiKeyRecord>(
-                    "SELECT id, key_prefix, name, created_at, is_revoked FROM api_keys WHERE key_prefix = $1 AND is_revoked = FALSE",
+                    "SELECT id, key_prefix, name, created_at, is_revoked FROM api_keys WHERE (key_hash = $1 OR key_prefix = $2) AND is_revoked = FALSE",
                 )
+                .bind(&key_hash)
                 .bind(prefix)
                 .fetch_optional(pg_pool)
                 .await?
             }
             PersistentBackend::Sqlite(sqlite_pool) => {
                 sqlx::query_as::<_, ApiKeyRecord>(
-                    "SELECT id, key_prefix, name, created_at, is_revoked FROM api_keys WHERE key_prefix = ? AND is_revoked = 0",
+                    "SELECT id, key_prefix, name, created_at, is_revoked FROM api_keys WHERE (key_hash = ? OR key_prefix = ?) AND is_revoked = 0",
                 )
+                .bind(&key_hash)
                 .bind(prefix)
                 .fetch_optional(sqlite_pool)
                 .await?

@@ -1,6 +1,6 @@
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
+    http::{header, HeaderMap, StatusCode},
     response::{sse::Event, IntoResponse, Sse},
     Json,
 };
@@ -11,6 +11,7 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use crate::agents::ResearchCoordinator;
+use crate::api::auth;
 use crate::error::AppError;
 use crate::resource_guard::{AdmissionStatus, ResourceGuard};
 use crate::storage::Storage;
@@ -87,8 +88,12 @@ pub async fn data_sources_handler() -> impl IntoResponse {
 /// POST /v1/jobs/async
 pub async fn submit_job_handler(
     State(state): State<AppState>,
+    headers: HeaderMap,
     Json(payload): Json<SubmitJobRequest>,
 ) -> Result<Json<SubmitJobResponse>, AppError> {
+    // Authenticate request if auth is required or key is passed
+    auth::validate_request(&headers, None, &state.storage).await?;
+
     let job_id = uuid::Uuid::new_v4().to_string();
     let query = payload.query.trim().to_string();
 
@@ -257,23 +262,43 @@ pub async fn dashboard_jobs_handler(State(state): State<AppState>) -> impl IntoR
 /// POST /api/keys
 pub async fn create_api_key_handler(
     State(state): State<AppState>,
+    headers: HeaderMap,
     Json(payload): Json<CreateKeyRequest>,
 ) -> Result<impl IntoResponse, AppError> {
+    auth::validate_request(&headers, None, &state.storage).await?;
     let key = state.storage.create_api_key(&payload.name).await?;
     Ok((StatusCode::CREATED, Json(serde_json::json!({ "api_key": key, "name": payload.name }))))
 }
 
 /// GET /api/keys
-pub async fn list_api_keys_handler(State(state): State<AppState>) -> impl IntoResponse {
+pub async fn list_api_keys_handler(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<impl IntoResponse, AppError> {
+    auth::validate_request(&headers, None, &state.storage).await?;
     let keys = state.storage.list_api_keys().await.unwrap_or_default();
-    Json(keys)
+    Ok(Json(keys))
 }
 
 /// DELETE /api/keys/:id
 pub async fn revoke_api_key_handler(
     State(state): State<AppState>,
+    headers: HeaderMap,
     Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
+    auth::validate_request(&headers, None, &state.storage).await?;
     state.storage.revoke_api_key(&id).await?;
     Ok(Json(serde_json::json!({ "revoked": true, "id": id })))
+}
+
+/// GET /favicon.ico and GET /favicon.svg
+pub async fn favicon_handler() -> impl IntoResponse {
+    let svg_content = include_str!("../../static/favicon.svg");
+    (
+        [
+            (header::CONTENT_TYPE, "image/svg+xml"),
+            (header::CACHE_CONTROL, "public, max-age=86400"),
+        ],
+        svg_content,
+    )
 }

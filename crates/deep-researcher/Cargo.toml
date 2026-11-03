@@ -40,5 +40,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 dotenvy = "0.15"
 regex = "1.11"
 urlencoding = "2.1"
+sha2 = "0.10"
+
 
 

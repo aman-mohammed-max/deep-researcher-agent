@@ -9,6 +9,7 @@ pub enum AppError {
     Tool(String),
     Skill(String),
     Json(String),
+    Auth(String),
 }
 
 impl std::fmt::Display for AppError {
@@ -22,6 +23,7 @@ impl std::fmt::Display for AppError {
             AppError::Tool(msg) => write!(f, "Tool execution error: {}", msg),
             AppError::Skill(msg) => write!(f, "Skill error: {}", msg),
             AppError::Json(msg) => write!(f, "JSON serialization error: {}", msg),
+            AppError::Auth(msg) => write!(f, "Authentication error: {}", msg),
         }
     }
 }
@@ -51,6 +53,7 @@ impl axum::response::IntoResponse for AppError {
         let (status, error_message) = match self {
             AppError::ResourceExhausted(msg) => (axum::http::StatusCode::SERVICE_UNAVAILABLE, msg),
             AppError::Config(msg) => (axum::http::StatusCode::BAD_REQUEST, msg),
+            AppError::Auth(msg) => (axum::http::StatusCode::UNAUTHORIZED, msg),
             AppError::Llm(msg) => (axum::http::StatusCode::BAD_GATEWAY, msg),
             AppError::Network(msg) => (axum::http::StatusCode::BAD_GATEWAY, msg),
             AppError::Storage(msg) => (axum::http::StatusCode::INTERNAL_SERVER_ERROR, msg),
