@@ -24,22 +24,36 @@ Usage:
       @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap');
 
       :root {
-        --bg-primary: #0a0c10;
-        --bg-secondary: #0f1218;
-        --bg-tertiary: #151a22;
-        --bg-card: #1a1f2a;
-        --border: #262d3a;
-        --border-active: #76b900;
-        --text-primary: #e8eaed;
-        --text-secondary: #9aa4b8;
-        --text-muted: #6b7588;
-        --accent: #76b900;
-        --accent-dim: #5c9400;
-        --success: #22c55e;
+        /* Medusa UI Design System Tokens (https://docs.medusajs.com/ui) */
+        --ui-bg-base: #09090b;
+        --ui-bg-subtle: #121215;
+        --ui-bg-component: #18181b;
+        --ui-bg-component-hover: #27272a;
+        --ui-bg-field: #121215;
+        --ui-fg-base: #fafafa;
+        --ui-fg-subtle: #a1a1aa;
+        --ui-fg-muted: #71717a;
+        --ui-border-base: #27272a;
+        --ui-border-strong: #3f3f46;
+        --ui-border-interactive: #10b981;
+
+        --bg-primary: var(--ui-bg-base);
+        --bg-secondary: var(--ui-bg-subtle);
+        --bg-tertiary: var(--ui-bg-component);
+        --bg-card: var(--ui-bg-component);
+        --border: var(--ui-border-base);
+        --border-subtle: var(--ui-border-base);
+        --border-active: var(--ui-border-interactive);
+        --text-primary: var(--ui-fg-base);
+        --text-secondary: var(--ui-fg-subtle);
+        --text-muted: var(--ui-fg-muted);
+        --accent: #10b981;
+        --accent-dim: #059669;
+        --success: #10b981;
         --warning: #f59e0b;
-        --error: #ef4444;
-        --info: #3b82f6;
-        --purple: #a855f7;
+        --error: #f43f5e;
+        --info: #0ea5e9;
+        --purple: #8b5cf6;
       }
 
       * {
@@ -98,56 +112,71 @@ Usage:
 
       .input-group input {
         padding: 6px 10px;
-        border-radius: 6px;
+        border-radius: 8px;
         border: 1px solid var(--border);
-        background: var(--bg-primary);
+        background: var(--ui-bg-field);
         color: var(--text-primary);
         font-size: 12px;
         min-width: 160px;
         font-family: 'JetBrains Mono', monospace;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
       }
 
       .input-group input:focus {
         outline: none;
-        border-color: var(--accent);
+        border-color: var(--border-active);
+        box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35);
       }
 
       .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
         padding: 6px 12px;
-        border-radius: 6px;
+        border-radius: 8px;
         border: 1px solid var(--border);
-        background: var(--bg-tertiary);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 100%), var(--bg-tertiary);
         color: var(--text-primary);
         cursor: pointer;
         font-size: 12px;
         font-weight: 500;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.12);
         transition: all 0.15s ease;
       }
 
       .btn:hover {
-        background: var(--bg-card);
-        border-color: var(--text-muted);
+        background: var(--ui-bg-component-hover);
+        border-color: var(--ui-border-strong);
+      }
+
+      .btn:active {
+        transform: scale(0.98);
       }
 
       .btn-primary {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: #000;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%), #059669;
+        border-color: rgba(0, 0, 0, 0.15);
+        color: #ffffff;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
       }
 
       .btn-primary:hover {
-        background: var(--accent-dim);
-        border-color: var(--accent-dim);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 100%), #10b981;
+        border-color: #10b981;
+        color: #ffffff;
       }
 
       .btn-danger {
-        border-color: var(--error);
-        color: var(--error);
+        background: rgba(244, 63, 94, 0.1);
+        border-color: rgba(244, 63, 94, 0.25);
+        color: #fb7185;
       }
 
       .btn-danger:hover {
-        background: var(--error);
-        color: white;
+        background: rgba(244, 63, 94, 0.2);
+        border-color: rgba(244, 63, 94, 0.4);
+        color: #fb7185;
       }
 
       .status-indicator {
@@ -338,23 +367,26 @@ Usage:
 
       .panel-tab {
         padding: 4px 10px;
-        border-radius: 4px;
+        border-radius: 6px;
         font-size: 11px;
         cursor: pointer;
         color: var(--text-secondary);
         background: transparent;
-        border: none;
+        border: 1px solid transparent;
         transition: all 0.15s ease;
       }
 
       .panel-tab:hover {
-        background: var(--bg-card);
+        background: var(--ui-bg-component-hover);
+        color: var(--text-primary);
       }
 
       .panel-tab.active {
-        background: var(--accent);
-        color: #000;
-        font-weight: 600;
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        border-color: var(--border);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+        font-weight: 500;
       }
 
       .panel-content {
@@ -380,9 +412,11 @@ Usage:
 
       .bubble.user {
         align-self: flex-end;
-        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
-        color: #000;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%), #059669;
+        color: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.15);
         border-bottom-right-radius: 4px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
       }
 
       .bubble.assistant {
@@ -390,6 +424,7 @@ Usage:
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-bottom-left-radius: 4px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
       }
 
       .bubble p { margin: 0; }
@@ -447,16 +482,18 @@ Usage:
 
       .composer-meta input[type="text"] {
         padding: 6px 10px;
-        border-radius: 6px;
+        border-radius: 8px;
         border: 1px solid var(--border);
-        background: var(--bg-primary);
+        background: var(--ui-bg-field);
         color: var(--text-primary);
         font-size: 12px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
       }
 
       .composer-meta input:focus {
         outline: none;
-        border-color: var(--accent);
+        border-color: var(--border-active);
+        box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35);
       }
 
       .composer input {
@@ -464,14 +501,16 @@ Usage:
         padding: 10px 12px;
         border-radius: 8px;
         border: 1px solid var(--border);
-        background: var(--bg-primary);
+        background: var(--ui-bg-field);
         color: var(--text-primary);
         font-size: 13px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
       }
 
       .composer input:focus {
         outline: none;
-        border-color: var(--accent);
+        border-color: var(--border-active);
+        box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35);
       }
 
       .loading-bar {
@@ -505,6 +544,7 @@ Usage:
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: 10px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
         overflow: hidden;
       }
 
