@@ -2,235 +2,251 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /**
- * Icon Adapters - CDN SVG Icons
+ * Icon Adapters - Medusa UI Icons
  *
- * Renders NVIDIA brand icons via CDN-hosted SVGs using external-svg-loader.
- * The loader script (in layout.tsx <head>) watches for <svg data-src="...">
- * elements and inlines the fetched SVG content, preserving our attributes.
- *
- * Icons are client-only to avoid hydration mismatches: external-svg-loader
- * mutates the SVG DOM after load (adds viewBox, <symbol>, <use>), which
- * conflicts with React's server-rendered HTML. During SSR an invisible
- * <span> placeholder preserves layout dimensions.
- *
- * CDN naming: icon names use kebab-case WITHOUT category prefix.
- * e.g. npm "CommonMenu" / "ShapesChevronDown" -> CDN "menu" / "chevron-down"
+ * Uses @medusajs/icons for a clean, consistent, minimalist design language
+ * aligned with https://docs.medusajs.com/ui.
  *
  * Features should import icons from '@/adapters/ui/icons'.
- *
- * @example
- * ```tsx
- * import { ChevronDown, Search, Settings } from '@/adapters/ui/icons'
- *
- * <Button>
- *   <Settings />
- *   Settings
- * </Button>
- * ```
  */
 
 'use client'
 
-import { type FC, useState, useEffect } from 'react'
+import React, { type FC } from 'react'
+import {
+  ChevronDown as MedusaChevronDown,
+  ChevronLeft as MedusaChevronLeft,
+  ChevronRight as MedusaChevronRight,
+  ChevronUpMini as MedusaChevronUpMini,
+  BarsThree as MedusaBarsThree,
+  ArrowLeft as MedusaArrowLeft,
+  ArrowRight as MedusaArrowRight,
+  MagnifyingGlass as MedusaMagnifyingGlass,
+  Plus as MedusaPlus,
+  Minus as MedusaMinus,
+  XMark as MedusaXMark,
+  Check as MedusaCheck,
+  PencilSquare as MedusaPencilSquare,
+  SquareTwoStack as MedusaSquareTwoStack,
+  ArrowDownTray as MedusaArrowDownTray,
+  ArrowUpTray as MedusaArrowUpTray,
+  Share as MedusaShare,
+  ArrowUpRightOnBox as MedusaArrowUpRightOnBox,
+  ArrowPath as MedusaArrowPath,
+  PaperPlane as MedusaPaperPlane,
+  ChatBubble as MedusaChatBubble,
+  Envelope as MedusaEnvelope,
+  InformationCircle as MedusaInformationCircle,
+  ExclamationCircle as MedusaExclamationCircle,
+  XCircle as MedusaXCircle,
+  CheckCircleSolid as MedusaCheckCircleSolid,
+  CheckCircle as MedusaCheckCircle,
+  User as MedusaUser,
+  Users as MedusaUsers,
+  CogSixTooth as MedusaCogSixTooth,
+  ArrowRightOnRectangle as MedusaArrowRightOnRectangle,
+  Folder as MedusaFolder,
+  Photo as MedusaPhoto,
+  Code as MedusaCode,
+  Sun as MedusaSun,
+  Moon as MedusaMoon,
+  Star as MedusaStar,
+  Heart as MedusaHeart,
+  Calendar as MedusaCalendar,
+  Clock as MedusaClock,
+  Sparkles as MedusaSparkles,
+  DocumentText as MedusaDocumentText,
+  Link as MedusaLink,
+  Trash as MedusaTrash,
+  GlobeEurope as MedusaGlobeEurope,
+  BookOpen as MedusaBookOpen,
+  QuestionMarkCircle as MedusaQuestionMarkCircle,
+  LockClosedSolid as MedusaLockClosedSolid,
+  Wrench as MedusaWrench,
+  PaperClip as MedusaPaperClip,
+  StopCircleSolid as MedusaStopCircleSolid,
+  AiAssistent as MedusaAiAssistent,
+  CircleDottedLine as MedusaCircleDottedLine,
+  Spinner as MedusaSpinner,
+  Adjustments as MedusaAdjustments,
+  ChevronUpDown as MedusaChevronUpDown,
+  BuildingStorefront as MedusaBuildingStorefront,
+} from '@medusajs/icons'
 
-/** CDN base URL for NVIDIA brand asset icons (pinned version) */
 const CDN_VERSION = '3.8.0'
 const CDN_BASE = `https://brand-assets.cne.ngc.nvidia.com/assets/icons/${CDN_VERSION}`
 
-// ---------------------------------------------------------------------------
-// Base icon props
-// ---------------------------------------------------------------------------
-
-interface IconProps {
+export interface IconProps extends React.SVGProps<SVGSVGElement> {
   className?: string
   width?: number | string
   height?: number | string
   'aria-label'?: string
 }
 
-// ---------------------------------------------------------------------------
-// Factory: creates a named icon component from a CDN icon name + variant
-// ---------------------------------------------------------------------------
+type MedusaIconComponent = React.ComponentType<{
+  className?: string
+  width?: number | string
+  height?: number | string
+  'aria-label'?: string
+  'aria-hidden'?: boolean | 'true' | 'false'
+  'data-src'?: string
+  color?: string
+  onClick?: React.MouseEventHandler<SVGElement>
+}>
 
-const createIcon = (iconName: string, variant: 'line' | 'fill' = 'line'): FC<IconProps> => {
-  const Icon: FC<IconProps> = ({ className, width = 20, height = 20, 'aria-label': ariaLabel }) => {
-    const [mounted, setMounted] = useState(false)
-    useEffect(() => setMounted(true), [])
-
-    // SSR / pre-mount: invisible placeholder preserving layout dimensions
-    if (!mounted) {
-      return (
-        <span
-          style={{ display: 'inline-block', width: Number(width), height: Number(height) }}
-          aria-hidden="true"
-        />
-      )
-    }
-
+const createIcon = (
+  Component: MedusaIconComponent,
+  displayName: string,
+  iconName?: string,
+  extraClassName?: string
+): FC<IconProps> => {
+  const Icon: FC<IconProps> = ({ className, width, height, 'aria-label': ariaLabel, onClick, ...rest }) => {
+    const combinedClassName = [extraClassName, className].filter(Boolean).join(' ')
+    const dataSrc = iconName ? `${CDN_BASE}/line/${iconName}.svg` : undefined
     return (
-      <svg
-        data-src={`${CDN_BASE}/${variant}/${iconName}.svg`}
+      <Component
         width={width}
         height={height}
-        fill="currentColor"
-        className={className}
+        className={combinedClassName || undefined}
         aria-hidden={!ariaLabel}
         aria-label={ariaLabel}
+        data-src={dataSrc}
+        onClick={onClick}
+        {...rest}
       />
     )
   }
-  Icon.displayName = iconName
+  Icon.displayName = displayName
   return Icon
 }
 
 // ---------------------------------------------------------------------------
 // Navigation icons
-// CDN names: no category prefix (Shapes* -> just the icon name)
 // ---------------------------------------------------------------------------
 
-export const ChevronDown = createIcon('chevron-down')
-export const ChevronUp = createIcon('chevron-up')
-export const ChevronLeft = createIcon('chevron-left')
-export const ChevronRight = createIcon('chevron-right')
-export const ArrowLeft = createIcon('arrow-left')
-export const ArrowRight = createIcon('arrow-right')
-export const Menu = createIcon('menu')
+export const ChevronDown = createIcon(MedusaChevronDown, 'ChevronDown', 'chevron-down')
+export const ChevronUp = createIcon(MedusaChevronUpMini, 'ChevronUp', 'chevron-up')
+export const ChevronLeft = createIcon(MedusaChevronLeft, 'ChevronLeft', 'chevron-left')
+export const ChevronRight = createIcon(MedusaChevronRight, 'ChevronRight', 'chevron-right')
+export const ArrowLeft = createIcon(MedusaArrowLeft, 'ArrowLeft', 'arrow-left')
+export const ArrowRight = createIcon(MedusaArrowRight, 'ArrowRight', 'arrow-right')
+export const Menu = createIcon(MedusaBarsThree, 'Menu', 'menu')
 
 // ---------------------------------------------------------------------------
 // Action icons
-// CDN names: no category prefix (Common* -> just the icon name)
 // ---------------------------------------------------------------------------
 
-export const Search = createIcon('magnifying-glass')
-export const Plus = createIcon('add')
-export const Minus = createIcon('subtract')
-export const Close = createIcon('close')
-export const Check = createIcon('check')
-export const Edit = createIcon('pencil')
-export const Copy = createIcon('copy-generic')
-export const Download = createIcon('download')
-export const Upload = createIcon('upload')
-export const Share = createIcon('share')
-export const OpenExternal = createIcon('open-external')
-export const Refresh = createIcon('refresh')
+export const Search = createIcon(MedusaMagnifyingGlass, 'Search', 'magnifying-glass')
+export const Plus = createIcon(MedusaPlus, 'Plus', 'add')
+export const Minus = createIcon(MedusaMinus, 'Minus', 'subtract')
+export const Close = createIcon(MedusaXMark, 'Close', 'close')
+export const Check = createIcon(MedusaCheck, 'Check', 'check')
+export const Edit = createIcon(MedusaPencilSquare, 'Edit', 'pencil')
+export const Copy = createIcon(MedusaSquareTwoStack, 'Copy', 'copy-generic')
+export const Download = createIcon(MedusaArrowDownTray, 'Download', 'download')
+export const Upload = createIcon(MedusaArrowUpTray, 'Upload', 'upload')
+export const Share = createIcon(MedusaShare, 'Share', 'share')
+export const OpenExternal = createIcon(MedusaArrowUpRightOnBox, 'OpenExternal', 'open-external')
+export const Refresh = createIcon(MedusaArrowPath, 'Refresh', 'refresh')
 
 // ---------------------------------------------------------------------------
 // Communication icons
 // ---------------------------------------------------------------------------
 
-export const Send = createIcon('forward')
-export const Chat = createIcon('chat-single')
-export const Mail = createIcon('envelope')
+export const Send = createIcon(MedusaPaperPlane, 'Send', 'forward')
+export const Chat = createIcon(MedusaChatBubble, 'Chat', 'chat-single')
+export const Mail = createIcon(MedusaEnvelope, 'Mail', 'envelope')
 
 // ---------------------------------------------------------------------------
 // Status icons
 // ---------------------------------------------------------------------------
 
-export const Info = createIcon('info-circle')
-export const Warning = createIcon('warning')
-export const Error = createIcon('cancel')
-export const Success = createIcon('check')
+export const Info = createIcon(MedusaInformationCircle, 'Info', 'info-circle')
+export const Warning = createIcon(MedusaExclamationCircle, 'Warning', 'warning')
+export const Error = createIcon(MedusaXCircle, 'Error', 'cancel')
+export const Success = createIcon(MedusaCheckCircle, 'Success', 'check')
 
 // ---------------------------------------------------------------------------
 // User icons
 // ---------------------------------------------------------------------------
 
-export const User = createIcon('profile')
-export const Users = createIcon('profile-group')
-export const Settings = createIcon('cog')
-export const Logout = createIcon('exit')
+export const User = createIcon(MedusaUser, 'User', 'profile')
+export const Users = createIcon(MedusaUsers, 'Users', 'profile-group')
+export const Settings = createIcon(MedusaCogSixTooth, 'Settings', 'cog')
+export const Logout = createIcon(MedusaArrowRightOnRectangle, 'Logout', 'exit')
 
 // ---------------------------------------------------------------------------
 // Content icons
 // ---------------------------------------------------------------------------
 
-export const Folder = createIcon('folder-closed')
-export const Image = createIcon('image')
-export const Code = createIcon('code')
+export const Folder = createIcon(MedusaFolder, 'Folder', 'folder-closed')
+export const Image = createIcon(MedusaPhoto, 'Image', 'image')
+export const Code = createIcon(MedusaCode, 'Code', 'code')
 
 // ---------------------------------------------------------------------------
 // Theme icons
 // ---------------------------------------------------------------------------
 
-export const Sun = createIcon('sun-high')
-export const Moon = createIcon('moon')
+export const Sun = createIcon(MedusaSun, 'Sun', 'sun-high')
+export const Moon = createIcon(MedusaMoon, 'Moon', 'moon')
 
 // ---------------------------------------------------------------------------
 // Misc icons
 // ---------------------------------------------------------------------------
 
-export const Star = createIcon('star')
-export const Heart = createIcon('heart')
-export const Home = createIcon('home')
-export const Calendar = createIcon('calendar')
-export const Clock = createIcon('clock')
-export const Filter = createIcon('filter')
-export const Sort = createIcon('sort')
-export const Wand = createIcon('wand')
+export const Star = createIcon(MedusaStar, 'Star', 'star')
+export const Heart = createIcon(MedusaHeart, 'Heart', 'heart')
+export const Home = createIcon(MedusaBuildingStorefront, 'Home', 'home')
+export const Calendar = createIcon(MedusaCalendar, 'Calendar', 'calendar')
+export const Clock = createIcon(MedusaClock, 'Clock', 'clock')
+export const Filter = createIcon(MedusaAdjustments, 'Filter', 'filter')
+export const Sort = createIcon(MedusaChevronUpDown, 'Sort', 'sort')
+export const Wand = createIcon(MedusaSparkles, 'Wand', 'wand')
 
 // ---------------------------------------------------------------------------
 // Aliased / additional icons
 // ---------------------------------------------------------------------------
 
-export const Document = createIcon('document')
-export const DocumentCheckmark = createIcon('document-checkmark')
-export const Link = createIcon('link')
-export const Trash = createIcon('trash')
-export const Globe = createIcon('world')
-export const Book = createIcon('book')
-export const Help = createIcon('help-circle')
-export const Lock = createIcon('lock-closed')
-export const Plug = createIcon('plug-recepticle')
-export const Wrench = createIcon('wrench')
-export const ChatMessage = createIcon('chat-message')
-export const SelectEllipse = createIcon('select-ellipse')
-export const Retry = createIcon('retry')
-export const Cancel = createIcon('cancel')
+export const Document = createIcon(MedusaDocumentText, 'Document', 'document')
+export const DocumentCheckmark = createIcon(MedusaCheckCircleSolid, 'DocumentCheckmark', 'document-checkmark')
+export const Link = createIcon(MedusaLink, 'Link', 'link')
+export const Trash = createIcon(MedusaTrash, 'Trash', 'trash')
+export const Globe = createIcon(MedusaGlobeEurope, 'Globe', 'world')
+export const Book = createIcon(MedusaBookOpen, 'Book', 'book')
+export const Help = createIcon(MedusaQuestionMarkCircle, 'Help', 'help-circle')
+export const Lock = createIcon(MedusaLockClosedSolid, 'Lock', 'lock-closed')
+export const Plug = createIcon(MedusaLink, 'Plug', 'plug-recepticle')
+export const Wrench = createIcon(MedusaWrench, 'Wrench', 'wrench')
+export const ChatMessage = createIcon(MedusaChatBubble, 'ChatMessage', 'chat-message')
+export const SelectEllipse = createIcon(MedusaCircleDottedLine, 'SelectEllipse', 'select-ellipse')
+export const Retry = createIcon(MedusaArrowPath, 'Retry', 'retry')
+export const Cancel = createIcon(MedusaXCircle, 'Cancel', 'cancel')
 
 // ---------------------------------------------------------------------------
-// GUI icons (previously from @nv-brand-assets/react-icons NvidiaGUIIcon)
-// These already used the correct CDN name format
+// GUI icons
 // ---------------------------------------------------------------------------
 
-/** Paperclip icon for file attachment */
-export const Paperclip = createIcon('paperclip', 'fill')
+export const Paperclip = createIcon(MedusaPaperClip, 'Paperclip', 'paperclip')
+export const Paperplane = createIcon(MedusaPaperPlane, 'Paperplane', 'paperplane')
+export const CheckCircle = createIcon(MedusaCheckCircle, 'CheckCircle', 'check-circle')
+export const ChartFlow = createIcon(MedusaArrowPath, 'ChartFlow', 'chart-flow')
 
-/** Paperplane icon for send action */
-export const Paperplane = createIcon('paperplane', 'fill')
-
-/** CheckCircle icon for success/complete status */
-export const CheckCircle = createIcon('check-circle')
-
-/** ChartFlow icon for workflow/working status */
-export const ChartFlow = createIcon('chart-flow')
-
-/** Generate icon for research panel toggle */
-export const Generate: FC<IconProps> = ({ className }) => {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  if (!mounted)
-    return <span style={{ display: 'inline-block', width: 24, height: 24 }} aria-hidden="true" />
+export const Generate: FC<IconProps> = ({ className, width = 24, height = 24, 'aria-label': ariaLabel, onClick }) => {
   return (
-    <svg
+    <MedusaSparkles
+      width={width}
+      height={height}
+      className={`text-[#76b900] ${className ?? ''}`}
+      aria-hidden={!ariaLabel}
+      aria-label={ariaLabel}
       data-src={`${CDN_BASE}/line/generate.svg`}
-      width="24"
-      height="24"
-      fill="#76B900"
-      className={`nv-icon-green ${className ?? ''}`}
-      aria-hidden="true"
+      onClick={onClick}
     />
   )
 }
 
-/** StopCircle icon for stop/cancel actions */
-export const StopCircle = createIcon('shape-circle-off')
-
-// ---------------------------------------------------------------------------
-// Marketing icons (previously from @nv-brand-assets/react-marketing-icons)
-// ---------------------------------------------------------------------------
-
-/** Thinking/Reasoning icon for research panel */
-export const ThinkingReasoning = createIcon('neural-network')
+export const StopCircle = createIcon(MedusaStopCircleSolid, 'StopCircle', 'shape-circle-off')
+export const ThinkingReasoning = createIcon(MedusaAiAssistent, 'ThinkingReasoning', 'neural-network')
 
 // ---------------------------------------------------------------------------
 // Loading spinner
@@ -242,27 +258,17 @@ interface LoadingSpinnerProps {
   'aria-label'?: string
 }
 
-/**
- * Loading spinner using circle-3-q icon with rotation animation.
- * Replaces KUI Spinner for a simpler, branded loading indicator.
- */
 export const LoadingSpinner: FC<LoadingSpinnerProps> = ({
   className,
   size = 'small',
   'aria-label': ariaLabel = 'Loading',
 }) => {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
   const sizeClass = size === 'medium' ? 'w-6 h-6' : 'w-4 h-4'
-  if (!mounted) {
-    return <span className={`${sizeClass} inline-block`} aria-label={ariaLabel} role="status" />
-  }
   return (
-    <svg
-      data-src={`${CDN_BASE}/line/circle-3-q.svg`}
-      fill="currentColor"
-      className={`animate-spin ${sizeClass} text-brand ${className ?? ''}`}
+    <MedusaSpinner
+      className={`animate-spin ${sizeClass} text-ui-fg-interactive ${className ?? ''}`}
       aria-label={ariaLabel}
+      data-src={`${CDN_BASE}/line/circle-3-q.svg`}
       role="status"
     />
   )

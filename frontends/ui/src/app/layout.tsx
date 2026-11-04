@@ -59,7 +59,7 @@ const RootLayout = async ({ children }: RootLayoutProps): Promise<ReactNode> => 
           async
         />
       </head>
-      <body className="bg-surface-base">
+      <body className="bg-ui-bg-subtle text-ui-fg-base font-sans antialiased">
         <Providers config={config}>{children}</Providers>
       </body>
     </html>

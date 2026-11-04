@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ReactElement } from 'react'
-import { ThemeProvider } from '@nvidia/foundations-react-core'
+import { ThemeProvider } from '@/adapters/ui'
 import { render } from '@testing-library/react'
 
 const TestProviders = ({ children }: { children: React.ReactNode }) => (

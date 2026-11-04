@@ -6,6 +6,7 @@
    Generated once, frozen as static CSS. No build-time plugin dependency.
    Contains: component styles, theme tokens, dark mode, density, animations. */
 @import '../styles/kui-generated.css';
+@import '../styles/medusa-theme.css';
 
 /* Layout variables */
 :root {

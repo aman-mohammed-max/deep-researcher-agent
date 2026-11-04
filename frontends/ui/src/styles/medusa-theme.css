@@ -1,0 +1,1207 @@
+/* ==========================================================================
+   Medusa UI Design System & Component Styles
+   Extracted from @medusajs/ui-preset for complete theme & component support
+   ========================================================================== */
+
+:where(:root, .light, .nv-light) {
+  --alpha-250: rgba(24, 24, 27, 0.1);
+  --alpha-400: rgba(24, 24, 27, 0.24);
+  --bg-base: rgba(255, 255, 255, 1);
+  --bg-base-hover: rgba(244, 244, 245, 1);
+  --bg-base-pressed: rgba(228, 228, 231, 1);
+  --bg-component: rgba(250, 250, 250, 1);
+  --bg-component-hover: rgba(244, 244, 245, 1);
+  --bg-component-pressed: rgba(228, 228, 231, 1);
+  --bg-disabled: rgba(244, 244, 245, 1);
+  --bg-field: rgba(250, 250, 250, 1);
+  --bg-field-component: rgba(255, 255, 255, 1);
+  --bg-field-component-hover: rgba(250, 250, 250, 1);
+  --bg-field-hover: rgba(244, 244, 245, 1);
+  --bg-highlight: rgba(239, 246, 255, 1);
+  --bg-highlight-hover: rgba(219, 234, 254, 1);
+  --bg-interactive: rgba(59, 130, 246, 1);
+  --bg-overlay: rgba(24, 24, 27, 0.4);
+  --bg-subtle: rgba(250, 250, 250, 1);
+  --bg-subtle-hover: rgba(244, 244, 245, 1);
+  --bg-subtle-pressed: rgba(228, 228, 231, 1);
+  --bg-switch-off: rgba(228, 228, 231, 1);
+  --bg-switch-off-hover: rgba(212, 212, 216, 1);
+  --border-base: rgba(228, 228, 231, 1);
+  --border-danger: rgba(190, 18, 60, 1);
+  --border-error: rgba(225, 29, 72, 1);
+  --border-interactive: rgba(59, 130, 246, 1);
+  --border-menu-bot: rgba(255, 255, 255, 1);
+  --border-menu-top: rgba(228, 228, 231, 1);
+  --border-strong: rgba(212, 212, 216, 1);
+  --border-transparent: rgba(255, 255, 255, 0);
+  --button-danger: rgba(225, 29, 72, 1);
+  --button-danger-hover: rgba(190, 18, 60, 1);
+  --button-danger-pressed: rgba(159, 18, 57, 1);
+  --button-inverted: rgba(39, 39, 42, 1);
+  --button-inverted-hover: rgba(63, 63, 70, 1);
+  --button-inverted-pressed: rgba(82, 82, 91, 1);
+  --button-neutral: rgba(255, 255, 255, 1);
+  --button-neutral-hover: rgba(244, 244, 245, 1);
+  --button-neutral-pressed: rgba(228, 228, 231, 1);
+  --button-transparent: rgba(255, 255, 255, 0);
+  --button-transparent-hover: rgba(244, 244, 245, 1);
+  --button-transparent-pressed: rgba(228, 228, 231, 1);
+  --contrast-bg-base: rgba(24, 24, 27, 1);
+  --contrast-bg-base-hover: rgba(39, 39, 42, 1);
+  --contrast-bg-base-pressed: rgba(63, 63, 70, 1);
+  --contrast-bg-subtle: rgba(39, 39, 42, 1);
+  --contrast-border-base: rgba(255, 255, 255, 0.15);
+  --contrast-border-bot: rgba(255, 255, 255, 0.1);
+  --contrast-border-top: rgba(24, 24, 27, 1);
+  --contrast-fg-primary: rgba(255, 255, 255, 0.88);
+  --contrast-fg-secondary: rgba(255, 255, 255, 0.56);
+  --fg-base: rgba(24, 24, 27, 1);
+  --fg-disabled: rgba(161, 161, 170, 1);
+  --fg-error: rgba(225, 29, 72, 1);
+  --fg-interactive: rgba(59, 130, 246, 1);
+  --fg-interactive-hover: rgba(37, 99, 235, 1);
+  --fg-muted: rgba(113, 113, 122, 1);
+  --fg-on-color: rgba(255, 255, 255, 1);
+  --fg-on-inverted: rgba(255, 255, 255, 1);
+  --fg-subtle: rgba(82, 82, 91, 1);
+  --tag-blue-bg: rgba(219, 234, 254, 1);
+  --tag-blue-bg-hover: rgba(191, 219, 254, 1);
+  --tag-blue-border: rgba(191, 219, 254, 1);
+  --tag-blue-icon: rgba(96, 165, 250, 1);
+  --tag-blue-text: rgba(30, 64, 175, 1);
+  --tag-green-bg: rgba(209, 250, 229, 1);
+  --tag-green-bg-hover: rgba(167, 243, 208, 1);
+  --tag-green-border: rgba(167, 243, 208, 1);
+  --tag-green-icon: rgba(16, 185, 129, 1);
+  --tag-green-text: rgba(6, 95, 70, 1);
+  --tag-neutral-bg: rgba(244, 244, 245, 1);
+  --tag-neutral-bg-hover: rgba(228, 228, 231, 1);
+  --tag-neutral-border: rgba(228, 228, 231, 1);
+  --tag-neutral-icon: rgba(161, 161, 170, 1);
+  --tag-neutral-text: rgba(82, 82, 91, 1);
+  --tag-orange-bg: rgba(255, 237, 213, 1);
+  --tag-orange-bg-hover: rgba(254, 215, 170, 1);
+  --tag-orange-border: rgba(254, 215, 170, 1);
+  --tag-orange-icon: rgba(249, 115, 22, 1);
+  --tag-orange-text: rgba(154, 52, 18, 1);
+  --tag-purple-bg: rgba(237, 233, 254, 1);
+  --tag-purple-bg-hover: rgba(221, 214, 254, 1);
+  --tag-purple-border: rgba(221, 214, 254, 1);
+  --tag-purple-icon: rgba(167, 139, 250, 1);
+  --tag-purple-text: rgba(91, 33, 182, 1);
+  --tag-red-bg: rgba(255, 228, 230, 1);
+  --tag-red-bg-hover: rgba(254, 205, 211, 1);
+  --tag-red-border: rgba(254, 205, 211, 1);
+  --tag-red-icon: rgba(244, 63, 94, 1);
+  --tag-red-text: rgba(159, 18, 57, 1);
+  --borders-base: 0px 1px 2px 0px rgba(0, 0, 0, 0.12), 0px 0px 0px 1px rgba(0, 0, 0, 0.08);
+  --borders-error: 0px 0px 0px 1px rgba(225, 29, 72, 1), 0px 0px 0px 3px rgba(225, 29, 72, 0.15);
+  --borders-focus: 0px 0px 0px 1px rgba(255, 255, 255, 1), 0px 0px 0px 3px rgba(59, 130, 246, 0.6);
+  --borders-interactive-with-active: 0px 0px 0px 4px rgba(37, 99, 235, 0.2), 0px 0px 0px 1px rgba(37, 99, 235, 1);
+  --borders-interactive-with-focus: 0px 1px 2px 0px rgba(30, 58, 138, 0.5), 0px 0px 0px 1px rgba(37, 99, 235, 1), 0px 0px 0px 2px rgba(255, 255, 255, 1), 0px 0px 0px 4px rgba(37, 99, 235, 0.6);
+  --borders-interactive-with-shadow: 0px 1px 2px 0px rgba(30, 58, 138, 0.5), 0px 0px 0px 1px rgba(37, 99, 235, 1);
+  --buttons-danger: 0px 0.75px 0px 0px rgba(255, 255, 255, 0.2) inset, 0px 1px 2px 0px rgba(190, 18, 60, 0.4), 0px 0px 0px 1px rgba(190, 18, 60, 1);
+  --buttons-danger-focus: 0px 0.75px 0px 0px rgba(255, 255, 255, 0.2) inset, 0px 1px 2px 0px rgba(190, 18, 60, 0.4), 0px 0px 0px 1px rgba(190, 18, 60, 1), 0px 0px 0px 2px rgba(255, 255, 255, 1), 0px 0px 0px 4px rgba(59, 130, 246, 0.6);
+  --buttons-inverted: 0px 0.75px 0px 0px rgba(255, 255, 255, 0.2) inset, 0px 1px 2px 0px rgba(0, 0, 0, 0.4), 0px 0px 0px 1px rgba(24, 24, 27, 1);
+  --buttons-inverted-focus: 0px 0.75px 0px 0px rgba(255, 255, 255, 0.2) inset, 0px 1px 2px 0px rgba(0, 0, 0, 0.4), 0px 0px 0px 1px rgba(24, 24, 27, 1), 0px 0px 0px 2px rgba(255, 255, 255, 1), 0px 0px 0px 4px rgba(59, 130, 246, 0.6);
+  --buttons-neutral: 0px 1px 2px 0px rgba(0, 0, 0, 0.12), 0px 0px 0px 1px rgba(0, 0, 0, 0.08);
+  --buttons-neutral-focus: 0px 1px 2px 0px rgba(0, 0, 0, 0.12), 0px 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 0px 0px 2px rgba(255, 255, 255, 1), 0px 0px 0px 4px rgba(59, 130, 246, 0.6);
+  --details-contrast-on-bg-interactive: 0px 1px 2px 0px rgba(30, 58, 138, 0.6);
+  --details-switch-background: 0px 1px 1px 0px rgba(0, 0, 0, 0.04) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.04) inset, 0px 0px 0px 0.75px rgba(0, 0, 0, 0.06) inset, 0px 0px 8px 0px rgba(0, 0, 0, 0.02) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.04);
+  --details-switch-background-focus: 0px 0px 0px 1px rgba(255, 255, 255, 1), 0px 0px 0px 3px rgba(59, 130, 246, 0.6), 0px 1px 1px 0px rgba(0, 0, 0, 0.04) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.04) inset, 0px 0px 0px 0.75px rgba(0, 0, 0, 0.06) inset, 0px 0px 8px 0px rgba(0, 0, 0, 0.02) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.04);
+  --details-switch-handle: 0px 0px 2px 1px rgba(255, 255, 255, 1) inset, 0px 1px 0px 0px rgba(255, 255, 255, 1) inset, 0px 0px 0px 0.5px rgba(0, 0, 0, 0.02), 0px 5px 4px 0px rgba(0, 0, 0, 0.02), 0px 3px 3px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.12), 0px 0px 1px 0px rgba(0, 0, 0, 0.08);
+  --elevation-card-hover: 0px 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 1px 2px -1px rgba(0, 0, 0, 0.08), 0px 2px 8px 0px rgba(0, 0, 0, 0.1);
+  --elevation-card-rest: 0px 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 1px 2px -1px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.04);
+  --elevation-code-block: 0px 0px 0px 1px rgba(24, 24, 27, 1) inset, 0px 0px 0px 1.5px rgba(255, 255, 255, 0.2) inset;
+  --elevation-commandbar: 0px 0px 0px 0.75px rgba(39, 39, 42, 1) inset, 0px 0px 0px 1.25px rgba(255, 255, 255, 0.3) inset, 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 16px 32px 0px rgba(0, 0, 0, 0.08);
+  --elevation-flyout: 0px 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 4px 8px 0px rgba(0, 0, 0, 0.08), 0px 8px 16px 0px rgba(0, 0, 0, 0.08);
+  --elevation-modal: 0px 0px 0px 1px rgba(255, 255, 255, 1) inset, 0px 0px 0px 1.5px rgba(228, 228, 231, 0.6) inset, 0px 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 8px 16px 0px rgba(0, 0, 0, 0.08), 0px 16px 32px 0px rgba(0, 0, 0, 0.08);
+  --elevation-tooltip: 0px 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.08), 0px 4px 8px 0px rgba(0, 0, 0, 0.08);
+}
+
+.dark, .nv-dark, [data-mode="dark"] {
+  --alpha-250: rgba(255, 255, 255, 0.1);
+  --alpha-400: rgba(255, 255, 255, 0.24);
+  --bg-base: rgba(33, 33, 36, 1);
+  --bg-base-hover: rgba(39, 39, 42, 1);
+  --bg-base-pressed: rgba(63, 63, 70, 1);
+  --bg-component: rgba(39, 39, 42, 1);
+  --bg-component-hover: rgba(255, 255, 255, 0.1);
+  --bg-component-pressed: rgba(255, 255, 255, 0.16);
+  --bg-disabled: rgba(39, 39, 42, 1);
+  --bg-field: rgba(255, 255, 255, 0.04);
+  --bg-field-component: rgba(33, 33, 36, 1);
+  --bg-field-component-hover: rgba(39, 39, 42, 1);
+  --bg-field-hover: rgba(255, 255, 255, 0.08);
+  --bg-highlight: rgba(23, 37, 84, 1);
+  --bg-highlight-hover: rgba(30, 58, 138, 1);
+  --bg-interactive: rgba(96, 165, 250, 1);
+  --bg-overlay: rgba(24, 24, 27, 0.72);
+  --bg-subtle: rgba(24, 24, 27, 1);
+  --bg-subtle-hover: rgba(33, 33, 36, 1);
+  --bg-subtle-pressed: rgba(39, 39, 42, 1);
+  --bg-switch-off: rgba(63, 63, 70, 1);
+  --bg-switch-off-hover: rgba(82, 82, 91, 1);
+  --border-base: rgba(255, 255, 255, 0.08);
+  --border-danger: rgba(190, 18, 60, 1);
+  --border-error: rgba(251, 113, 133, 1);
+  --border-interactive: rgba(96, 165, 250, 1);
+  --border-menu-bot: rgba(255, 255, 255, 0.08);
+  --border-menu-top: rgba(33, 33, 36, 1);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --border-transparent: rgba(255, 255, 255, 0);
+  --button-danger: rgba(159, 18, 57, 1);
+  --button-danger-hover: rgba(190, 18, 60, 1);
+  --button-danger-pressed: rgba(225, 29, 72, 1);
+  --button-inverted: rgba(82, 82, 91, 1);
+  --button-inverted-hover: rgba(113, 113, 122, 1);
+  --button-inverted-pressed: rgba(161, 161, 170, 1);
+  --button-neutral: rgba(255, 255, 255, 0.04);
+  --button-neutral-hover: rgba(255, 255, 255, 0.08);
+  --button-neutral-pressed: rgba(255, 255, 255, 0.12);
+  --button-transparent: rgba(255, 255, 255, 0);
+  --button-transparent-hover: rgba(255, 255, 255, 0.08);
+  --button-transparent-pressed: rgba(255, 255, 255, 0.12);
+  --contrast-bg-base: rgba(39, 39, 42, 1);
+  --contrast-bg-base-hover: rgba(63, 63, 70, 1);
+  --contrast-bg-base-pressed: rgba(82, 82, 91, 1);
+  --contrast-bg-subtle: rgba(255, 255, 255, 0.04);
+  --contrast-border-base: rgba(255, 255, 255, 0.16);
+  --contrast-border-bot: rgba(255, 255, 255, 0.08);
+  --contrast-border-top: rgba(33, 33, 36, 1);
+  --contrast-fg-primary: rgba(255, 255, 255, 0.88);
+  --contrast-fg-secondary: rgba(255, 255, 255, 0.56);
+  --fg-base: rgba(244, 244, 245, 1);
+  --fg-disabled: rgba(82, 82, 91, 1);
+  --fg-error: rgba(251, 113, 133, 1);
+  --fg-interactive: rgba(96, 165, 250, 1);
+  --fg-interactive-hover: rgba(147, 197, 253, 1);
+  --fg-muted: rgba(113, 113, 122, 1);
+  --fg-on-color: rgba(255, 255, 255, 1);
+  --fg-on-inverted: rgba(24, 24, 27, 1);
+  --fg-subtle: rgba(161, 161, 170, 1);
+  --tag-blue-bg: rgba(23, 37, 84, 1);
+  --tag-blue-bg-hover: rgba(30, 58, 138, 1);
+  --tag-blue-border: rgba(30, 58, 138, 1);
+  --tag-blue-icon: rgba(96, 165, 250, 1);
+  --tag-blue-text: rgba(147, 197, 253, 1);
+  --tag-green-bg: rgba(2, 44, 34, 1);
+  --tag-green-bg-hover: rgba(6, 78, 59, 1);
+  --tag-green-border: rgba(6, 78, 59, 1);
+  --tag-green-icon: rgba(16, 185, 129, 1);
+  --tag-green-text: rgba(52, 211, 153, 1);
+  --tag-neutral-bg: rgba(255, 255, 255, 0.08);
+  --tag-neutral-bg-hover: rgba(255, 255, 255, 0.12);
+  --tag-neutral-border: rgba(255, 255, 255, 0.06);
+  --tag-neutral-icon: rgba(113, 113, 122, 1);
+  --tag-neutral-text: rgba(212, 212, 216, 1);
+  --tag-orange-bg: rgba(67, 20, 7, 1);
+  --tag-orange-bg-hover: rgba(124, 45, 18, 1);
+  --tag-orange-border: rgba(124, 45, 18, 1);
+  --tag-orange-icon: rgba(251, 146, 60, 1);
+  --tag-orange-text: rgba(253, 186, 116, 1);
+  --tag-purple-bg: rgba(46, 16, 101, 1);
+  --tag-purple-bg-hover: rgba(91, 33, 182, 1);
+  --tag-purple-border: rgba(91, 33, 182, 1);
+  --tag-purple-icon: rgba(167, 139, 250, 1);
+  --tag-purple-text: rgba(196, 181, 253, 1);
+  --tag-red-bg: rgba(76, 5, 25, 1);
+  --tag-red-bg-hover: rgba(136, 19, 55, 1);
+  --tag-red-border: rgba(136, 19, 55, 1);
+  --tag-red-icon: rgba(251, 113, 133, 1);
+  --tag-red-text: rgba(253, 164, 175, 1);
+  --borders-base: 0px -1px 0px 0px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(39, 39, 42, 1), 0px 0px 1px 1.5px rgba(0, 0, 0, 0.24), 0px 2px 2px 0px rgba(0, 0, 0, 0.24);
+  --borders-error: 0px 0px 0px 1px rgba(244, 63, 94, 1), 0px 0px 0px 3px rgba(225, 29, 72, 0.25);
+  --borders-focus: 0px 0px 0px 1px rgba(24, 24, 27, 1), 0px 0px 0px 3px rgba(96, 165, 250, 0.8);
+  --borders-interactive-with-active: 0px 0px 0px 1px rgba(96, 165, 250, 1), 0px 0px 0px 4px rgba(59, 130, 246, 0.25);
+  --borders-interactive-with-focus: 0px -1px 2px 0px rgba(219, 234, 254, 0.5), 0px 0px 0px 1px rgba(96, 165, 250, 1), 0px 0px 0px 2px rgba(24, 24, 27, 1), 0px 0px 0px 4px rgba(96, 165, 250, 0.8);
+  --borders-interactive-with-shadow: 0px -1px 2px 0px rgba(219, 234, 254, 0.5), 0px 0px 0px 1px rgba(96, 165, 250, 1);
+  --buttons-danger: 0px -1px 0px 0px rgba(255, 255, 255, 0.16), 0px 0px 0px 1px rgba(255, 255, 255, 0.12), 0px 0px 0px 1px rgba(159, 18, 57, 1), 0px 0px 1px 1.5px rgba(0, 0, 0, 0.24), 0px 2px 2px 0px rgba(0, 0, 0, 0.24);
+  --buttons-danger-focus: 0px -1px 0px 0px rgba(255, 255, 255, 0.16), 0px 0px 0px 1px rgba(255, 255, 255, 0.12), 0px 0px 0px 1px rgba(159, 18, 57, 1), 0px 0px 0px 2px rgba(24, 24, 27, 1), 0px 0px 0px 4px rgba(96, 165, 250, 0.8);
+  --buttons-inverted: 0px -1px 0px 0px rgba(255, 255, 255, 0.12), 0px 0px 0px 1px rgba(255, 255, 255, 0.1), 0px 0px 0px 1px rgba(82, 82, 91, 1), 0px 0px 1px 1.5px rgba(0, 0, 0, 0.24), 0px 2px 2px 0px rgba(0, 0, 0, 0.24);
+  --buttons-inverted-focus: 0px -1px 0px 0px rgba(255, 255, 255, 0.12), 0px 0px 0px 1px rgba(255, 255, 255, 0.12), 0px 0px 0px 1px rgba(82, 82, 91, 1), 0px 0px 0px 2px rgba(24, 24, 27, 1), 0px 0px 0px 4px rgba(96, 165, 250, 0.8);
+  --buttons-neutral: 0px -1px 0px 0px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(39, 39, 42, 1), 0px 0px 1px 1.5px rgba(0, 0, 0, 0.24), 0px 2px 2px 0px rgba(0, 0, 0, 0.24);
+  --buttons-neutral-focus: 0px -1px 0px 0px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(39, 39, 42, 1), 0px 0px 0px 2px rgba(24, 24, 27, 1), 0px 0px 0px 4px rgba(96, 165, 250, 0.8);
+  --details-contrast-on-bg-interactive: 0px 1px 2px 0px rgba(30, 58, 138, 0.6);
+  --details-switch-background: 0px 1px 1px 0px rgba(0, 0, 0, 0.1) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.1) inset, 0px 0px 0px 0.75px rgba(255, 255, 255, 0.12) inset, 0px 0px 8px 0px rgba(0, 0, 0, 0.1) inset;
+  --details-switch-background-focus: 0px 0px 0px 1px rgba(24, 24, 27, 1), 0px 0px 0px 3px rgba(96, 165, 250, 0.8), 0px 1px 1px 0px rgba(0, 0, 0, 0.1) inset, 0px 2px 4px 0px rgba(0, 0, 0, 0.1) inset, 0px 0px 0px 0.75px rgba(255, 255, 255, 0.12) inset, 0px 0px 8px 0px rgba(0, 0, 0, 0.1) inset;
+  --details-switch-handle: 0px 0px 2px 1px rgba(255, 255, 255, 1) inset, 0px 1px 0px 0px rgba(255, 255, 255, 1) inset, 0px 0px 0px 0.5px rgba(0, 0, 0, 0.16), 0px 5px 4px 0px rgba(0, 0, 0, 0.1), 0px 3px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 2px 0px rgba(0, 0, 0, 0.1), 0px 0px 1px 0px rgba(0, 0, 0, 0.1);
+  --elevation-card-hover: 0px -1px 0px 0px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(39, 39, 42, 1), 0px 1px 4px 0px rgba(0, 0, 0, 0.48), 0px 2px 8px 0px rgba(0, 0, 0, 0.48);
+  --elevation-card-rest: 0px -1px 0px 0px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(39, 39, 42, 1), 0px 1px 2px 0px rgba(0, 0, 0, 0.32), 0px 2px 4px 0px rgba(0, 0, 0, 0.32);
+  --elevation-code-block: 0px -1px 0px 0px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(255, 255, 255, 0.06), 0px 0px 0px 1px rgba(39, 39, 42, 1), 0px 1px 2px 0px rgba(0, 0, 0, 0.32), 0px 2px 4px 0px rgba(0, 0, 0, 0.32);
+  --elevation-commandbar: 0px 0px 0px 0.75px rgba(24, 24, 27, 1) inset, 0px 0px 0px 1.25px rgba(255, 255, 255, 0.1) inset, 0px 4px 8px 0px rgba(0, 0, 0, 0.32), 0px 8px 16px 0px rgba(0, 0, 0, 0.32);
+  --elevation-flyout: 0px -1px 0px 0px rgba(255, 255, 255, 0.04), 0px 0px 0px 1px rgba(255, 255, 255, 0.1), 0px 4px 8px 0px rgba(0, 0, 0, 0.32), 0px 8px 16px 0px rgba(0, 0, 0, 0.32);
+  --elevation-modal: 0px 0px 0px 1px rgba(24, 24, 27, 1) inset, 0px 0px 0px 1.5px rgba(255, 255, 255, 0.06) inset, 0px -1px 0px 0px rgba(255, 255, 255, 0.04), 0px 0px 0px 1px rgba(255, 255, 255, 0.1), 0px 4px 8px 0px rgba(0, 0, 0, 0.32), 0px 8px 16px 0px rgba(0, 0, 0, 0.32);
+  --elevation-tooltip: 0px -1px 0px 0px rgba(255, 255, 255, 0.04), 0px 2px 4px 0px rgba(0, 0, 0, 0.32), 0px 0px 0px 1px rgba(255, 255, 255, 0.1), 0px 4px 8px 0px rgba(0, 0, 0, 0.32);
+}
+
+/* Typography Classes */
+.code-label {
+  font-size: 0.75rem;
+  line-height: 0.9375rem;
+  font-weight: 400;
+  font-family: Roboto Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+}
+.code-label-plus {
+  font-size: 0.75rem;
+  line-height: 0.9375rem;
+  font-weight: 500;
+  font-family: Roboto Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+}
+.code-paragraph {
+  font-size: 0.75rem;
+  line-height: 1.2000000476837158rem;
+  font-weight: 400;
+  font-family: Roboto Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+}
+.code-paragraph-plus {
+  font-size: 0.75rem;
+  line-height: 1.2000000476837158rem;
+  font-weight: 500;
+  font-family: Roboto Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+}
+.h1-core {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.h1-docs {
+  font-size: 1.5rem;
+  line-height: 1.875rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.h1-webs {
+  font-size: 4rem;
+  line-height: 4.400000095367432rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.h2-core {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.h2-docs {
+  font-size: 1.125rem;
+  line-height: 1.8000000715255737rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.h2-webs {
+  font-size: 3.5rem;
+  line-height: 3.8500001430511475rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.h3-core {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.h3-docs {
+  font-size: 1rem;
+  line-height: 1.600000023841858rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.h3-webs {
+  font-size: 2.5rem;
+  line-height: 2.75rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.h4-docs {
+  font-size: 0.875rem;
+  line-height: 1.399999976158142rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.h4-webs {
+  font-size: 1.5rem;
+  line-height: 1.875rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-compact-large {
+  font-size: 1rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-compact-large-plus {
+  font-size: 1rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-compact-medium {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-compact-medium-plus {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-compact-small {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-compact-small-plus {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-compact-xlarge {
+  font-size: 1.125rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-compact-xlarge-plus {
+  font-size: 1.125rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-compact-xsmall {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-compact-xsmall-plus {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-large {
+  font-size: 1rem;
+  line-height: 1.600000023841858rem;
+  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-large-plus {
+  font-size: 1rem;
+  line-height: 1.600000023841858rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-medium {
+  font-size: 0.875rem;
+  line-height: 1.399999976158142rem;
+  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-medium-plus {
+  font-size: 0.875rem;
+  line-height: 1.399999976158142rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-small {
+  font-size: 0.8125rem;
+  line-height: 1.3000000715255737rem;
+  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-small-plus {
+  font-size: 0.8125rem;
+  line-height: 1.3000000715255737rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-xlarge {
+  font-size: 1.125rem;
+  line-height: 1.8000000715255737rem;
+  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-xlarge-plus {
+  font-size: 1.125rem;
+  line-height: 1.8000000715255737rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-xsmall {
+  font-size: 0.75rem;
+  line-height: 1.2000000476837158rem;
+  font-weight: 400;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+.txt-xsmall-plus {
+  font-size: 0.75rem;
+  line-height: 1.2000000476837158rem;
+  font-weight: 500;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+
+/* Transitions & Animations */
+.transition-fg { transition-property: color, background-color, border-color, box-shadow, opacity; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.button-inverted-gradient { background-image: radial-gradient(75% 100% at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%); }
+.button-inverted-hover-gradient { background-image: radial-gradient(75% 100% at 50% 0%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%); }
+.button-inverted-pressed-gradient { background-image: radial-gradient(75% 100% at 50% 0%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%); }
+.button-neutral-gradient { background-image: radial-gradient(75% 100% at 50% 0%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%); }
+.button-neutral-hover-gradient { background-image: radial-gradient(75% 100% at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%); }
+.button-neutral-pressed-gradient { background-image: radial-gradient(75% 100% at 50% 0%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%); }
+.button-danger-gradient { background-image: radial-gradient(75% 100% at 50% 0%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%); }
+.button-danger-hover-gradient { background-image: radial-gradient(75% 100% at 50% 0%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%); }
+.button-danger-pressed-gradient { background-image: radial-gradient(75% 100% at 50% 0%, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0) 100%); }
+
+/* Shadow Utilities */
+.shadow-buttons-danger-focus { box-shadow: var(--buttons-danger-focus); }
+.shadow-details-contrast-on-bg-interactive { box-shadow: var(--details-contrast-on-bg-interactive); }
+.shadow-borders-error { box-shadow: var(--borders-error); }
+.shadow-borders-focus { box-shadow: var(--borders-focus); }
+.shadow-buttons-danger { box-shadow: var(--buttons-danger); }
+.shadow-buttons-inverted-focus { box-shadow: var(--buttons-inverted-focus); }
+.shadow-elevation-card-hover { box-shadow: var(--elevation-card-hover); }
+.shadow-details-switch-handle { box-shadow: var(--details-switch-handle); }
+.shadow-buttons-neutral { box-shadow: var(--buttons-neutral); }
+.shadow-borders-base { box-shadow: var(--borders-base); }
+.shadow-elevation-card-rest { box-shadow: var(--elevation-card-rest); }
+.shadow-buttons-neutral-focus { box-shadow: var(--buttons-neutral-focus); }
+.shadow-details-switch-background-focus { box-shadow: var(--details-switch-background-focus); }
+.shadow-details-switch-background { box-shadow: var(--details-switch-background); }
+.shadow-elevation-flyout { box-shadow: var(--elevation-flyout); }
+.shadow-elevation-tooltip { box-shadow: var(--elevation-tooltip); }
+.shadow-elevation-modal { box-shadow: var(--elevation-modal); }
+.shadow-elevation-code-block { box-shadow: var(--elevation-code-block); }
+.shadow-buttons-inverted { box-shadow: var(--buttons-inverted); }
+.shadow-elevation-commandbar { box-shadow: var(--elevation-commandbar); }
+.shadow-borders-interactive-with-focus { box-shadow: var(--borders-interactive-with-focus); }
+.shadow-borders-interactive-with-shadow { box-shadow: var(--borders-interactive-with-shadow); }
+.shadow-borders-interactive-with-active { box-shadow: var(--borders-interactive-with-active); }
+
+/* Medusa UI Color Classes */
+.bg-ui-tag-neutral-border { background-color: var(--tag-neutral-border); }
+.hover\:bg-ui-tag-neutral-border:hover { background-color: var(--tag-neutral-border); }
+.active\:bg-ui-tag-neutral-border:active { background-color: var(--tag-neutral-border); }
+.text-ui-tag-neutral-border { color: var(--tag-neutral-border); }
+.hover\:text-ui-tag-neutral-border:hover { color: var(--tag-neutral-border); }
+.border-ui-tag-neutral-border { border-color: var(--tag-neutral-border); }
+.hover\:border-ui-tag-neutral-border:hover { border-color: var(--tag-neutral-border); }
+.\[\&_svg\]\:text-ui-tag-neutral-border svg { color: var(--tag-neutral-border); }
+.bg-ui-tag-neutral-icon { background-color: var(--tag-neutral-icon); }
+.hover\:bg-ui-tag-neutral-icon:hover { background-color: var(--tag-neutral-icon); }
+.active\:bg-ui-tag-neutral-icon:active { background-color: var(--tag-neutral-icon); }
+.text-ui-tag-neutral-icon { color: var(--tag-neutral-icon); }
+.hover\:text-ui-tag-neutral-icon:hover { color: var(--tag-neutral-icon); }
+.border-ui-tag-neutral-icon { border-color: var(--tag-neutral-icon); }
+.hover\:border-ui-tag-neutral-icon:hover { border-color: var(--tag-neutral-icon); }
+.\[\&_svg\]\:text-ui-tag-neutral-icon svg { color: var(--tag-neutral-icon); }
+.bg-ui-tag-neutral-text { background-color: var(--tag-neutral-text); }
+.hover\:bg-ui-tag-neutral-text:hover { background-color: var(--tag-neutral-text); }
+.active\:bg-ui-tag-neutral-text:active { background-color: var(--tag-neutral-text); }
+.text-ui-tag-neutral-text { color: var(--tag-neutral-text); }
+.hover\:text-ui-tag-neutral-text:hover { color: var(--tag-neutral-text); }
+.border-ui-tag-neutral-text { border-color: var(--tag-neutral-text); }
+.hover\:border-ui-tag-neutral-text:hover { border-color: var(--tag-neutral-text); }
+.\[\&_svg\]\:text-ui-tag-neutral-text svg { color: var(--tag-neutral-text); }
+.bg-ui-tag-neutral-bg { background-color: var(--tag-neutral-bg); }
+.hover\:bg-ui-tag-neutral-bg:hover { background-color: var(--tag-neutral-bg); }
+.active\:bg-ui-tag-neutral-bg:active { background-color: var(--tag-neutral-bg); }
+.text-ui-tag-neutral-bg { color: var(--tag-neutral-bg); }
+.hover\:text-ui-tag-neutral-bg:hover { color: var(--tag-neutral-bg); }
+.border-ui-tag-neutral-bg { border-color: var(--tag-neutral-bg); }
+.hover\:border-ui-tag-neutral-bg:hover { border-color: var(--tag-neutral-bg); }
+.\[\&_svg\]\:text-ui-tag-neutral-bg svg { color: var(--tag-neutral-bg); }
+.bg-ui-tag-neutral-bg-hover { background-color: var(--tag-neutral-bg-hover); }
+.hover\:bg-ui-tag-neutral-bg-hover:hover { background-color: var(--tag-neutral-bg-hover); }
+.active\:bg-ui-tag-neutral-bg-hover:active { background-color: var(--tag-neutral-bg-hover); }
+.text-ui-tag-neutral-bg-hover { color: var(--tag-neutral-bg-hover); }
+.hover\:text-ui-tag-neutral-bg-hover:hover { color: var(--tag-neutral-bg-hover); }
+.border-ui-tag-neutral-bg-hover { border-color: var(--tag-neutral-bg-hover); }
+.hover\:border-ui-tag-neutral-bg-hover:hover { border-color: var(--tag-neutral-bg-hover); }
+.\[\&_svg\]\:text-ui-tag-neutral-bg-hover svg { color: var(--tag-neutral-bg-hover); }
+.bg-ui-tag-red-text { background-color: var(--tag-red-text); }
+.hover\:bg-ui-tag-red-text:hover { background-color: var(--tag-red-text); }
+.active\:bg-ui-tag-red-text:active { background-color: var(--tag-red-text); }
+.text-ui-tag-red-text { color: var(--tag-red-text); }
+.hover\:text-ui-tag-red-text:hover { color: var(--tag-red-text); }
+.border-ui-tag-red-text { border-color: var(--tag-red-text); }
+.hover\:border-ui-tag-red-text:hover { border-color: var(--tag-red-text); }
+.\[\&_svg\]\:text-ui-tag-red-text svg { color: var(--tag-red-text); }
+.bg-ui-tag-red-bg { background-color: var(--tag-red-bg); }
+.hover\:bg-ui-tag-red-bg:hover { background-color: var(--tag-red-bg); }
+.active\:bg-ui-tag-red-bg:active { background-color: var(--tag-red-bg); }
+.text-ui-tag-red-bg { color: var(--tag-red-bg); }
+.hover\:text-ui-tag-red-bg:hover { color: var(--tag-red-bg); }
+.border-ui-tag-red-bg { border-color: var(--tag-red-bg); }
+.hover\:border-ui-tag-red-bg:hover { border-color: var(--tag-red-bg); }
+.\[\&_svg\]\:text-ui-tag-red-bg svg { color: var(--tag-red-bg); }
+.bg-ui-tag-red-bg-hover { background-color: var(--tag-red-bg-hover); }
+.hover\:bg-ui-tag-red-bg-hover:hover { background-color: var(--tag-red-bg-hover); }
+.active\:bg-ui-tag-red-bg-hover:active { background-color: var(--tag-red-bg-hover); }
+.text-ui-tag-red-bg-hover { color: var(--tag-red-bg-hover); }
+.hover\:text-ui-tag-red-bg-hover:hover { color: var(--tag-red-bg-hover); }
+.border-ui-tag-red-bg-hover { border-color: var(--tag-red-bg-hover); }
+.hover\:border-ui-tag-red-bg-hover:hover { border-color: var(--tag-red-bg-hover); }
+.\[\&_svg\]\:text-ui-tag-red-bg-hover svg { color: var(--tag-red-bg-hover); }
+.bg-ui-tag-red-border { background-color: var(--tag-red-border); }
+.hover\:bg-ui-tag-red-border:hover { background-color: var(--tag-red-border); }
+.active\:bg-ui-tag-red-border:active { background-color: var(--tag-red-border); }
+.text-ui-tag-red-border { color: var(--tag-red-border); }
+.hover\:text-ui-tag-red-border:hover { color: var(--tag-red-border); }
+.border-ui-tag-red-border { border-color: var(--tag-red-border); }
+.hover\:border-ui-tag-red-border:hover { border-color: var(--tag-red-border); }
+.\[\&_svg\]\:text-ui-tag-red-border svg { color: var(--tag-red-border); }
+.bg-ui-tag-red-icon { background-color: var(--tag-red-icon); }
+.hover\:bg-ui-tag-red-icon:hover { background-color: var(--tag-red-icon); }
+.active\:bg-ui-tag-red-icon:active { background-color: var(--tag-red-icon); }
+.text-ui-tag-red-icon { color: var(--tag-red-icon); }
+.hover\:text-ui-tag-red-icon:hover { color: var(--tag-red-icon); }
+.border-ui-tag-red-icon { border-color: var(--tag-red-icon); }
+.hover\:border-ui-tag-red-icon:hover { border-color: var(--tag-red-icon); }
+.\[\&_svg\]\:text-ui-tag-red-icon svg { color: var(--tag-red-icon); }
+.bg-ui-tag-blue-text { background-color: var(--tag-blue-text); }
+.hover\:bg-ui-tag-blue-text:hover { background-color: var(--tag-blue-text); }
+.active\:bg-ui-tag-blue-text:active { background-color: var(--tag-blue-text); }
+.text-ui-tag-blue-text { color: var(--tag-blue-text); }
+.hover\:text-ui-tag-blue-text:hover { color: var(--tag-blue-text); }
+.border-ui-tag-blue-text { border-color: var(--tag-blue-text); }
+.hover\:border-ui-tag-blue-text:hover { border-color: var(--tag-blue-text); }
+.\[\&_svg\]\:text-ui-tag-blue-text svg { color: var(--tag-blue-text); }
+.bg-ui-tag-blue-border { background-color: var(--tag-blue-border); }
+.hover\:bg-ui-tag-blue-border:hover { background-color: var(--tag-blue-border); }
+.active\:bg-ui-tag-blue-border:active { background-color: var(--tag-blue-border); }
+.text-ui-tag-blue-border { color: var(--tag-blue-border); }
+.hover\:text-ui-tag-blue-border:hover { color: var(--tag-blue-border); }
+.border-ui-tag-blue-border { border-color: var(--tag-blue-border); }
+.hover\:border-ui-tag-blue-border:hover { border-color: var(--tag-blue-border); }
+.\[\&_svg\]\:text-ui-tag-blue-border svg { color: var(--tag-blue-border); }
+.bg-ui-tag-blue-bg { background-color: var(--tag-blue-bg); }
+.hover\:bg-ui-tag-blue-bg:hover { background-color: var(--tag-blue-bg); }
+.active\:bg-ui-tag-blue-bg:active { background-color: var(--tag-blue-bg); }
+.text-ui-tag-blue-bg { color: var(--tag-blue-bg); }
+.hover\:text-ui-tag-blue-bg:hover { color: var(--tag-blue-bg); }
+.border-ui-tag-blue-bg { border-color: var(--tag-blue-bg); }
+.hover\:border-ui-tag-blue-bg:hover { border-color: var(--tag-blue-bg); }
+.\[\&_svg\]\:text-ui-tag-blue-bg svg { color: var(--tag-blue-bg); }
+.bg-ui-tag-blue-bg-hover { background-color: var(--tag-blue-bg-hover); }
+.hover\:bg-ui-tag-blue-bg-hover:hover { background-color: var(--tag-blue-bg-hover); }
+.active\:bg-ui-tag-blue-bg-hover:active { background-color: var(--tag-blue-bg-hover); }
+.text-ui-tag-blue-bg-hover { color: var(--tag-blue-bg-hover); }
+.hover\:text-ui-tag-blue-bg-hover:hover { color: var(--tag-blue-bg-hover); }
+.border-ui-tag-blue-bg-hover { border-color: var(--tag-blue-bg-hover); }
+.hover\:border-ui-tag-blue-bg-hover:hover { border-color: var(--tag-blue-bg-hover); }
+.\[\&_svg\]\:text-ui-tag-blue-bg-hover svg { color: var(--tag-blue-bg-hover); }
+.bg-ui-tag-blue-icon { background-color: var(--tag-blue-icon); }
+.hover\:bg-ui-tag-blue-icon:hover { background-color: var(--tag-blue-icon); }
+.active\:bg-ui-tag-blue-icon:active { background-color: var(--tag-blue-icon); }
+.text-ui-tag-blue-icon { color: var(--tag-blue-icon); }
+.hover\:text-ui-tag-blue-icon:hover { color: var(--tag-blue-icon); }
+.border-ui-tag-blue-icon { border-color: var(--tag-blue-icon); }
+.hover\:border-ui-tag-blue-icon:hover { border-color: var(--tag-blue-icon); }
+.\[\&_svg\]\:text-ui-tag-blue-icon svg { color: var(--tag-blue-icon); }
+.bg-ui-tag-orange-text { background-color: var(--tag-orange-text); }
+.hover\:bg-ui-tag-orange-text:hover { background-color: var(--tag-orange-text); }
+.active\:bg-ui-tag-orange-text:active { background-color: var(--tag-orange-text); }
+.text-ui-tag-orange-text { color: var(--tag-orange-text); }
+.hover\:text-ui-tag-orange-text:hover { color: var(--tag-orange-text); }
+.border-ui-tag-orange-text { border-color: var(--tag-orange-text); }
+.hover\:border-ui-tag-orange-text:hover { border-color: var(--tag-orange-text); }
+.\[\&_svg\]\:text-ui-tag-orange-text svg { color: var(--tag-orange-text); }
+.bg-ui-tag-orange-border { background-color: var(--tag-orange-border); }
+.hover\:bg-ui-tag-orange-border:hover { background-color: var(--tag-orange-border); }
+.active\:bg-ui-tag-orange-border:active { background-color: var(--tag-orange-border); }
+.text-ui-tag-orange-border { color: var(--tag-orange-border); }
+.hover\:text-ui-tag-orange-border:hover { color: var(--tag-orange-border); }
+.border-ui-tag-orange-border { border-color: var(--tag-orange-border); }
+.hover\:border-ui-tag-orange-border:hover { border-color: var(--tag-orange-border); }
+.\[\&_svg\]\:text-ui-tag-orange-border svg { color: var(--tag-orange-border); }
+.bg-ui-tag-orange-icon { background-color: var(--tag-orange-icon); }
+.hover\:bg-ui-tag-orange-icon:hover { background-color: var(--tag-orange-icon); }
+.active\:bg-ui-tag-orange-icon:active { background-color: var(--tag-orange-icon); }
+.text-ui-tag-orange-icon { color: var(--tag-orange-icon); }
+.hover\:text-ui-tag-orange-icon:hover { color: var(--tag-orange-icon); }
+.border-ui-tag-orange-icon { border-color: var(--tag-orange-icon); }
+.hover\:border-ui-tag-orange-icon:hover { border-color: var(--tag-orange-icon); }
+.\[\&_svg\]\:text-ui-tag-orange-icon svg { color: var(--tag-orange-icon); }
+.bg-ui-tag-orange-bg { background-color: var(--tag-orange-bg); }
+.hover\:bg-ui-tag-orange-bg:hover { background-color: var(--tag-orange-bg); }
+.active\:bg-ui-tag-orange-bg:active { background-color: var(--tag-orange-bg); }
+.text-ui-tag-orange-bg { color: var(--tag-orange-bg); }
+.hover\:text-ui-tag-orange-bg:hover { color: var(--tag-orange-bg); }
+.border-ui-tag-orange-bg { border-color: var(--tag-orange-bg); }
+.hover\:border-ui-tag-orange-bg:hover { border-color: var(--tag-orange-bg); }
+.\[\&_svg\]\:text-ui-tag-orange-bg svg { color: var(--tag-orange-bg); }
+.bg-ui-tag-orange-bg-hover { background-color: var(--tag-orange-bg-hover); }
+.hover\:bg-ui-tag-orange-bg-hover:hover { background-color: var(--tag-orange-bg-hover); }
+.active\:bg-ui-tag-orange-bg-hover:active { background-color: var(--tag-orange-bg-hover); }
+.text-ui-tag-orange-bg-hover { color: var(--tag-orange-bg-hover); }
+.hover\:text-ui-tag-orange-bg-hover:hover { color: var(--tag-orange-bg-hover); }
+.border-ui-tag-orange-bg-hover { border-color: var(--tag-orange-bg-hover); }
+.hover\:border-ui-tag-orange-bg-hover:hover { border-color: var(--tag-orange-bg-hover); }
+.\[\&_svg\]\:text-ui-tag-orange-bg-hover svg { color: var(--tag-orange-bg-hover); }
+.bg-ui-tag-green-icon { background-color: var(--tag-green-icon); }
+.hover\:bg-ui-tag-green-icon:hover { background-color: var(--tag-green-icon); }
+.active\:bg-ui-tag-green-icon:active { background-color: var(--tag-green-icon); }
+.text-ui-tag-green-icon { color: var(--tag-green-icon); }
+.hover\:text-ui-tag-green-icon:hover { color: var(--tag-green-icon); }
+.border-ui-tag-green-icon { border-color: var(--tag-green-icon); }
+.hover\:border-ui-tag-green-icon:hover { border-color: var(--tag-green-icon); }
+.\[\&_svg\]\:text-ui-tag-green-icon svg { color: var(--tag-green-icon); }
+.bg-ui-tag-green-border { background-color: var(--tag-green-border); }
+.hover\:bg-ui-tag-green-border:hover { background-color: var(--tag-green-border); }
+.active\:bg-ui-tag-green-border:active { background-color: var(--tag-green-border); }
+.text-ui-tag-green-border { color: var(--tag-green-border); }
+.hover\:text-ui-tag-green-border:hover { color: var(--tag-green-border); }
+.border-ui-tag-green-border { border-color: var(--tag-green-border); }
+.hover\:border-ui-tag-green-border:hover { border-color: var(--tag-green-border); }
+.\[\&_svg\]\:text-ui-tag-green-border svg { color: var(--tag-green-border); }
+.bg-ui-tag-green-text { background-color: var(--tag-green-text); }
+.hover\:bg-ui-tag-green-text:hover { background-color: var(--tag-green-text); }
+.active\:bg-ui-tag-green-text:active { background-color: var(--tag-green-text); }
+.text-ui-tag-green-text { color: var(--tag-green-text); }
+.hover\:text-ui-tag-green-text:hover { color: var(--tag-green-text); }
+.border-ui-tag-green-text { border-color: var(--tag-green-text); }
+.hover\:border-ui-tag-green-text:hover { border-color: var(--tag-green-text); }
+.\[\&_svg\]\:text-ui-tag-green-text svg { color: var(--tag-green-text); }
+.bg-ui-tag-green-bg { background-color: var(--tag-green-bg); }
+.hover\:bg-ui-tag-green-bg:hover { background-color: var(--tag-green-bg); }
+.active\:bg-ui-tag-green-bg:active { background-color: var(--tag-green-bg); }
+.text-ui-tag-green-bg { color: var(--tag-green-bg); }
+.hover\:text-ui-tag-green-bg:hover { color: var(--tag-green-bg); }
+.border-ui-tag-green-bg { border-color: var(--tag-green-bg); }
+.hover\:border-ui-tag-green-bg:hover { border-color: var(--tag-green-bg); }
+.\[\&_svg\]\:text-ui-tag-green-bg svg { color: var(--tag-green-bg); }
+.bg-ui-tag-green-bg-hover { background-color: var(--tag-green-bg-hover); }
+.hover\:bg-ui-tag-green-bg-hover:hover { background-color: var(--tag-green-bg-hover); }
+.active\:bg-ui-tag-green-bg-hover:active { background-color: var(--tag-green-bg-hover); }
+.text-ui-tag-green-bg-hover { color: var(--tag-green-bg-hover); }
+.hover\:text-ui-tag-green-bg-hover:hover { color: var(--tag-green-bg-hover); }
+.border-ui-tag-green-bg-hover { border-color: var(--tag-green-bg-hover); }
+.hover\:border-ui-tag-green-bg-hover:hover { border-color: var(--tag-green-bg-hover); }
+.\[\&_svg\]\:text-ui-tag-green-bg-hover svg { color: var(--tag-green-bg-hover); }
+.bg-ui-tag-purple-bg { background-color: var(--tag-purple-bg); }
+.hover\:bg-ui-tag-purple-bg:hover { background-color: var(--tag-purple-bg); }
+.active\:bg-ui-tag-purple-bg:active { background-color: var(--tag-purple-bg); }
+.text-ui-tag-purple-bg { color: var(--tag-purple-bg); }
+.hover\:text-ui-tag-purple-bg:hover { color: var(--tag-purple-bg); }
+.border-ui-tag-purple-bg { border-color: var(--tag-purple-bg); }
+.hover\:border-ui-tag-purple-bg:hover { border-color: var(--tag-purple-bg); }
+.\[\&_svg\]\:text-ui-tag-purple-bg svg { color: var(--tag-purple-bg); }
+.bg-ui-tag-purple-bg-hover { background-color: var(--tag-purple-bg-hover); }
+.hover\:bg-ui-tag-purple-bg-hover:hover { background-color: var(--tag-purple-bg-hover); }
+.active\:bg-ui-tag-purple-bg-hover:active { background-color: var(--tag-purple-bg-hover); }
+.text-ui-tag-purple-bg-hover { color: var(--tag-purple-bg-hover); }
+.hover\:text-ui-tag-purple-bg-hover:hover { color: var(--tag-purple-bg-hover); }
+.border-ui-tag-purple-bg-hover { border-color: var(--tag-purple-bg-hover); }
+.hover\:border-ui-tag-purple-bg-hover:hover { border-color: var(--tag-purple-bg-hover); }
+.\[\&_svg\]\:text-ui-tag-purple-bg-hover svg { color: var(--tag-purple-bg-hover); }
+.bg-ui-tag-purple-text { background-color: var(--tag-purple-text); }
+.hover\:bg-ui-tag-purple-text:hover { background-color: var(--tag-purple-text); }
+.active\:bg-ui-tag-purple-text:active { background-color: var(--tag-purple-text); }
+.text-ui-tag-purple-text { color: var(--tag-purple-text); }
+.hover\:text-ui-tag-purple-text:hover { color: var(--tag-purple-text); }
+.border-ui-tag-purple-text { border-color: var(--tag-purple-text); }
+.hover\:border-ui-tag-purple-text:hover { border-color: var(--tag-purple-text); }
+.\[\&_svg\]\:text-ui-tag-purple-text svg { color: var(--tag-purple-text); }
+.bg-ui-tag-purple-icon { background-color: var(--tag-purple-icon); }
+.hover\:bg-ui-tag-purple-icon:hover { background-color: var(--tag-purple-icon); }
+.active\:bg-ui-tag-purple-icon:active { background-color: var(--tag-purple-icon); }
+.text-ui-tag-purple-icon { color: var(--tag-purple-icon); }
+.hover\:text-ui-tag-purple-icon:hover { color: var(--tag-purple-icon); }
+.border-ui-tag-purple-icon { border-color: var(--tag-purple-icon); }
+.hover\:border-ui-tag-purple-icon:hover { border-color: var(--tag-purple-icon); }
+.\[\&_svg\]\:text-ui-tag-purple-icon svg { color: var(--tag-purple-icon); }
+.bg-ui-tag-purple-border { background-color: var(--tag-purple-border); }
+.hover\:bg-ui-tag-purple-border:hover { background-color: var(--tag-purple-border); }
+.active\:bg-ui-tag-purple-border:active { background-color: var(--tag-purple-border); }
+.text-ui-tag-purple-border { color: var(--tag-purple-border); }
+.hover\:text-ui-tag-purple-border:hover { color: var(--tag-purple-border); }
+.border-ui-tag-purple-border { border-color: var(--tag-purple-border); }
+.hover\:border-ui-tag-purple-border:hover { border-color: var(--tag-purple-border); }
+.\[\&_svg\]\:text-ui-tag-purple-border svg { color: var(--tag-purple-border); }
+.bg-ui-bg-switch-off { background-color: var(--bg-switch-off); }
+.hover\:bg-ui-bg-switch-off:hover { background-color: var(--bg-switch-off); }
+.active\:bg-ui-bg-switch-off:active { background-color: var(--bg-switch-off); }
+.text-ui-bg-switch-off { color: var(--bg-switch-off); }
+.hover\:text-ui-bg-switch-off:hover { color: var(--bg-switch-off); }
+.border-ui-bg-switch-off { border-color: var(--bg-switch-off); }
+.hover\:border-ui-bg-switch-off:hover { border-color: var(--bg-switch-off); }
+.\[\&_svg\]\:text-ui-bg-switch-off svg { color: var(--bg-switch-off); }
+.bg-ui-bg-switch-off-hover { background-color: var(--bg-switch-off-hover); }
+.hover\:bg-ui-bg-switch-off-hover:hover { background-color: var(--bg-switch-off-hover); }
+.active\:bg-ui-bg-switch-off-hover:active { background-color: var(--bg-switch-off-hover); }
+.text-ui-bg-switch-off-hover { color: var(--bg-switch-off-hover); }
+.hover\:text-ui-bg-switch-off-hover:hover { color: var(--bg-switch-off-hover); }
+.border-ui-bg-switch-off-hover { border-color: var(--bg-switch-off-hover); }
+.hover\:border-ui-bg-switch-off-hover:hover { border-color: var(--bg-switch-off-hover); }
+.\[\&_svg\]\:text-ui-bg-switch-off-hover svg { color: var(--bg-switch-off-hover); }
+.bg-ui-bg-subtle { background-color: var(--bg-subtle); }
+.hover\:bg-ui-bg-subtle:hover { background-color: var(--bg-subtle); }
+.active\:bg-ui-bg-subtle:active { background-color: var(--bg-subtle); }
+.text-ui-bg-subtle { color: var(--bg-subtle); }
+.hover\:text-ui-bg-subtle:hover { color: var(--bg-subtle); }
+.border-ui-bg-subtle { border-color: var(--bg-subtle); }
+.hover\:border-ui-bg-subtle:hover { border-color: var(--bg-subtle); }
+.\[\&_svg\]\:text-ui-bg-subtle svg { color: var(--bg-subtle); }
+.bg-ui-bg-subtle-hover { background-color: var(--bg-subtle-hover); }
+.hover\:bg-ui-bg-subtle-hover:hover { background-color: var(--bg-subtle-hover); }
+.active\:bg-ui-bg-subtle-hover:active { background-color: var(--bg-subtle-hover); }
+.text-ui-bg-subtle-hover { color: var(--bg-subtle-hover); }
+.hover\:text-ui-bg-subtle-hover:hover { color: var(--bg-subtle-hover); }
+.border-ui-bg-subtle-hover { border-color: var(--bg-subtle-hover); }
+.hover\:border-ui-bg-subtle-hover:hover { border-color: var(--bg-subtle-hover); }
+.\[\&_svg\]\:text-ui-bg-subtle-hover svg { color: var(--bg-subtle-hover); }
+.bg-ui-bg-subtle-pressed { background-color: var(--bg-subtle-pressed); }
+.hover\:bg-ui-bg-subtle-pressed:hover { background-color: var(--bg-subtle-pressed); }
+.active\:bg-ui-bg-subtle-pressed:active { background-color: var(--bg-subtle-pressed); }
+.text-ui-bg-subtle-pressed { color: var(--bg-subtle-pressed); }
+.hover\:text-ui-bg-subtle-pressed:hover { color: var(--bg-subtle-pressed); }
+.border-ui-bg-subtle-pressed { border-color: var(--bg-subtle-pressed); }
+.hover\:border-ui-bg-subtle-pressed:hover { border-color: var(--bg-subtle-pressed); }
+.\[\&_svg\]\:text-ui-bg-subtle-pressed svg { color: var(--bg-subtle-pressed); }
+.bg-ui-bg-field { background-color: var(--bg-field); }
+.hover\:bg-ui-bg-field:hover { background-color: var(--bg-field); }
+.active\:bg-ui-bg-field:active { background-color: var(--bg-field); }
+.text-ui-bg-field { color: var(--bg-field); }
+.hover\:text-ui-bg-field:hover { color: var(--bg-field); }
+.border-ui-bg-field { border-color: var(--bg-field); }
+.hover\:border-ui-bg-field:hover { border-color: var(--bg-field); }
+.\[\&_svg\]\:text-ui-bg-field svg { color: var(--bg-field); }
+.bg-ui-bg-field-component { background-color: var(--bg-field-component); }
+.hover\:bg-ui-bg-field-component:hover { background-color: var(--bg-field-component); }
+.active\:bg-ui-bg-field-component:active { background-color: var(--bg-field-component); }
+.text-ui-bg-field-component { color: var(--bg-field-component); }
+.hover\:text-ui-bg-field-component:hover { color: var(--bg-field-component); }
+.border-ui-bg-field-component { border-color: var(--bg-field-component); }
+.hover\:border-ui-bg-field-component:hover { border-color: var(--bg-field-component); }
+.\[\&_svg\]\:text-ui-bg-field-component svg { color: var(--bg-field-component); }
+.bg-ui-bg-field-component-hover { background-color: var(--bg-field-component-hover); }
+.hover\:bg-ui-bg-field-component-hover:hover { background-color: var(--bg-field-component-hover); }
+.active\:bg-ui-bg-field-component-hover:active { background-color: var(--bg-field-component-hover); }
+.text-ui-bg-field-component-hover { color: var(--bg-field-component-hover); }
+.hover\:text-ui-bg-field-component-hover:hover { color: var(--bg-field-component-hover); }
+.border-ui-bg-field-component-hover { border-color: var(--bg-field-component-hover); }
+.hover\:border-ui-bg-field-component-hover:hover { border-color: var(--bg-field-component-hover); }
+.\[\&_svg\]\:text-ui-bg-field-component-hover svg { color: var(--bg-field-component-hover); }
+.bg-ui-bg-field-hover { background-color: var(--bg-field-hover); }
+.hover\:bg-ui-bg-field-hover:hover { background-color: var(--bg-field-hover); }
+.active\:bg-ui-bg-field-hover:active { background-color: var(--bg-field-hover); }
+.text-ui-bg-field-hover { color: var(--bg-field-hover); }
+.hover\:text-ui-bg-field-hover:hover { color: var(--bg-field-hover); }
+.border-ui-bg-field-hover { border-color: var(--bg-field-hover); }
+.hover\:border-ui-bg-field-hover:hover { border-color: var(--bg-field-hover); }
+.\[\&_svg\]\:text-ui-bg-field-hover svg { color: var(--bg-field-hover); }
+.bg-ui-bg-base { background-color: var(--bg-base); }
+.hover\:bg-ui-bg-base:hover { background-color: var(--bg-base); }
+.active\:bg-ui-bg-base:active { background-color: var(--bg-base); }
+.text-ui-bg-base { color: var(--bg-base); }
+.hover\:text-ui-bg-base:hover { color: var(--bg-base); }
+.border-ui-bg-base { border-color: var(--bg-base); }
+.hover\:border-ui-bg-base:hover { border-color: var(--bg-base); }
+.\[\&_svg\]\:text-ui-bg-base svg { color: var(--bg-base); }
+.bg-ui-bg-base-pressed { background-color: var(--bg-base-pressed); }
+.hover\:bg-ui-bg-base-pressed:hover { background-color: var(--bg-base-pressed); }
+.active\:bg-ui-bg-base-pressed:active { background-color: var(--bg-base-pressed); }
+.text-ui-bg-base-pressed { color: var(--bg-base-pressed); }
+.hover\:text-ui-bg-base-pressed:hover { color: var(--bg-base-pressed); }
+.border-ui-bg-base-pressed { border-color: var(--bg-base-pressed); }
+.hover\:border-ui-bg-base-pressed:hover { border-color: var(--bg-base-pressed); }
+.\[\&_svg\]\:text-ui-bg-base-pressed svg { color: var(--bg-base-pressed); }
+.bg-ui-bg-base-hover { background-color: var(--bg-base-hover); }
+.hover\:bg-ui-bg-base-hover:hover { background-color: var(--bg-base-hover); }
+.active\:bg-ui-bg-base-hover:active { background-color: var(--bg-base-hover); }
+.text-ui-bg-base-hover { color: var(--bg-base-hover); }
+.hover\:text-ui-bg-base-hover:hover { color: var(--bg-base-hover); }
+.border-ui-bg-base-hover { border-color: var(--bg-base-hover); }
+.hover\:border-ui-bg-base-hover:hover { border-color: var(--bg-base-hover); }
+.\[\&_svg\]\:text-ui-bg-base-hover svg { color: var(--bg-base-hover); }
+.bg-ui-bg-highlight { background-color: var(--bg-highlight); }
+.hover\:bg-ui-bg-highlight:hover { background-color: var(--bg-highlight); }
+.active\:bg-ui-bg-highlight:active { background-color: var(--bg-highlight); }
+.text-ui-bg-highlight { color: var(--bg-highlight); }
+.hover\:text-ui-bg-highlight:hover { color: var(--bg-highlight); }
+.border-ui-bg-highlight { border-color: var(--bg-highlight); }
+.hover\:border-ui-bg-highlight:hover { border-color: var(--bg-highlight); }
+.\[\&_svg\]\:text-ui-bg-highlight svg { color: var(--bg-highlight); }
+.bg-ui-bg-highlight-hover { background-color: var(--bg-highlight-hover); }
+.hover\:bg-ui-bg-highlight-hover:hover { background-color: var(--bg-highlight-hover); }
+.active\:bg-ui-bg-highlight-hover:active { background-color: var(--bg-highlight-hover); }
+.text-ui-bg-highlight-hover { color: var(--bg-highlight-hover); }
+.hover\:text-ui-bg-highlight-hover:hover { color: var(--bg-highlight-hover); }
+.border-ui-bg-highlight-hover { border-color: var(--bg-highlight-hover); }
+.hover\:border-ui-bg-highlight-hover:hover { border-color: var(--bg-highlight-hover); }
+.\[\&_svg\]\:text-ui-bg-highlight-hover svg { color: var(--bg-highlight-hover); }
+.bg-ui-bg-component { background-color: var(--bg-component); }
+.hover\:bg-ui-bg-component:hover { background-color: var(--bg-component); }
+.active\:bg-ui-bg-component:active { background-color: var(--bg-component); }
+.text-ui-bg-component { color: var(--bg-component); }
+.hover\:text-ui-bg-component:hover { color: var(--bg-component); }
+.border-ui-bg-component { border-color: var(--bg-component); }
+.hover\:border-ui-bg-component:hover { border-color: var(--bg-component); }
+.\[\&_svg\]\:text-ui-bg-component svg { color: var(--bg-component); }
+.bg-ui-bg-component-pressed { background-color: var(--bg-component-pressed); }
+.hover\:bg-ui-bg-component-pressed:hover { background-color: var(--bg-component-pressed); }
+.active\:bg-ui-bg-component-pressed:active { background-color: var(--bg-component-pressed); }
+.text-ui-bg-component-pressed { color: var(--bg-component-pressed); }
+.hover\:text-ui-bg-component-pressed:hover { color: var(--bg-component-pressed); }
+.border-ui-bg-component-pressed { border-color: var(--bg-component-pressed); }
+.hover\:border-ui-bg-component-pressed:hover { border-color: var(--bg-component-pressed); }
+.\[\&_svg\]\:text-ui-bg-component-pressed svg { color: var(--bg-component-pressed); }
+.bg-ui-bg-component-hover { background-color: var(--bg-component-hover); }
+.hover\:bg-ui-bg-component-hover:hover { background-color: var(--bg-component-hover); }
+.active\:bg-ui-bg-component-hover:active { background-color: var(--bg-component-hover); }
+.text-ui-bg-component-hover { color: var(--bg-component-hover); }
+.hover\:text-ui-bg-component-hover:hover { color: var(--bg-component-hover); }
+.border-ui-bg-component-hover { border-color: var(--bg-component-hover); }
+.hover\:border-ui-bg-component-hover:hover { border-color: var(--bg-component-hover); }
+.\[\&_svg\]\:text-ui-bg-component-hover svg { color: var(--bg-component-hover); }
+.bg-ui-bg-interactive { background-color: var(--bg-interactive); }
+.hover\:bg-ui-bg-interactive:hover { background-color: var(--bg-interactive); }
+.active\:bg-ui-bg-interactive:active { background-color: var(--bg-interactive); }
+.text-ui-bg-interactive { color: var(--bg-interactive); }
+.hover\:text-ui-bg-interactive:hover { color: var(--bg-interactive); }
+.border-ui-bg-interactive { border-color: var(--bg-interactive); }
+.hover\:border-ui-bg-interactive:hover { border-color: var(--bg-interactive); }
+.\[\&_svg\]\:text-ui-bg-interactive svg { color: var(--bg-interactive); }
+.bg-ui-bg-disabled { background-color: var(--bg-disabled); }
+.hover\:bg-ui-bg-disabled:hover { background-color: var(--bg-disabled); }
+.active\:bg-ui-bg-disabled:active { background-color: var(--bg-disabled); }
+.text-ui-bg-disabled { color: var(--bg-disabled); }
+.hover\:text-ui-bg-disabled:hover { color: var(--bg-disabled); }
+.border-ui-bg-disabled { border-color: var(--bg-disabled); }
+.hover\:border-ui-bg-disabled:hover { border-color: var(--bg-disabled); }
+.\[\&_svg\]\:text-ui-bg-disabled svg { color: var(--bg-disabled); }
+.bg-ui-bg-overlay { background-color: var(--bg-overlay); }
+.hover\:bg-ui-bg-overlay:hover { background-color: var(--bg-overlay); }
+.active\:bg-ui-bg-overlay:active { background-color: var(--bg-overlay); }
+.text-ui-bg-overlay { color: var(--bg-overlay); }
+.hover\:text-ui-bg-overlay:hover { color: var(--bg-overlay); }
+.border-ui-bg-overlay { border-color: var(--bg-overlay); }
+.hover\:border-ui-bg-overlay:hover { border-color: var(--bg-overlay); }
+.\[\&_svg\]\:text-ui-bg-overlay svg { color: var(--bg-overlay); }
+.bg-ui-border-menu-bot { background-color: var(--border-menu-bot); }
+.hover\:bg-ui-border-menu-bot:hover { background-color: var(--border-menu-bot); }
+.active\:bg-ui-border-menu-bot:active { background-color: var(--border-menu-bot); }
+.text-ui-border-menu-bot { color: var(--border-menu-bot); }
+.hover\:text-ui-border-menu-bot:hover { color: var(--border-menu-bot); }
+.border-ui-border-menu-bot { border-color: var(--border-menu-bot); }
+.hover\:border-ui-border-menu-bot:hover { border-color: var(--border-menu-bot); }
+.\[\&_svg\]\:text-ui-border-menu-bot svg { color: var(--border-menu-bot); }
+.bg-ui-border-menu-top { background-color: var(--border-menu-top); }
+.hover\:bg-ui-border-menu-top:hover { background-color: var(--border-menu-top); }
+.active\:bg-ui-border-menu-top:active { background-color: var(--border-menu-top); }
+.text-ui-border-menu-top { color: var(--border-menu-top); }
+.hover\:text-ui-border-menu-top:hover { color: var(--border-menu-top); }
+.border-ui-border-menu-top { border-color: var(--border-menu-top); }
+.hover\:border-ui-border-menu-top:hover { border-color: var(--border-menu-top); }
+.\[\&_svg\]\:text-ui-border-menu-top svg { color: var(--border-menu-top); }
+.bg-ui-border-strong { background-color: var(--border-strong); }
+.hover\:bg-ui-border-strong:hover { background-color: var(--border-strong); }
+.active\:bg-ui-border-strong:active { background-color: var(--border-strong); }
+.text-ui-border-strong { color: var(--border-strong); }
+.hover\:text-ui-border-strong:hover { color: var(--border-strong); }
+.border-ui-border-strong { border-color: var(--border-strong); }
+.hover\:border-ui-border-strong:hover { border-color: var(--border-strong); }
+.\[\&_svg\]\:text-ui-border-strong svg { color: var(--border-strong); }
+.bg-ui-border-interactive { background-color: var(--border-interactive); }
+.hover\:bg-ui-border-interactive:hover { background-color: var(--border-interactive); }
+.active\:bg-ui-border-interactive:active { background-color: var(--border-interactive); }
+.text-ui-border-interactive { color: var(--border-interactive); }
+.hover\:text-ui-border-interactive:hover { color: var(--border-interactive); }
+.border-ui-border-interactive { border-color: var(--border-interactive); }
+.hover\:border-ui-border-interactive:hover { border-color: var(--border-interactive); }
+.\[\&_svg\]\:text-ui-border-interactive svg { color: var(--border-interactive); }
+.bg-ui-border-base { background-color: var(--border-base); }
+.hover\:bg-ui-border-base:hover { background-color: var(--border-base); }
+.active\:bg-ui-border-base:active { background-color: var(--border-base); }
+.text-ui-border-base { color: var(--border-base); }
+.hover\:text-ui-border-base:hover { color: var(--border-base); }
+.border-ui-border-base { border-color: var(--border-base); }
+.hover\:border-ui-border-base:hover { border-color: var(--border-base); }
+.\[\&_svg\]\:text-ui-border-base svg { color: var(--border-base); }
+.bg-ui-border-danger { background-color: var(--border-danger); }
+.hover\:bg-ui-border-danger:hover { background-color: var(--border-danger); }
+.active\:bg-ui-border-danger:active { background-color: var(--border-danger); }
+.text-ui-border-danger { color: var(--border-danger); }
+.hover\:text-ui-border-danger:hover { color: var(--border-danger); }
+.border-ui-border-danger { border-color: var(--border-danger); }
+.hover\:border-ui-border-danger:hover { border-color: var(--border-danger); }
+.\[\&_svg\]\:text-ui-border-danger svg { color: var(--border-danger); }
+.bg-ui-border-error { background-color: var(--border-error); }
+.hover\:bg-ui-border-error:hover { background-color: var(--border-error); }
+.active\:bg-ui-border-error:active { background-color: var(--border-error); }
+.text-ui-border-error { color: var(--border-error); }
+.hover\:text-ui-border-error:hover { color: var(--border-error); }
+.border-ui-border-error { border-color: var(--border-error); }
+.hover\:border-ui-border-error:hover { border-color: var(--border-error); }
+.\[\&_svg\]\:text-ui-border-error svg { color: var(--border-error); }
+.bg-ui-border-transparent { background-color: var(--border-transparent); }
+.hover\:bg-ui-border-transparent:hover { background-color: var(--border-transparent); }
+.active\:bg-ui-border-transparent:active { background-color: var(--border-transparent); }
+.text-ui-border-transparent { color: var(--border-transparent); }
+.hover\:text-ui-border-transparent:hover { color: var(--border-transparent); }
+.border-ui-border-transparent { border-color: var(--border-transparent); }
+.hover\:border-ui-border-transparent:hover { border-color: var(--border-transparent); }
+.\[\&_svg\]\:text-ui-border-transparent svg { color: var(--border-transparent); }
+.bg-ui-contrast-fg-primary { background-color: var(--contrast-fg-primary); }
+.hover\:bg-ui-contrast-fg-primary:hover { background-color: var(--contrast-fg-primary); }
+.active\:bg-ui-contrast-fg-primary:active { background-color: var(--contrast-fg-primary); }
+.text-ui-contrast-fg-primary { color: var(--contrast-fg-primary); }
+.hover\:text-ui-contrast-fg-primary:hover { color: var(--contrast-fg-primary); }
+.border-ui-contrast-fg-primary { border-color: var(--contrast-fg-primary); }
+.hover\:border-ui-contrast-fg-primary:hover { border-color: var(--contrast-fg-primary); }
+.\[\&_svg\]\:text-ui-contrast-fg-primary svg { color: var(--contrast-fg-primary); }
+.bg-ui-contrast-fg-secondary { background-color: var(--contrast-fg-secondary); }
+.hover\:bg-ui-contrast-fg-secondary:hover { background-color: var(--contrast-fg-secondary); }
+.active\:bg-ui-contrast-fg-secondary:active { background-color: var(--contrast-fg-secondary); }
+.text-ui-contrast-fg-secondary { color: var(--contrast-fg-secondary); }
+.hover\:text-ui-contrast-fg-secondary:hover { color: var(--contrast-fg-secondary); }
+.border-ui-contrast-fg-secondary { border-color: var(--contrast-fg-secondary); }
+.hover\:border-ui-contrast-fg-secondary:hover { border-color: var(--contrast-fg-secondary); }
+.\[\&_svg\]\:text-ui-contrast-fg-secondary svg { color: var(--contrast-fg-secondary); }
+.bg-ui-contrast-bg-base { background-color: var(--contrast-bg-base); }
+.hover\:bg-ui-contrast-bg-base:hover { background-color: var(--contrast-bg-base); }
+.active\:bg-ui-contrast-bg-base:active { background-color: var(--contrast-bg-base); }
+.text-ui-contrast-bg-base { color: var(--contrast-bg-base); }
+.hover\:text-ui-contrast-bg-base:hover { color: var(--contrast-bg-base); }
+.border-ui-contrast-bg-base { border-color: var(--contrast-bg-base); }
+.hover\:border-ui-contrast-bg-base:hover { border-color: var(--contrast-bg-base); }
+.\[\&_svg\]\:text-ui-contrast-bg-base svg { color: var(--contrast-bg-base); }
+.bg-ui-contrast-bg-base-pressed { background-color: var(--contrast-bg-base-pressed); }
+.hover\:bg-ui-contrast-bg-base-pressed:hover { background-color: var(--contrast-bg-base-pressed); }
+.active\:bg-ui-contrast-bg-base-pressed:active { background-color: var(--contrast-bg-base-pressed); }
+.text-ui-contrast-bg-base-pressed { color: var(--contrast-bg-base-pressed); }
+.hover\:text-ui-contrast-bg-base-pressed:hover { color: var(--contrast-bg-base-pressed); }
+.border-ui-contrast-bg-base-pressed { border-color: var(--contrast-bg-base-pressed); }
+.hover\:border-ui-contrast-bg-base-pressed:hover { border-color: var(--contrast-bg-base-pressed); }
+.\[\&_svg\]\:text-ui-contrast-bg-base-pressed svg { color: var(--contrast-bg-base-pressed); }
+.bg-ui-contrast-bg-base-hover { background-color: var(--contrast-bg-base-hover); }
+.hover\:bg-ui-contrast-bg-base-hover:hover { background-color: var(--contrast-bg-base-hover); }
+.active\:bg-ui-contrast-bg-base-hover:active { background-color: var(--contrast-bg-base-hover); }
+.text-ui-contrast-bg-base-hover { color: var(--contrast-bg-base-hover); }
+.hover\:text-ui-contrast-bg-base-hover:hover { color: var(--contrast-bg-base-hover); }
+.border-ui-contrast-bg-base-hover { border-color: var(--contrast-bg-base-hover); }
+.hover\:border-ui-contrast-bg-base-hover:hover { border-color: var(--contrast-bg-base-hover); }
+.\[\&_svg\]\:text-ui-contrast-bg-base-hover svg { color: var(--contrast-bg-base-hover); }
+.bg-ui-contrast-bg-subtle { background-color: var(--contrast-bg-subtle); }
+.hover\:bg-ui-contrast-bg-subtle:hover { background-color: var(--contrast-bg-subtle); }
+.active\:bg-ui-contrast-bg-subtle:active { background-color: var(--contrast-bg-subtle); }
+.text-ui-contrast-bg-subtle { color: var(--contrast-bg-subtle); }
+.hover\:text-ui-contrast-bg-subtle:hover { color: var(--contrast-bg-subtle); }
+.border-ui-contrast-bg-subtle { border-color: var(--contrast-bg-subtle); }
+.hover\:border-ui-contrast-bg-subtle:hover { border-color: var(--contrast-bg-subtle); }
+.\[\&_svg\]\:text-ui-contrast-bg-subtle svg { color: var(--contrast-bg-subtle); }
+.bg-ui-contrast-border-base { background-color: var(--contrast-border-base); }
+.hover\:bg-ui-contrast-border-base:hover { background-color: var(--contrast-border-base); }
+.active\:bg-ui-contrast-border-base:active { background-color: var(--contrast-border-base); }
+.text-ui-contrast-border-base { color: var(--contrast-border-base); }
+.hover\:text-ui-contrast-border-base:hover { color: var(--contrast-border-base); }
+.border-ui-contrast-border-base { border-color: var(--contrast-border-base); }
+.hover\:border-ui-contrast-border-base:hover { border-color: var(--contrast-border-base); }
+.\[\&_svg\]\:text-ui-contrast-border-base svg { color: var(--contrast-border-base); }
+.bg-ui-contrast-border-bot { background-color: var(--contrast-border-bot); }
+.hover\:bg-ui-contrast-border-bot:hover { background-color: var(--contrast-border-bot); }
+.active\:bg-ui-contrast-border-bot:active { background-color: var(--contrast-border-bot); }
+.text-ui-contrast-border-bot { color: var(--contrast-border-bot); }
+.hover\:text-ui-contrast-border-bot:hover { color: var(--contrast-border-bot); }
+.border-ui-contrast-border-bot { border-color: var(--contrast-border-bot); }
+.hover\:border-ui-contrast-border-bot:hover { border-color: var(--contrast-border-bot); }
+.\[\&_svg\]\:text-ui-contrast-border-bot svg { color: var(--contrast-border-bot); }
+.bg-ui-contrast-border-top { background-color: var(--contrast-border-top); }
+.hover\:bg-ui-contrast-border-top:hover { background-color: var(--contrast-border-top); }
+.active\:bg-ui-contrast-border-top:active { background-color: var(--contrast-border-top); }
+.text-ui-contrast-border-top { color: var(--contrast-border-top); }
+.hover\:text-ui-contrast-border-top:hover { color: var(--contrast-border-top); }
+.border-ui-contrast-border-top { border-color: var(--contrast-border-top); }
+.hover\:border-ui-contrast-border-top:hover { border-color: var(--contrast-border-top); }
+.\[\&_svg\]\:text-ui-contrast-border-top svg { color: var(--contrast-border-top); }
+.bg-ui-button-inverted { background-color: var(--button-inverted); }
+.hover\:bg-ui-button-inverted:hover { background-color: var(--button-inverted); }
+.active\:bg-ui-button-inverted:active { background-color: var(--button-inverted); }
+.text-ui-button-inverted { color: var(--button-inverted); }
+.hover\:text-ui-button-inverted:hover { color: var(--button-inverted); }
+.border-ui-button-inverted { border-color: var(--button-inverted); }
+.hover\:border-ui-button-inverted:hover { border-color: var(--button-inverted); }
+.\[\&_svg\]\:text-ui-button-inverted svg { color: var(--button-inverted); }
+.bg-ui-button-inverted-pressed { background-color: var(--button-inverted-pressed); }
+.hover\:bg-ui-button-inverted-pressed:hover { background-color: var(--button-inverted-pressed); }
+.active\:bg-ui-button-inverted-pressed:active { background-color: var(--button-inverted-pressed); }
+.text-ui-button-inverted-pressed { color: var(--button-inverted-pressed); }
+.hover\:text-ui-button-inverted-pressed:hover { color: var(--button-inverted-pressed); }
+.border-ui-button-inverted-pressed { border-color: var(--button-inverted-pressed); }
+.hover\:border-ui-button-inverted-pressed:hover { border-color: var(--button-inverted-pressed); }
+.\[\&_svg\]\:text-ui-button-inverted-pressed svg { color: var(--button-inverted-pressed); }
+.bg-ui-button-inverted-hover { background-color: var(--button-inverted-hover); }
+.hover\:bg-ui-button-inverted-hover:hover { background-color: var(--button-inverted-hover); }
+.active\:bg-ui-button-inverted-hover:active { background-color: var(--button-inverted-hover); }
+.text-ui-button-inverted-hover { color: var(--button-inverted-hover); }
+.hover\:text-ui-button-inverted-hover:hover { color: var(--button-inverted-hover); }
+.border-ui-button-inverted-hover { border-color: var(--button-inverted-hover); }
+.hover\:border-ui-button-inverted-hover:hover { border-color: var(--button-inverted-hover); }
+.\[\&_svg\]\:text-ui-button-inverted-hover svg { color: var(--button-inverted-hover); }
+.bg-ui-button-transparent { background-color: var(--button-transparent); }
+.hover\:bg-ui-button-transparent:hover { background-color: var(--button-transparent); }
+.active\:bg-ui-button-transparent:active { background-color: var(--button-transparent); }
+.text-ui-button-transparent { color: var(--button-transparent); }
+.hover\:text-ui-button-transparent:hover { color: var(--button-transparent); }
+.border-ui-button-transparent { border-color: var(--button-transparent); }
+.hover\:border-ui-button-transparent:hover { border-color: var(--button-transparent); }
+.\[\&_svg\]\:text-ui-button-transparent svg { color: var(--button-transparent); }
+.bg-ui-button-transparent-hover { background-color: var(--button-transparent-hover); }
+.hover\:bg-ui-button-transparent-hover:hover { background-color: var(--button-transparent-hover); }
+.active\:bg-ui-button-transparent-hover:active { background-color: var(--button-transparent-hover); }
+.text-ui-button-transparent-hover { color: var(--button-transparent-hover); }
+.hover\:text-ui-button-transparent-hover:hover { color: var(--button-transparent-hover); }
+.border-ui-button-transparent-hover { border-color: var(--button-transparent-hover); }
+.hover\:border-ui-button-transparent-hover:hover { border-color: var(--button-transparent-hover); }
+.\[\&_svg\]\:text-ui-button-transparent-hover svg { color: var(--button-transparent-hover); }
+.bg-ui-button-transparent-pressed { background-color: var(--button-transparent-pressed); }
+.hover\:bg-ui-button-transparent-pressed:hover { background-color: var(--button-transparent-pressed); }
+.active\:bg-ui-button-transparent-pressed:active { background-color: var(--button-transparent-pressed); }
+.text-ui-button-transparent-pressed { color: var(--button-transparent-pressed); }
+.hover\:text-ui-button-transparent-pressed:hover { color: var(--button-transparent-pressed); }
+.border-ui-button-transparent-pressed { border-color: var(--button-transparent-pressed); }
+.hover\:border-ui-button-transparent-pressed:hover { border-color: var(--button-transparent-pressed); }
+.\[\&_svg\]\:text-ui-button-transparent-pressed svg { color: var(--button-transparent-pressed); }
+.bg-ui-button-danger { background-color: var(--button-danger); }
+.hover\:bg-ui-button-danger:hover { background-color: var(--button-danger); }
+.active\:bg-ui-button-danger:active { background-color: var(--button-danger); }
+.text-ui-button-danger { color: var(--button-danger); }
+.hover\:text-ui-button-danger:hover { color: var(--button-danger); }
+.border-ui-button-danger { border-color: var(--button-danger); }
+.hover\:border-ui-button-danger:hover { border-color: var(--button-danger); }
+.\[\&_svg\]\:text-ui-button-danger svg { color: var(--button-danger); }
+.bg-ui-button-danger-pressed { background-color: var(--button-danger-pressed); }
+.hover\:bg-ui-button-danger-pressed:hover { background-color: var(--button-danger-pressed); }
+.active\:bg-ui-button-danger-pressed:active { background-color: var(--button-danger-pressed); }
+.text-ui-button-danger-pressed { color: var(--button-danger-pressed); }
+.hover\:text-ui-button-danger-pressed:hover { color: var(--button-danger-pressed); }
+.border-ui-button-danger-pressed { border-color: var(--button-danger-pressed); }
+.hover\:border-ui-button-danger-pressed:hover { border-color: var(--button-danger-pressed); }
+.\[\&_svg\]\:text-ui-button-danger-pressed svg { color: var(--button-danger-pressed); }
+.bg-ui-button-danger-hover { background-color: var(--button-danger-hover); }
+.hover\:bg-ui-button-danger-hover:hover { background-color: var(--button-danger-hover); }
+.active\:bg-ui-button-danger-hover:active { background-color: var(--button-danger-hover); }
+.text-ui-button-danger-hover { color: var(--button-danger-hover); }
+.hover\:text-ui-button-danger-hover:hover { color: var(--button-danger-hover); }
+.border-ui-button-danger-hover { border-color: var(--button-danger-hover); }
+.hover\:border-ui-button-danger-hover:hover { border-color: var(--button-danger-hover); }
+.\[\&_svg\]\:text-ui-button-danger-hover svg { color: var(--button-danger-hover); }
+.bg-ui-button-neutral { background-color: var(--button-neutral); }
+.hover\:bg-ui-button-neutral:hover { background-color: var(--button-neutral); }
+.active\:bg-ui-button-neutral:active { background-color: var(--button-neutral); }
+.text-ui-button-neutral { color: var(--button-neutral); }
+.hover\:text-ui-button-neutral:hover { color: var(--button-neutral); }
+.border-ui-button-neutral { border-color: var(--button-neutral); }
+.hover\:border-ui-button-neutral:hover { border-color: var(--button-neutral); }
+.\[\&_svg\]\:text-ui-button-neutral svg { color: var(--button-neutral); }
+.bg-ui-button-neutral-hover { background-color: var(--button-neutral-hover); }
+.hover\:bg-ui-button-neutral-hover:hover { background-color: var(--button-neutral-hover); }
+.active\:bg-ui-button-neutral-hover:active { background-color: var(--button-neutral-hover); }
+.text-ui-button-neutral-hover { color: var(--button-neutral-hover); }
+.hover\:text-ui-button-neutral-hover:hover { color: var(--button-neutral-hover); }
+.border-ui-button-neutral-hover { border-color: var(--button-neutral-hover); }
+.hover\:border-ui-button-neutral-hover:hover { border-color: var(--button-neutral-hover); }
+.\[\&_svg\]\:text-ui-button-neutral-hover svg { color: var(--button-neutral-hover); }
+.bg-ui-button-neutral-pressed { background-color: var(--button-neutral-pressed); }
+.hover\:bg-ui-button-neutral-pressed:hover { background-color: var(--button-neutral-pressed); }
+.active\:bg-ui-button-neutral-pressed:active { background-color: var(--button-neutral-pressed); }
+.text-ui-button-neutral-pressed { color: var(--button-neutral-pressed); }
+.hover\:text-ui-button-neutral-pressed:hover { color: var(--button-neutral-pressed); }
+.border-ui-button-neutral-pressed { border-color: var(--button-neutral-pressed); }
+.hover\:border-ui-button-neutral-pressed:hover { border-color: var(--button-neutral-pressed); }
+.\[\&_svg\]\:text-ui-button-neutral-pressed svg { color: var(--button-neutral-pressed); }
+.bg-ui-fg-on-color { background-color: var(--fg-on-color); }
+.hover\:bg-ui-fg-on-color:hover { background-color: var(--fg-on-color); }
+.active\:bg-ui-fg-on-color:active { background-color: var(--fg-on-color); }
+.text-ui-fg-on-color { color: var(--fg-on-color); }
+.hover\:text-ui-fg-on-color:hover { color: var(--fg-on-color); }
+.border-ui-fg-on-color { border-color: var(--fg-on-color); }
+.hover\:border-ui-fg-on-color:hover { border-color: var(--fg-on-color); }
+.\[\&_svg\]\:text-ui-fg-on-color svg { color: var(--fg-on-color); }
+.bg-ui-fg-on-inverted { background-color: var(--fg-on-inverted); }
+.hover\:bg-ui-fg-on-inverted:hover { background-color: var(--fg-on-inverted); }
+.active\:bg-ui-fg-on-inverted:active { background-color: var(--fg-on-inverted); }
+.text-ui-fg-on-inverted { color: var(--fg-on-inverted); }
+.hover\:text-ui-fg-on-inverted:hover { color: var(--fg-on-inverted); }
+.border-ui-fg-on-inverted { border-color: var(--fg-on-inverted); }
+.hover\:border-ui-fg-on-inverted:hover { border-color: var(--fg-on-inverted); }
+.\[\&_svg\]\:text-ui-fg-on-inverted svg { color: var(--fg-on-inverted); }
+.bg-ui-fg-interactive { background-color: var(--fg-interactive); }
+.hover\:bg-ui-fg-interactive:hover { background-color: var(--fg-interactive); }
+.active\:bg-ui-fg-interactive:active { background-color: var(--fg-interactive); }
+.text-ui-fg-interactive { color: var(--fg-interactive); }
+.hover\:text-ui-fg-interactive:hover { color: var(--fg-interactive); }
+.border-ui-fg-interactive { border-color: var(--fg-interactive); }
+.hover\:border-ui-fg-interactive:hover { border-color: var(--fg-interactive); }
+.\[\&_svg\]\:text-ui-fg-interactive svg { color: var(--fg-interactive); }
+.bg-ui-fg-interactive-hover { background-color: var(--fg-interactive-hover); }
+.hover\:bg-ui-fg-interactive-hover:hover { background-color: var(--fg-interactive-hover); }
+.active\:bg-ui-fg-interactive-hover:active { background-color: var(--fg-interactive-hover); }
+.text-ui-fg-interactive-hover { color: var(--fg-interactive-hover); }
+.hover\:text-ui-fg-interactive-hover:hover { color: var(--fg-interactive-hover); }
+.border-ui-fg-interactive-hover { border-color: var(--fg-interactive-hover); }
+.hover\:border-ui-fg-interactive-hover:hover { border-color: var(--fg-interactive-hover); }
+.\[\&_svg\]\:text-ui-fg-interactive-hover svg { color: var(--fg-interactive-hover); }
+.bg-ui-fg-error { background-color: var(--fg-error); }
+.hover\:bg-ui-fg-error:hover { background-color: var(--fg-error); }
+.active\:bg-ui-fg-error:active { background-color: var(--fg-error); }
+.text-ui-fg-error { color: var(--fg-error); }
+.hover\:text-ui-fg-error:hover { color: var(--fg-error); }
+.border-ui-fg-error { border-color: var(--fg-error); }
+.hover\:border-ui-fg-error:hover { border-color: var(--fg-error); }
+.\[\&_svg\]\:text-ui-fg-error svg { color: var(--fg-error); }
+.bg-ui-fg-subtle { background-color: var(--fg-subtle); }
+.hover\:bg-ui-fg-subtle:hover { background-color: var(--fg-subtle); }
+.active\:bg-ui-fg-subtle:active { background-color: var(--fg-subtle); }
+.text-ui-fg-subtle { color: var(--fg-subtle); }
+.hover\:text-ui-fg-subtle:hover { color: var(--fg-subtle); }
+.border-ui-fg-subtle { border-color: var(--fg-subtle); }
+.hover\:border-ui-fg-subtle:hover { border-color: var(--fg-subtle); }
+.\[\&_svg\]\:text-ui-fg-subtle svg { color: var(--fg-subtle); }
+.bg-ui-fg-base { background-color: var(--fg-base); }
+.hover\:bg-ui-fg-base:hover { background-color: var(--fg-base); }
+.active\:bg-ui-fg-base:active { background-color: var(--fg-base); }
+.text-ui-fg-base { color: var(--fg-base); }
+.hover\:text-ui-fg-base:hover { color: var(--fg-base); }
+.border-ui-fg-base { border-color: var(--fg-base); }
+.hover\:border-ui-fg-base:hover { border-color: var(--fg-base); }
+.\[\&_svg\]\:text-ui-fg-base svg { color: var(--fg-base); }
+.bg-ui-fg-disabled { background-color: var(--fg-disabled); }
+.hover\:bg-ui-fg-disabled:hover { background-color: var(--fg-disabled); }
+.active\:bg-ui-fg-disabled:active { background-color: var(--fg-disabled); }
+.text-ui-fg-disabled { color: var(--fg-disabled); }
+.hover\:text-ui-fg-disabled:hover { color: var(--fg-disabled); }
+.border-ui-fg-disabled { border-color: var(--fg-disabled); }
+.hover\:border-ui-fg-disabled:hover { border-color: var(--fg-disabled); }
+.\[\&_svg\]\:text-ui-fg-disabled svg { color: var(--fg-disabled); }
+.bg-ui-fg-muted { background-color: var(--fg-muted); }
+.hover\:bg-ui-fg-muted:hover { background-color: var(--fg-muted); }
+.active\:bg-ui-fg-muted:active { background-color: var(--fg-muted); }
+.text-ui-fg-muted { color: var(--fg-muted); }
+.hover\:text-ui-fg-muted:hover { color: var(--fg-muted); }
+.border-ui-fg-muted { border-color: var(--fg-muted); }
+.hover\:border-ui-fg-muted:hover { border-color: var(--fg-muted); }
+.\[\&_svg\]\:text-ui-fg-muted svg { color: var(--fg-muted); }
+.bg-ui-alpha-250 { background-color: var(--alpha-250); }
+.hover\:bg-ui-alpha-250:hover { background-color: var(--alpha-250); }
+.active\:bg-ui-alpha-250:active { background-color: var(--alpha-250); }
+.text-ui-alpha-250 { color: var(--alpha-250); }
+.hover\:text-ui-alpha-250:hover { color: var(--alpha-250); }
+.border-ui-alpha-250 { border-color: var(--alpha-250); }
+.hover\:border-ui-alpha-250:hover { border-color: var(--alpha-250); }
+.\[\&_svg\]\:text-ui-alpha-250 svg { color: var(--alpha-250); }
+.bg-ui-alpha-400 { background-color: var(--alpha-400); }
+.hover\:bg-ui-alpha-400:hover { background-color: var(--alpha-400); }
+.active\:bg-ui-alpha-400:active { background-color: var(--alpha-400); }
+.text-ui-alpha-400 { color: var(--alpha-400); }
+.hover\:text-ui-alpha-400:hover { color: var(--alpha-400); }
+.border-ui-alpha-400 { border-color: var(--alpha-400); }
+.hover\:border-ui-alpha-400:hover { border-color: var(--alpha-400); }
+.\[\&_svg\]\:text-ui-alpha-400 svg { color: var(--alpha-400); }
